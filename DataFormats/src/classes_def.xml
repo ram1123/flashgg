@@ -342,4 +342,16 @@
 </class>
 <class name="std::vector<flashgg::TagCandidate>"/>
 <class name="edm::Wrapper<std::vector<flashgg::TagCandidate> >"/>
+
+<class name="flashgg::HHWWggCandidate" ClassVersion="16">
+ <version ClassVersion="16" checksum="3289891636"/>
+ <version ClassVersion="15" checksum="4118898217"/>
+ <version ClassVersion="14" checksum="3188803893"/>
+  <version ClassVersion="12" checksum="618148466"/>
+  <version ClassVersion="11" checksum="2809364010"/>
+  <version ClassVersion="13" checksum="618148466"/>
+</class>
+<class name="std::vector<flashgg::HHWWggCandidate>"/>
+<class name="edm::Wrapper<std::vector<flashgg::HHWWggCandidate> >"/>
+
 </lcgdict>
