@@ -1,4 +1,7 @@
-<library   name="FlashggMetaDataPlugins" file="*.cc">
+
+<!-- call .cc plugin file here  -->
+
+<library   name="FlashggMetaDataPlugins" file="*.cc"> 
   <use   name="flashgg/MetaData"/>
   <use   name="FWCore/Framework"/>
   <use   name="FWCore/ParameterSet"/>

@@ -5,6 +5,8 @@ def addCategories(pset,cats,variables,histograms,mvas=None):
     
     for cat in cats:
         addCategory(pset,*cat,variables=variables,histograms=histograms,mvas=mvas)
+        # Single asterisk as used in function declaration allows variable number of arguments passed from calling environment.  
+        
 
 # -----------------------------------------------------------------------
 def addCategory(pset,label,cutbased=None,subcats=0,variables=[],histograms=[],mvas=None,classname=None,binnedOnly=None,

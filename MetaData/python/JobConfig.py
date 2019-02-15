@@ -7,7 +7,7 @@ class JobConfig(object):
     
     def __init__(self,*args,**kwargs):
         
-        super(JobConfig,self).__init__()
+        super(JobConfig,self).__init__() 
 
         self.metaDataSrc=kwargs.get("metaDataSrc","flashgg")
         self.crossSections=kwargs.get("crossSections",["$CMSSW_BASE/src/flashgg/MetaData/data/cross_sections.json"])
@@ -147,7 +147,7 @@ class JobConfig(object):
  
     # process customization
     def customize(self,process):
-        self.parse()
+        self.parse() 
 
         isFwlite = False
         hasOutput = False
@@ -162,7 +162,7 @@ class JobConfig(object):
         if hasOutput and hasTFile:
             tfile = self.outputFile.replace(".root","_histos.root")
         else:
-            tfile = self.outputFile
+            tfile = self.outputFile 
             
         if self.dryRun:
             import sys
@@ -182,7 +182,6 @@ class JobConfig(object):
             else:
                 sys.exit(1)
             
-
         files = self.inputFiles
         if self.dataset and self.dataset != "":
             dsetname,xsec,totEvents,files,maxEvents,sp_unused = self.dataset
@@ -305,7 +304,7 @@ class JobConfig(object):
 
             if isdata:    
                 print process.source.lumisToProcess
-            
+
         flist = []
         for f in files:
             if len(f.split(":",1))>1:

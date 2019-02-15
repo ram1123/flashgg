@@ -1,3 +1,12 @@
+# Can call created functions here to get variables 
+# For example: HHWWggCandidate.cc defines function:
+# std::vector<float> HHWWggCandidate::CosThetaAngles()
+#
+# In this file, you can call it with: 
+# CosThetaAngles()[1]
+#
+# This will return whatever variable you're interested in 
+
 pho_variables = [
       "npho                    := phoVector.size()",
       "pho1_pt                 := phoP4Corrected[0].pt()",
@@ -98,4 +107,25 @@ ws_variables = [
    "dp2_mass                := HHWWggDiPho2.mass() ",
    "avg_dp_mass             := (HHWWggDiPho1.mass()+HHWWggDiPho2.mass())/2",
    "dZ                      := 0"
+]
+
+abe_variables = [
+
+    # One entry per event 
+    # Plot from header file utils 
+    "n_ps_dipho                   := diphoVector.size()",
+    "ps_dipho_mass                := ? Abe_HHWWggDiPho.mass() != 0 ? Abe_HHWWggDiPho.mass() : -999 ",
+    "elec1_pt                     := elec1.pt()", # Leading pT
+    "elec2_pt                     := elec2.pt()",  # Subleading pT 
+    "MET                          := MET_fourvec.pt()",
+    #"Transverse_W_Mass            := (MET + elec1).Mt()"
+    "W1_TM                        := W1_TM",
+    #"W2_TM                        := (MET + elec1).Mt()"
+    #"MET                          := theMET.mPt()"
+    #"MET                          := theMET.mPt()"
+   # "theMETcorpt                  := theMETcorpt"
+    #"ps_dipho_mass                :=                      "
+    #"dipho_mass	              := "
+    #"npho_                    := phoVector.size()"
+
 ]
