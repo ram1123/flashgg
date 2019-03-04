@@ -309,6 +309,7 @@ if options.createCrabConfig:
             ("RunIISummer17MiniAOD-NZSFlatPU28to62_92X_upgrade2017_realistic_v10","FlatPU_92Xv10"),
             ("RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14","PU2017_94Xv14"),
             ("RunIIFall17MiniAODv2-PU2017_12Apr2018_1core_94X_mc2017_realistic_v14","1core_94Xv1"),
+            ("RunIIFall18-4_0_0-29-gb3690f29_postGEN_Outputs","abetest"),
             ]
 
         for orig, replacement in replacements:
@@ -318,6 +319,7 @@ if options.createCrabConfig:
 
         if len(jobname) > 97:
             jobname = jobname.replace("RunIIFall18MiniAOD-102X_upgrade2018_realistic_v12-v1","Fall18_102X")
+            
         if len(jobname) > 97:
             print orig_jobname
             print "-->", len(jobname), jobname
