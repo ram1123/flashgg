@@ -20,7 +20,6 @@
 #include "flashgg/DataFormats/interface/SingleVertexView.h"
 #include "flashgg/DataFormats/interface/TTHHadronicTag.h"
 #include "flashgg/DataFormats/interface/TTHLeptonicTag.h"
-#include "flashgg/DataFormats/interface/TTHDiLeptonTag.h"
 #include "flashgg/DataFormats/interface/VBFDiPhoDiJetMVAResult.h"
 #include "flashgg/DataFormats/interface/VBFMVAResult.h"
 #include "flashgg/DataFormats/interface/VBFTag.h"
@@ -42,8 +41,7 @@
 #include "flashgg/DataFormats/interface/PDFWeightObject.h"
 #include "flashgg/DataFormats/interface/ZPlusJetTag.h"
 #include "flashgg/DataFormats/interface/TagCandidate.h"
-#include "flashgg/DataFormats/interface/TagAndProbeCandidate.h" //spigazzi
-#include "flashgg/DataFormats/interface/DoubleHTag.h"
+#include "flashgg/DataFormats/interface/HHWWggCandidate.h"
 
 #include <vector>
 #include <map>
@@ -51,7 +49,7 @@
 namespace  {
     struct dictionary {
         flashgg::WeightedObject                                             fgg_obj;
-        
+
         flashgg::PDFWeightObject                                             fgg_pobj;
         edm::Ptr<flashgg::PDFWeightObject>                                ptr_fgg_pobj;
         edm::Wrapper<flashgg::PDFWeightObject>                            wrp_fgg_pobj;
@@ -75,8 +73,8 @@ namespace  {
 
         edm::Ref<std::vector<flashgg::Photon>,flashgg::Photon,edm::refhelper::FindUsingAdvance<std::vector<flashgg::Photon>,flashgg::Photon> > ref_fgg_pho;
         std::vector<edm::Ref<std::vector<flashgg::Photon>,flashgg::Photon,edm::refhelper::FindUsingAdvance<std::vector<flashgg::Photon>,flashgg::Photon> > > vref_fgg_pho;
-        edm::RefProd<std::vector<flashgg::Photon> >              rfp_fgg_pho; 
-        edm::RefVector<std::vector<flashgg::Photon>,flashgg::Photon,edm::refhelper::FindUsingAdvance<std::vector<flashgg::Photon>,flashgg::Photon> >    refv_fgg_pho; 
+        edm::RefProd<std::vector<flashgg::Photon> >              rfp_fgg_pho;
+        edm::RefVector<std::vector<flashgg::Photon>,flashgg::Photon,edm::refhelper::FindUsingAdvance<std::vector<flashgg::Photon>,flashgg::Photon> >    refv_fgg_pho;
         edm::Wrapper<edm::RefVector<std::vector<flashgg::Photon>,flashgg::Photon,edm::refhelper::FindUsingAdvance<std::vector<flashgg::Photon>,flashgg::Photon> > >  wrp_rv_fgg_pho;
 
 
@@ -206,14 +204,6 @@ namespace  {
         std::vector<flashgg::TTHLeptonicTag> vec_tthl;
         edm::Wrapper<std::vector<flashgg::TTHLeptonicTag> > wrp_vec_tthl;
 
-        flashgg::DoubleHTag hh;
-        std::vector<flashgg::DoubleHTag> vec_hh;
-        edm::Wrapper<std::vector<flashgg::DoubleHTag> > wrp_vec_hh;
-
-        flashgg::TTHDiLeptonTag tthd;
-        std::vector<flashgg::TTHDiLeptonTag> vec_tthd;
-        edm::Wrapper<std::vector<flashgg::TTHDiLeptonTag> > wrp_vec_tthd;
-
         edm::Ptr<reco::GenParticle> ptr_genp;
 
         flashgg::TTHHadronicTag tthh;
@@ -236,9 +226,6 @@ namespace  {
         edm::OwnVector<flashgg::TagTruthBase, edm::ClonePolicy<flashgg::TagTruthBase> > ownvec_truthbase;
         edm::Wrapper<edm::OwnVector<flashgg::TagTruthBase, edm::ClonePolicy<flashgg::TagTruthBase> > > wrp_ownvec_truthbase;
 
-        std::vector<flashgg::DiPhotonTagBase*> vec_ptr_tagbase;
-        std::vector<flashgg::TagTruthBase*> vec_ptr_truthbase;
-
         flashgg::VBFTagTruth vbftt;
         std::vector<flashgg::VBFTagTruth> vec_vbftt;
         edm::Wrapper<std::vector<flashgg::VBFTagTruth> > wrp_vec_vbftt;
@@ -252,6 +239,10 @@ namespace  {
         edm::Wrapper<std::vector<flashgg::VHLooseTag> > wrp_vec_vhl;
         edm::Ptr<pat::Electron> ptr_elec_vhl;
         edm::Ptr<pat::Muon> ptr_muon_vhl;
+
+        flashgg::HHWWggCandidate HHWWgg;
+        std::vector<flashgg::HHWWggCandidate> vec_HHWWgg;
+        edm::Wrapper<std::vector<flashgg::HHWWggCandidate> > wrp_vec_HHWWgg;
 
         flashgg::VHTightTag vht;
         std::vector<flashgg::VHTightTag> vec_vht;
@@ -268,7 +259,7 @@ namespace  {
         flashgg::ZHLeptonicTag zht;
         std::vector<flashgg::ZHLeptonicTag> vec_zht;
         edm::Wrapper<std::vector<flashgg::ZHLeptonicTag> > wrp_vec_zht;
-        
+
         flashgg::VHLeptonicLooseTag vhll;
         std::vector<flashgg::VHLeptonicLooseTag> vec_vhll;
         edm::Wrapper<std::vector<flashgg::VHLeptonicLooseTag> > wrp_vec_vhll;
@@ -278,7 +269,7 @@ namespace  {
         edm::Wrapper<std::vector<flashgg::WHLeptonicTag> > wrp_vec_whl;
         edm::Ptr<pat::Electron> ptr_elec_whl;
         edm::Ptr<pat::Muon> ptr_muon_whl;
-        
+
         flashgg::VHEtTag vhet;
         std::vector<flashgg::VHEtTag> vec_vhet;
         edm::Wrapper<std::vector<flashgg::VHEtTag> > wrp_vec_vhet;
@@ -316,17 +307,6 @@ namespace  {
         edm::Wrapper<flashgg::TagCandidate>                      wrp_tags;
         std::vector<flashgg::TagCandidate>                       vec_tags;
         edm::Wrapper<std::vector<flashgg::TagCandidate> >    wrp_vec_tags;
-
-        //---TagAndProbe candidate
-        flashgg::TagAndProbeCandidate                                          fgg_tnp;
-        edm::Wrapper<flashgg::TagAndProbeCandidate>                            wrp_fgg_tnp;
-        std::vector<flashgg::TagAndProbeCandidate>                             vec_fgg_tnp;
-        edm::Wrapper<std::vector<flashgg::TagAndProbeCandidate> >              wrp_vec_fgg_tnp;
-        edm::Ptr<flashgg::TagAndProbeCandidate>                                ptr_fgg_tnp;
-        edm::Wrapper<edm::Ptr<flashgg::TagAndProbeCandidate> >                 wrp_ptr_fgg_tnp;
-        std::vector<edm::Ptr<flashgg::TagAndProbeCandidate> >                  vec_ptr_fgg_tnp;
-        edm::Wrapper<std::vector<edm::Ptr<flashgg::TagAndProbeCandidate> > >   wrp_vec_ptr_fgg_tnp;
-
     };
 }
 // Local Variables:
@@ -336,4 +316,3 @@ namespace  {
 // c-basic-offset:4
 // End:
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-
