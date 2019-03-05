@@ -117,9 +117,12 @@ abe_variables = [
     "ps_dipho_mass                := ? Abe_HHWWggDiPho.mass() != 0 ? Abe_HHWWggDiPho.mass() : -999 ",
     "elec1_pt                     := elec1.pt()", # Leading pT
     "elec2_pt                     := elec2.pt()",  # Subleading pT 
+    "muon1_pt                     := muon1.pt()", 
     "MET                          := MET_fourvec.pt()",
-    "pt_gen_part                  := gen_pt",
+    "gen_lepton_pt                := gen_lepton_pt",
     "gen_neutrino_pt              := gen_neutrino_pt"
+    # Change to gen_electron_pt
+    # gen_muon_pt 
     #"Transverse_W_Mass            := (MET + elec1).Mt()"
     #"W1_TM                        := W1_TM",
     #"W2_TM                        := (MET + elec1).Mt()"

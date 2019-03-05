@@ -22,6 +22,7 @@
 #include "flashgg/DataFormats/interface/SinglePhotonView.h"
 #include "flashgg/DataFormats/interface/Photon.h"
 #include "flashgg/DataFormats/interface/Electron.h"
+#include "flashgg/DataFormats/interface/Muon.h"
 #include "flashgg/DataFormats/interface/Met.h"
 #include "flashgg/DataFormats/interface/Jet.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
@@ -80,6 +81,9 @@ namespace flashgg {
     EDGetTokenT<View<Electron> > electronToken_;
     Handle<View<flashgg::Electron> > electrons;
 
+    EDGetTokenT<View<Muon> > muonToken_;
+    Handle<View<flashgg::Muon> > muons;
+
     EDGetTokenT<View<flashgg::Met> > METToken_;
     Handle<View<flashgg::Met> > METs;
 
@@ -98,6 +102,7 @@ namespace flashgg {
   diphotonToken_(),
   genParticleToken_(),
   electronToken_(),
+  muonToken_(),
   METToken_(),
   cc_( consumesCollector() ),
   idSelector_( ParameterSet(), cc_ )
@@ -111,6 +116,7 @@ namespace flashgg {
     vertexToken_( consumes<View<reco::Vertex> >( pSet.getParameter<InputTag> ( "VertexTag" ) ) ),
     genParticleToken_( consumes<View<reco::GenParticle> >( pSet.getParameter<InputTag> ( "GenParticleTag" ) ) ),
     electronToken_( consumes<View<Electron> >( pSet.getParameter<InputTag> ( "ElectronTag" ) ) ), // prev iConfig.get..
+    muonToken_( consumes<View<Muon> >( pSet.getParameter<InputTag> ( "MuonTag" ) ) ),
     //METToken_( consumes<View<flashgg::Met> >( pSet.getParameter<InputTag> ( "METTag" ) ) ),
     METToken_( consumes<View<Met> >( pSet.getParameter<InputTag> ( "METTag" ) ) ),
 
@@ -129,6 +135,7 @@ namespace flashgg {
       event.getByToken( vertexToken_, vertex );
       event.getByToken( genParticleToken_, genParticle );
       event.getByToken( electronToken_, electrons );
+      event.getByToken( muonToken_, muons );
       event.getByToken( METToken_, METs );
 
       //---output collection
@@ -149,6 +156,7 @@ namespace flashgg {
       //   atLeastOneDiphoPass |= idSelector_(*thisDPPointer, event);
       // }
       int n_electrons = electrons->size();
+      int n_muons = muons->size();
       int n_photons = photons->size();
       //std::cout << "n_photons = " << n_photons << std::endl;
       //if (n_photons == 0) std::cout << "***************************n_photons = " << n_photons << std::endl;
@@ -157,6 +165,7 @@ namespace flashgg {
       std::vector<flashgg::Photon> phoVector;
       std::vector<flashgg::DiPhotonCandidate> diphoVector;
       std::vector<flashgg::Electron> electronVector;
+      std::vector<flashgg::Muon> muonVector;
       std::vector<flashgg::Met> METVector;
 
       // Save gen particles 
@@ -173,6 +182,14 @@ namespace flashgg {
           edm::Ptr<flashgg::Electron> elec = electrons->ptrAt( electronIndex );
           flashgg::Electron * thisElecPointer = const_cast<flashgg::Electron *>(elec.get());
           electronVector.push_back(*thisElecPointer);
+        }
+
+        // Append muonVector
+        for( int muonIndex = 0; muonIndex < n_muons; muonIndex++ )
+        {
+          edm::Ptr<flashgg::Muon> mlep = muons->ptrAt( muonIndex );
+          flashgg::Muon * thisMuonPointer = const_cast<flashgg::Muon *>(mlep.get());
+          muonVector.push_back(*thisMuonPointer);
         }
 
 
@@ -205,129 +222,135 @@ namespace flashgg {
           METVector.push_back(*thisMETPointer);
         }
 
-        // MET 
-        //if( METs->size() != 1 ) { std::cout << "WARNING - #MET is not 1" << std::endl;}
-        //edm::Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
-        //edm::Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
-        //std::cout << "theMET = " << theMET << std::endl;
-        //std::cout << "Got to candproducer line" << std::endl;
+        // Want to save GEN particles to compare variables to RECO 
+        // Only want to save GEN particles coming from mother particle of interest
 
-        //edm::Ptr<reco::Vertex> vertex_zero = vertex->ptrAt(0);
-
+        // Mother Daughter pdgid pairs 
+        // if a particle of pdgid [0] came from pdgid [1], save it 
+        std::vector<std::vector<int>> md_pairs = {};
+        md_pairs.push_back({24,25}); // W from H 
+        md_pairs.push_back({22,25}); // Photon from H 
+        md_pairs.push_back({11,24}); // Electron from W
+        md_pairs.push_back({12,24}); // Electron neutrino from W
+        md_pairs.push_back({13,24}); // Muon from W
+        md_pairs.push_back({14,24}); // Muon neutrino from W 
+        
         std::vector<int> quark_pdgids = {1,2,3,4,5};
+
+        for (unsigned int i = 0; i < quark_pdgids.size(); i++){
+          int qid = quark_pdgids[i];
+          md_pairs.push_back({qid,24}); // Quark from W
+        }
+
+        // vector to store genparticles in 
         vector<reco::GenParticle> genParticlesVector;
 
-        // Grab GEN objects 
-        if (! event.isRealData() ) // if MC event 
-        {
+        // If MC event 
+        if (! event.isRealData() ){
+          // For each gen particle in event 
+          for(size_t g=0; g < genParticle->size(); g++){
+            auto gen = genParticle->ptrAt(g);
 
-          for(size_t g=0; g < genParticle->size(); g++) {
+            // If the particle has a mother 
+            if (gen->mother(0) != 0){
+              int pid = gen->pdgId();
+              int pmotid = gen->mother(0)->pdgId();              
 
-              // gen type: reco::GenParticle 
-              // edm::Ptr<reco::GenParticle>
-              auto gen = genParticle->ptrAt(g);
+              for(unsigned int i = 0; i < md_pairs.size(); i++){
+                  int vec_id = md_pairs[i][0];
+                  int vec_mid = md_pairs[i][1]; 
 
-              // 2212: proton 
-              // If the particle has a mother 
-              if (gen->mother(0) != 0){
-                int pid = gen->pdgId();
-                int pmotid = gen->mother(0)->pdgId();
+                  // if event gen particle and mother are on list of desired particles, add to genParticlesVector 
+                  if ( (abs(pid) == abs(vec_id)) && (abs(pmotid) == abs(vec_mid))){ 
+                    cout << "Found " << abs(pid) << " from " << abs(pmotid) << endl;
+                    reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
+                    genParticlesVector.push_back(*thisGENPointer);
 
-                //edm::Ptr<flashgg::Met> m_entry = METs->ptrAt( METIndex );
-                //flashgg::Met * thisMETPointer = const_cast<flashgg::Met *>(m_entry.get());
-                //METVector.push_back(*thisMETPointer);
-              //if (gen->pdgId() != 2212){
-                //cout << "gen->pdgId() = " << gen->pdgId() << endl;
-                //cout << "gen->mother(0) = " << gen->mother(0) << endl;
-                //cout << "gen->mother(0)->pdgId() = " << gen->mother(0)->pdgId() << endl;
+                  }
 
-                if (abs(pid) == 24 && pmotid == 25 ){
-                  cout << "Found W boson from Higgs boson" << endl;
-                  reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-                  genParticlesVector.push_back(*thisGENPointer);
 
-                }
+              }
+            }
+          }
+        }
 
-                if (abs(pid) == 22 && pmotid == 25 ){
-                  cout << "Found photon from Higgs boson" << endl;
-                  reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-                  genParticlesVector.push_back(*thisGENPointer);
 
-                }
+      //   // If MC event
+      //   if (! event.isRealData() ) 
+      //   {
 
-                if (abs(pid) == 11 && abs(pmotid) == 24){
-                  cout << "Found electron from W boson" << endl;
-                  reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-                  genParticlesVector.push_back(*thisGENPointer);
-                }
+      //     for(size_t g=0; g < genParticle->size(); g++) {
 
-                if (abs(pid) == 12 && abs(pmotid) == 24 ){
-                  cout << "Found neutrino from W boson" << endl;
-                  reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-                  genParticlesVector.push_back(*thisGENPointer);
+      //         auto gen = genParticle->ptrAt(g);
 
-                }
+      //         // 2212: proton 
+      //         // If the particle has a mother 
+      //         if (gen->mother(0) != 0){
+      //           int pid = gen->pdgId();
+      //           int pmotid = gen->mother(0)->pdgId();
 
-                for (unsigned int i = 0; i < quark_pdgids.size(); i++){
-                    int val = quark_pdgids[i];
-                    if (abs(pid) == val && abs(pmotid) == 24 ){
-                        std::cout << "found a quark from W boson" << endl;
-                        reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-                        genParticlesVector.push_back(*thisGENPointer);
-                    }
+      //           if (abs(pid) == 24 && pmotid == 25 ){
+      //             cout << "Found W boson from Higgs boson" << endl;
+      //             reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
+      //             genParticlesVector.push_back(*thisGENPointer);
 
-                }
+      //           }
+
+      //           if (abs(pid) == 22 && pmotid == 25 ){
+      //             cout << "Found photon from Higgs boson" << endl;
+      //             reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
+      //             genParticlesVector.push_back(*thisGENPointer);
+
+      //           }
+
+      //           if (abs(pid) == 11 && abs(pmotid) == 24){
+      //             cout << "Found electron from W boson" << endl;
+      //             reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
+      //             genParticlesVector.push_back(*thisGENPointer);
+      //           }
+
+      //           if (abs(pid) == 12 && abs(pmotid) == 24 ){
+      //             cout << "Found neutrino from W boson" << endl;
+      //             reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
+      //             genParticlesVector.push_back(*thisGENPointer);
+
+      //           }
+
+      //           for (unsigned int i = 0; i < quark_pdgids.size(); i++){
+      //               int val = quark_pdgids[i];
+      //               if (abs(pid) == val && abs(pmotid) == 24 ){
+      //                   std::cout << "found a quark from W boson" << endl;
+      //                   reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
+      //                   genParticlesVector.push_back(*thisGENPointer);
+      //               }
+
+      //           }
 
                 
 
-              }
+      //         }
 
-              //if( gen->isPromptFinalState() == 0 ) continue;
-              //if( gen->pdgId() != 22) continue;
-              //if( gen->mother(0)->pdgId() == 25 || gen->mother(0)->pdgId() == 54)  // for matching -- this is the pseudoscalar "a"
-              //{
-              //    v_genpho_p4.push_back( gen->p4() );
-              //}
+      //     }
 
 
-          }
+      //   //   // for each gen particle in event 
+      //   //   for( auto &part : *genParticle ) { 
 
-
-          // for each gen particle in event 
-          for( auto &part : *genParticle ) { 
-
-            //if( part.pdgId() != 2212 || part.vertex().z() != 0. ) 
-            // Gen electron 
-            //if( part.pdgId() == 11 || part.pdgId() == -11 ) 
-
-            // for (unsigned int i = 0; i < pdgids.size(); i++){
-            //     int val = pdgids[i];
-            //     if (part.pdgId() == val && part.vertex().z() != 0. ){
-            //         std::cout << "pdgid == " << val << std::endl;
-            //     }
-
-            // }
-
-            // Where is the clas for "part" so I can see all of the member functions? 
-            //cout << "part.mother(0) = " << part.mother(0) << endl;
-            //cout << "part.mother(0).pdgId() = " << part.mother(0).pdgId(0) << endl;
-
-            //cout << "part.mother(0)->pdgId() = " << part.mother(0)->pdgId() << endl;
-
-            if( part.pdgId() != 2212 || part.vertex().z() != 0. ) 
-            {
-              genVertex = part.vertex();
-            }
+      //   //     if( part.pdgId() != 2212 || part.vertex().z() != 0. ) 
+      //   //     {
+      //   //       genVertex = part.vertex();
+      //   //     }
             
-        }
-      }
+      //   // }
+
+      // }
 
 
         //HHWWggCandidate HHWWgg(phoVector, vertex_zero, genVertex); // I think one for each event 
         //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex); 
         //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, theMET); 
         //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, METVector);  genParticlesVector
-        HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, METVector, genParticlesVector);
+        HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector);
         HHWWggColl_->push_back(HHWWgg);
 
       //}

@@ -11,6 +11,7 @@ FlashggHHWWggCandidate = cms.EDProducer("FlashggHHWWggCandidateProducer",
                                      GenParticleTag         = cms.InputTag('flashggPrunedGenParticles'),
                                      ElectronTag            = cms.InputTag('flashggSelectedElectrons'),
                                      #METTag                 = cms.InputTag('slimmedMETs'),
+                                     MuonTag                = cms.InputTag('flashggSelectedMuons'),
                                      METTag                 = cms.InputTag('flashggMets'),
                                      # METTag                 = cms.InputTag('flashggMetsCorr'),
                                      )

@@ -2,6 +2,7 @@
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "flashgg/DataFormats/interface/Photon.h"
 #include "flashgg/DataFormats/interface/Electron.h"
+#include "flashgg/DataFormats/interface/Muon.h"
 #include "flashgg/DataFormats/interface/DiPhotonCandidate.h"
 #include "flashgg/DataFormats/interface/HHWWggCandidate.h"
 #include "flashgg/DataFormats/interface/Met.h"
@@ -13,6 +14,7 @@ diphoVector_ (),
 phoVector_ (),
 vertex_ (),
 electronVector_ (),
+muonVector_ (),
 METVector_ (),
 GenParticlesVector_ (),
 phoP4Corrected_ (),
@@ -24,12 +26,13 @@ MET_fourvec_ (),
 abe_dp_(),
 elec1_(),
 elec2_(),
+muon1_(),
 dp1_ (),
 dp2_ (),
 tp_ (),
 theMETcorpt_(),
 W1_TM_ (),
-gen_pt_ (),
+gen_lepton_pt_ (),
 gen_neutrino_pt_ ()
 {}
 
@@ -44,8 +47,8 @@ gen_neutrino_pt_ ()
   // HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, edm::Ptr<flashgg::Met> theMET):
   // diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), theMET_(theMET)
 
-  HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector):
-  diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector)
+  HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector):
+  diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector)
  
   {
 
@@ -73,56 +76,77 @@ gen_neutrino_pt_ ()
     //if (electronVector_.size() == 2)
     // Check for muons as well 
 
-    if (electronVector_.size() == 2)
-    {
-      flashgg::Electron firstelec = electronVector_[0];
-      flashgg::Electron secondelec = electronVector_[1];
-      auto elec1 = firstelec.p4();
-      auto elec2 = secondelec.p4();
+    // if (electronVector_.size() == 2)
+    // {
+    //   flashgg::Electron firstelec = electronVector_[0];
+    //   flashgg::Electron secondelec = electronVector_[1];
+    //   auto elec1 = firstelec.p4();
+    //   auto elec2 = secondelec.p4();
       
-      // if the first elec pt is higher, call it elec1 
-      if (firstelec.pt() > secondelec.pt())
-      {
-        elec1 = firstelec.p4();
-        elec2 = secondelec.p4();
-      }
-      // if the secobnd elec pt is higher, call it elec1 
-      else if (secondelec.pt() > firstelec.pt())
-      {
-        elec1 = secondelec.p4();
-        elec2 = firstelec.p4();
-      }
+    //   // if the first elec pt is higher, call it elec1 
+    //   if (firstelec.pt() > secondelec.pt())
+    //   {
+    //     elec1 = firstelec.p4();
+    //     elec2 = secondelec.p4();
+    //   }
+    //   // if the secobnd elec pt is higher, call it elec1 
+    //   else if (secondelec.pt() > firstelec.pt())
+    //   {
+    //     elec1 = secondelec.p4();
+    //     elec2 = firstelec.p4();
+    //   }
 
-      // Same pt
-      else
-      {
-        elec1 = firstelec.p4();
-        elec2 = secondelec.p4();  
-      }
+    //   // Same pt
+    //   else
+    //   {
+    //     elec1 = firstelec.p4();
+    //     elec2 = secondelec.p4();  
+    //   }
 
-      elec1_ = elec1; // leading pt electron
-      elec2_ = elec2; // subleading pt electron 
+    //   elec1_ = elec1; // leading pt electron
+    //   elec2_ = elec2; // subleading pt electron 
 
-      // MET 
-      if (METVector_.size() == 1)
-      {
-        flashgg::Met met__ = METVector_[0];
-        auto met_ = met__.p4();
-        MET_fourvec_ = met_;
+    //   // MET 
+    //   if (METVector_.size() == 1)
+    //   {
+    //     flashgg::Met met__ = METVector_[0];
+    //     auto met_ = met__.p4();
+    //     MET_fourvec_ = met_;
 
-        auto W = met_ + elec1;
-        W1_TM_ = W.Mt();
+    //     auto W = met_ + elec1;
+    //     W1_TM_ = W.Mt();
 
-      } 
+    //   } 
 
-    } 
+    // } 
 
-    // semileptonic signal 
-    else if (electronVector_.size() == 1)
+    // // semileptonic signal 
+    // else if (electronVector_.size() == 1)
+    // {
+    //   flashgg::Electron firstelec = electronVector_[0];
+    //   auto elec1 = firstelec.p4();
+    //   elec1_ = elec1;
+
+    //   // MET 
+    //   if (METVector_.size() == 1)
+    //   {
+    //     flashgg::Met met__ = METVector_[0];
+    //     auto met_ = met__.p4();
+    //     MET_fourvec_ = met_;
+
+    //     auto W = met_ + elec1;
+    //     W1_TM_ = W.Mt();
+
+    //   } 
+
+
+    // }
+
+    if (muonVector_.size() == 1)
     {
-      flashgg::Electron firstelec = electronVector_[0];
-      auto elec1 = firstelec.p4();
-      elec1_ = elec1;
+      flashgg::Muon firstmuon = muonVector_[0];
+      auto muon1 = firstmuon.p4();
+      muon1_ = muon1;
 
       // MET 
       if (METVector_.size() == 1)
@@ -131,7 +155,7 @@ gen_neutrino_pt_ ()
         auto met_ = met__.p4();
         MET_fourvec_ = met_;
 
-        auto W = met_ + elec1;
+        auto W = met_ + muon1;
         W1_TM_ = W.Mt();
 
       } 
@@ -162,8 +186,8 @@ gen_neutrino_pt_ ()
       //cout << "i = " << i << endl;
       //cout << "gen_.pdgId() = " << gen_.pdgId() << endl;
 
-      if (abs(gen_.pdgId()) == 11 ){
-        cout << "Found electron in HHWWggCandidate.cc" << endl;
+      if (abs(gen_.pdgId()) == 11 || abs(gen_.pdgId()) == 13 ){
+        cout << "Found electron or muon in HHWWggCandidate.cc" << endl;
         cout << "electronVector.size() = " << electronVector.size() << endl;
         //cout << "gen_.pdgId() = " << gen_.pdgId() << endl;
         //cout << "gen_.eta() = " << gen_.eta() << endl;
@@ -171,13 +195,15 @@ gen_neutrino_pt_ ()
         //cout << "gen_.pt() = " << gen_.pt() << endl;
         //auto gen = gen_.p4();
         //cout << "typeid(gen_.pt()).name() = " << typeid(gen_.pt()).name() << endl;
-        auto gen_pt_val = gen_.pt();
-        gen_pt_ = gen_pt_val;
+        auto gen_lepton_pt_val = gen_.pt();
+        auto gen_lepton_eta_val = gen_.eta();
+        //cout << "gen_pt_val = " << gen_pt_val << endl;
+        gen_lepton_pt_ = gen_lepton_pt_val;
         //gen_ = gen;
       }
 
-      if (abs(gen_.pdgId()) == 12 ){
-        cout << "Found electron neutrino" << endl;
+      if (abs(gen_.pdgId()) == 12 || abs(gen_.pdgId()) == 14 ){
+        cout << "Found electron neutrino or muon neutrino" << endl;
         //cout << "electronVector.size() = " << electronVector.size() << endl;
         //cout << "gen_.pdgId() = " << gen_.pdgId() << endl;
         //cout << "gen_.eta() = " << gen_.eta() << endl;
@@ -186,6 +212,7 @@ gen_neutrino_pt_ ()
         //auto gen = gen_.p4();
         //cout << "typeid(gen_.pt()).name() = " << typeid(gen_.pt()).name() << endl;
         auto gen_neutrino_pt = gen_.pt();
+        //cout << "gen_neutrino_pt = " << gen_neutrino_pt << endl;
         gen_neutrino_pt_ = gen_neutrino_pt;
         //gen_ = gen;
       }
@@ -195,7 +222,7 @@ gen_neutrino_pt_ ()
         if (abs(gen_.pdgId()) == val ){
             quarkVector.push_back(gen_);
             // will want a vector of quarks 
-            // in one case there will be two. 
+            // if 2 quarks: order by leading, subleading  
             // Want to order by leading, subleading then save pt values 
             //std::cout << "found a quark from W boson" << endl;
             //reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());

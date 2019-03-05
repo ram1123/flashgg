@@ -26,13 +26,13 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_Tra
 ### 2017
 
 abe_files = [] 
-
+file_path = '/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqmunugg_10000events_woPU_MINIAOD/190305_151213/0000/ggF_X1250_WWgg_qqmunugg_10000events_woPU_MINIAOD_'
+ 
 #for i in range(11):
 for i in range(1):
     j = i + 1
-    this_path = '/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_woPU_MINIAOD/190225_135123/0000/ggF_X1250_WWgg_qqenugg_10000events_woPU_MINIAOD_' + str(j) + '.root'
+    this_path = file_path + str(j) + '.root'
     #this_path += 
-
     abe_files.append(this_path)
 
 
