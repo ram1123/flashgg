@@ -14,5 +14,11 @@ FlashggHHWWggCandidate = cms.EDProducer("FlashggHHWWggCandidateProducer",
                                      MuonTag                = cms.InputTag('flashggSelectedMuons'),
                                      METTag                 = cms.InputTag('flashggMets'),
                                      # METTag                 = cms.InputTag('flashggMetsCorr'),
+                                     JetTag                 = cms.InputTag('JetCollectionVInputTag')     
+                                     # flashggSelectedJets
+                                     # slimmedJets
+                                     # JetCollectionVInputTag
+                                     # UnpackedJetCollectionVInputTag
+
                                      )
 flashggHHWWggTagSequence = cms.Sequence( flashggHHWWggTag )

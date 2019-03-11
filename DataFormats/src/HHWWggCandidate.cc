@@ -7,6 +7,8 @@
 #include "flashgg/DataFormats/interface/HHWWggCandidate.h"
 #include "flashgg/DataFormats/interface/Met.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "flashgg/DataFormats/interface/Jet.h"
 
 using namespace flashgg; // makes flashgg sub members visible 
 HHWWggCandidate::HHWWggCandidate():
@@ -17,6 +19,8 @@ electronVector_ (),
 muonVector_ (),
 METVector_ (),
 GenParticlesVector_ (),
+//tagJets_ (),
+//JetVector_ (),
 phoP4Corrected_ (),
 pho1_MVA_ (),
 pho2_MVA_ (),
@@ -24,16 +28,23 @@ pho3_MVA_ (),
 pho4_MVA_ (),
 MET_fourvec_ (),
 abe_dp_(),
-elec1_(),
-elec2_(),
+leading_elec_(),
+subleading_elec_(),
+leading_muon_(),
+subleading_muon_(),
 muon1_(),
 dp1_ (),
 dp2_ (),
 tp_ (),
 theMETcorpt_(),
 W1_TM_ (),
-gen_lepton_pt_ (),
-gen_neutrino_pt_ ()
+leading_gen_elec_pt_ (),
+subleading_gen_elec_pt_ (),
+leading_gen_muon_pt_ (),
+subleading_gen_muon_pt_ ()
+
+ // Need absence of comma on last variable 
+
 {}
 
   HHWWggCandidate::~HHWWggCandidate() {}
@@ -49,19 +60,29 @@ gen_neutrino_pt_ ()
 
   HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector):
   diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector)
+
+  //HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector):
+  //diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), JetVector_(JetVector)
  
+  //HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<edm::Ptr<Jet>> tagJets):
+  //diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), tagJets_(tagJets)
+
   {
 
+    // void test_function(){
+
+    //   cout << "Inside test function" << endl;
+    // }
+
+    // Call function finding leading and subleading momentum for each 
+
     // If there is only one diphoton candidate, plot its invariant mass
-
     // going to come from diphoVector[]
-
     // if size diphoVector == 1, save diphoton object as TLorentzvector to plot invariant mass 
-
     // Save Diphoton object from flashgg::DiPhotonCandidate 
 
-
-    //std::cout << "Got here" << std::endl;
+    //bool one_PS_dpho = false; // at least one diphoton that passed preselection 
+    //if (diphoVector_.size() > 0) one_PS_dpho = true;
 
     if (diphoVector_.size() == 1)
     {
@@ -71,40 +92,119 @@ gen_neutrino_pt_ ()
 
     } 
 
-    // Save Electrons 1 and 2 four momentum **IF** there are exactly two electrons. If more than 2, take leading pT? 
+    // MET 
+    if (METVector_.size() == 1)
+    {
+      flashgg::Met met__ = METVector_[0];
+      auto met_ = met__.p4();
+      MET_fourvec_ = met_;
 
-    //if (electronVector_.size() == 2)
-    // Check for muons as well 
+      //auto W = met_ + elec1;
+      //W1_TM_ = W.Mt();
+
+    } 
+
+    // ---
+    // Get leading and subleading leptons
+    // --- 
+
+    // Get leading electron 
+    float l_elec_pt = 0.;
+    for (unsigned int i = 0; i < electronVector_.size(); i++ )
+    {
+      flashgg::Electron current_elec = electronVector_[i];
+      auto current_elec_4vec = current_elec.p4();
+      float current_elec_pt = current_elec_4vec.pt();
+
+      // If current electron pt is greater than maximum so far, make it the leading pt electron 
+      if (current_elec_pt > l_elec_pt){ 
+        l_elec_pt = current_elec_pt; 
+        auto leading_elec = current_elec_4vec;
+        leading_elec_ = leading_elec;
+
+      }
+    } 
+
+    // Get Subleading electron 
+    float sl_elec_pt = 0.;
+    for (unsigned int i = 0; i < electronVector_.size(); i++ )
+    {
+      flashgg::Electron current_elec = electronVector_[i];
+      auto current_elec_4vec = current_elec.p4();
+      float current_elec_pt = current_elec_4vec.pt();
+
+      // If current electron pt is greater than max subleading pt, and isn't the leading pt electron, make it the subleading electron 
+      if ( (current_elec_pt > sl_elec_pt) && (current_elec_pt != l_elec_pt) ){ 
+        sl_elec_pt = current_elec_pt; 
+        auto subleading_elec = current_elec_4vec;
+        subleading_elec_ = subleading_elec;
+
+      }
+    } 
+
+    // Get leading muon
+    float l_muon_pt = 0.;
+    for (unsigned int i = 0; i < muonVector_.size(); i++ )
+    {
+      flashgg::Muon current_muon = muonVector_[i];
+      auto current_muon_4vec = current_muon.p4();
+      float current_muon_pt = current_muon_4vec.pt();
+
+      // If current muon pt is greater than maximum so far, make it the leading pt muon
+      if (current_muon_pt > l_muon_pt){ 
+        l_muon_pt = current_muon_pt; 
+        auto leading_muon = current_muon_4vec;
+        leading_muon_ = leading_muon;
+
+      }
+    } 
+
+    // Get Subleading muon
+    float sl_muon_pt = 0.;
+    for (unsigned int i = 0; i < muonVector_.size(); i++ )
+    {
+      flashgg::Muon current_muon = muonVector_[i];
+      auto current_muon_4vec = current_muon.p4();
+      float current_muon_pt = current_muon_4vec.pt();
+
+      // If current muon pt is greater than max subleading pt, and isn't the leading pt muon, make it the subleading muon 
+      if ( (current_muon_pt > sl_muon_pt) && (current_muon_pt != l_muon_pt) ){ 
+        sl_muon_pt = current_muon_pt; 
+        auto subleading_muon = current_muon_4vec;
+        subleading_muon_ = subleading_muon;
+
+      }
+    } 
 
     // if (electronVector_.size() == 2)
     // {
     //   flashgg::Electron firstelec = electronVector_[0];
     //   flashgg::Electron secondelec = electronVector_[1];
-    //   auto elec1 = firstelec.p4();
-    //   auto elec2 = secondelec.p4();
+    //   auto leading_elec = firstelec.p4();
+    //   auto subleading_elec = secondelec.p4();
       
     //   // if the first elec pt is higher, call it elec1 
     //   if (firstelec.pt() > secondelec.pt())
     //   {
-    //     elec1 = firstelec.p4();
+    //     leading_elec = firstelec.p4();
     //     elec2 = secondelec.p4();
     //   }
     //   // if the secobnd elec pt is higher, call it elec1 
     //   else if (secondelec.pt() > firstelec.pt())
     //   {
-    //     elec1 = secondelec.p4();
+    //     leading_elec = secondelec.p4();
     //     elec2 = firstelec.p4();
     //   }
 
     //   // Same pt
     //   else
     //   {
-    //     elec1 = firstelec.p4();
+    //     leading_elec = firstelec.p4();
     //     elec2 = secondelec.p4();  
     //   }
 
-    //   elec1_ = elec1; // leading pt electron
-    //   elec2_ = elec2; // subleading pt electron 
+    //   leading_elec_ = leading_elec; // leading pt electron
+    //   subleading_elec_ = subleading_elec; // subleading pt electron 
 
     //   // MET 
     //   if (METVector_.size() == 1)
@@ -142,26 +242,26 @@ gen_neutrino_pt_ ()
 
     // }
 
-    if (muonVector_.size() == 1)
-    {
-      flashgg::Muon firstmuon = muonVector_[0];
-      auto muon1 = firstmuon.p4();
-      muon1_ = muon1;
+    // if (muonVector_.size() == 1)
+    // {
+    //   flashgg::Muon firstmuon = muonVector_[0];
+    //   auto muon1 = firstmuon.p4();
+    //   muon1_ = muon1;
 
-      // MET 
-      if (METVector_.size() == 1)
-      {
-        flashgg::Met met__ = METVector_[0];
-        auto met_ = met__.p4();
-        MET_fourvec_ = met_;
+    //   // MET 
+    //   if (METVector_.size() == 1)
+    //   {
+    //     flashgg::Met met__ = METVector_[0];
+    //     auto met_ = met__.p4();
+    //     MET_fourvec_ = met_;
 
-        auto W = met_ + muon1;
-        W1_TM_ = W.Mt();
+    //     auto W = met_ + muon1;
+    //     W1_TM_ = W.Mt();
 
-      } 
+    //   } 
 
 
-    }
+    // }
 
     // MET 
 
@@ -174,36 +274,64 @@ gen_neutrino_pt_ ()
     // Save Higgs object (coming from fully leptonic, semi-leptonic, or fully hadronic)
     // First iteration: H->qqenu (where q's are specifially charm strange)
     
+    // Jets 
+
+    // if (JetVector_.size() > 0)
+    // {
+    //   flashgg::Jet firstjet = JetVector_[0];
+    //   auto jet1 = firstjet.p4();
+    //   jet1_ = jet1;
+
+    // }
+
     // GEN 
 
-    std::vector<int> quark_pdgids = {1,2,3,4,5};
+    //std::vector<int> quark_pdgids = {1,2,3,4,5}; // Include B quarks
+    std::vector<int> quark_pdgids = {1,2,3,4};
     vector<reco::GenParticle> quarkVector;
+    vector<reco::GenParticle> gen_electronVector;
+    vector<reco::GenParticle> gen_muonVector;
+    //vector<> 
 
     //cout << "GenParticlesVector_.size() = " << GenParticlesVector_.size() << endl; 
+    //     float l_elec_pt = 0.;
     for (unsigned int i = 0; i < GenParticlesVector_.size(); i++){
     
       reco::GenParticle gen_ = GenParticlesVector_[i];  
       //cout << "i = " << i << endl;
       //cout << "gen_.pdgId() = " << gen_.pdgId() << endl;
 
-      if (abs(gen_.pdgId()) == 11 || abs(gen_.pdgId()) == 13 ){
-        cout << "Found electron or muon in HHWWggCandidate.cc" << endl;
-        cout << "electronVector.size() = " << electronVector.size() << endl;
-        //cout << "gen_.pdgId() = " << gen_.pdgId() << endl;
-        //cout << "gen_.eta() = " << gen_.eta() << endl;
-        //cout << "gen_.eta() = " << gen_.phi() << endl;
-        //cout << "gen_.pt() = " << gen_.pt() << endl;
-        //auto gen = gen_.p4();
-        //cout << "typeid(gen_.pt()).name() = " << typeid(gen_.pt()).name() << endl;
-        auto gen_lepton_pt_val = gen_.pt();
-        auto gen_lepton_eta_val = gen_.eta();
-        //cout << "gen_pt_val = " << gen_pt_val << endl;
-        gen_lepton_pt_ = gen_lepton_pt_val;
-        //gen_ = gen;
-      }
+      // Get gen_leading_electron_pt 
+
+      if (abs(gen_.pdgId()) == 11)
+      {
+        gen_electronVector.push_back(gen_);
+
+      } 
+
+      if (abs(gen_.pdgId()) == 13)
+      {
+        gen_muonVector.push_back(gen_);
+      } 
+
+      // if (abs(gen_.pdgId()) == 11 || abs(gen_.pdgId()) == 13 ){
+      //   //cout << "Found electron or muon in HHWWggCandidate.cc" << endl;
+      //   //cout << "electronVector.size() = " << electronVector.size() << endl;
+      //   //cout << "gen_.pdgId() = " << gen_.pdgId() << endl;
+      //   //cout << "gen_.eta() = " << gen_.eta() << endl;
+      //   //cout << "gen_.eta() = " << gen_.phi() << endl;
+      //   //cout << "gen_.pt() = " << gen_.pt() << endl;
+      //   //auto gen = gen_.p4();
+      //   //cout << "typeid(gen_.pt()).name() = " << typeid(gen_.pt()).name() << endl;
+      //   auto gen_lepton_pt_val = gen_.pt();
+      //   auto gen_lepton_eta_val = gen_.eta();
+      //   //cout << "gen_pt_val = " << gen_pt_val << endl;
+      //   gen_lepton_pt_ = gen_lepton_pt_val;
+      //   //gen_ = gen;
+      // }
 
       if (abs(gen_.pdgId()) == 12 || abs(gen_.pdgId()) == 14 ){
-        cout << "Found electron neutrino or muon neutrino" << endl;
+        //cout << "Found electron neutrino or muon neutrino" << endl;
         //cout << "electronVector.size() = " << electronVector.size() << endl;
         //cout << "gen_.pdgId() = " << gen_.pdgId() << endl;
         //cout << "gen_.eta() = " << gen_.eta() << endl;
@@ -211,29 +339,102 @@ gen_neutrino_pt_ ()
         //cout << "gen_.pt() = " << gen_.pt() << endl;
         //auto gen = gen_.p4();
         //cout << "typeid(gen_.pt()).name() = " << typeid(gen_.pt()).name() << endl;
-        auto gen_neutrino_pt = gen_.pt();
+        //auto gen_neutrino_pt = gen_.pt();
         //cout << "gen_neutrino_pt = " << gen_neutrino_pt << endl;
-        gen_neutrino_pt_ = gen_neutrino_pt;
+        //gen_neutrino_pt_ = gen_neutrino_pt;
         //gen_ = gen;
       }
 
-      for (unsigned int i = 0; i < quark_pdgids.size(); i++){
-        int val = quark_pdgids[i];
-        if (abs(gen_.pdgId()) == val ){
-            quarkVector.push_back(gen_);
+
+
+      //for (unsigned int i = 0; i < quark_pdgids.size(); i++){
+        //int val = quark_pdgids[i];
+
+        //if (abs(gen_.pdgId()) == val ){
+            //quarkVector.push_back(gen_);
+
+
             // will want a vector of quarks 
             // if 2 quarks: order by leading, subleading  
             // Want to order by leading, subleading then save pt values 
             //std::cout << "found a quark from W boson" << endl;
             //reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
             //genParticlesVector.push_back(*thisGENPointer);
-        } 
+        //} 
 
-      }
+      //}
 
     }
 
-    cout << "quarkVector.size() = " << quarkVector.size() << endl;
+    // Get leading and subleading GEN leptons 
+
+    // Get gen electrons
+
+    // Get leading pt gen_electron 
+    float l_gen_elec_pt = 0.;
+    for (unsigned int i = 0; i < gen_electronVector.size(); i++ )
+    {
+      reco::GenParticle current_gen_elec = gen_electronVector[i];
+      auto current_gen_elec_pt = current_gen_elec.pt();
+
+      // If current gen electron pt is greater than maximum so far, make it the leading pt gen electron 
+      if (current_gen_elec_pt > l_gen_elec_pt){ 
+        l_gen_elec_pt = current_gen_elec_pt; 
+        leading_gen_elec_pt_ = l_gen_elec_pt;
+
+      }
+    }     
+
+    // Get subleading pt gen_electron 
+    float sl_gen_elec_pt = 0.;
+    for (unsigned int i = 0; i < gen_electronVector.size(); i++ )
+    {
+      reco::GenParticle current_gen_elec = gen_electronVector[i];
+      auto current_gen_elec_pt = current_gen_elec.pt();
+
+      // If current gen electron pt is greater than max subleading gen pt, and isn't the leading pt gen electron, make it the subleading gen electron 
+      if ( (current_gen_elec_pt > sl_gen_elec_pt) && (current_gen_elec_pt != l_gen_elec_pt) ){ 
+        sl_gen_elec_pt = current_gen_elec_pt; 
+        subleading_gen_elec_pt_ = sl_gen_elec_pt;
+
+      }
+    } 
+
+    // Get gen muons 
+
+    // Get leading pt gen_muon
+    float l_gen_muon_pt = 0.;
+    for (unsigned int i = 0; i < gen_muonVector.size(); i++ )
+    {
+      reco::GenParticle current_gen_muon = gen_muonVector[i];
+      auto current_gen_muon_pt = current_gen_muon.pt();
+
+      // If current gen muon pt is greater than maximum so far, make it the leading pt gen muon
+      if (current_gen_muon_pt > l_gen_muon_pt){ 
+        l_gen_muon_pt = current_gen_muon_pt; 
+        leading_gen_muon_pt_ = l_gen_muon_pt;
+
+      }
+    }     
+
+    // Get subleading pt gen_muon
+    float sl_gen_muon_pt = 0.;
+    for (unsigned int i = 0; i < gen_muonVector.size(); i++ )
+    {
+      reco::GenParticle current_gen_muon = gen_muonVector[i];
+      auto current_gen_muon_pt = current_gen_muon.pt();
+
+      // If current gen muon pt is greater than max subleading gen pt, and isn't the leading pt gen muon, make it the subleading gen muon
+      if ( (current_gen_muon_pt > sl_gen_muon_pt) && (current_gen_muon_pt != l_gen_muon_pt) ){ 
+        sl_gen_muon_pt = current_gen_muon_pt; 
+        subleading_gen_muon_pt_ = sl_gen_muon_pt;
+
+      }
+    } 
+
+
+
+    //cout << "quarkVector.size() = " << quarkVector.size() << endl;
 
     if (quarkVector.size() == 2){
       //cout << ""
@@ -357,6 +558,7 @@ gen_neutrino_pt_ ()
     //   pho24_ = phoP4Corrected_[1].p4() + phoP4Corrected_[3].p4();
     //   pho34_ = phoP4Corrected_[2].p4() + phoP4Corrected_[3].p4();
     // }
+
   }
 
   // float HHWWggCandidate::getCosThetaStar_CS(float ebeam) const {

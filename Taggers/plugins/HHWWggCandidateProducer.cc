@@ -1,13 +1,7 @@
 // Abe Tishelman-Charny
 // 5 Feb 2019
 //
-// Starting with H4G, converting to HHWWgg 
-// Currently have: photons, diphotons, vertex, gen particle
-// Want to add:
-//
-// Electron
-// Jets
-// Met
+// Started with H4G, converting to HHWWgg 
 
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -25,6 +19,7 @@
 #include "flashgg/DataFormats/interface/Muon.h"
 #include "flashgg/DataFormats/interface/Met.h"
 #include "flashgg/DataFormats/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "flashgg/MicroAOD/interface/VertexSelectorBase.h"
 #include "flashgg/DataFormats/interface/DiPhotonMVAResult.h"
@@ -42,15 +37,8 @@
 #include "TGraph.h"
 #include "TLorentzVector.h"
 
-
 using namespace std;
 using namespace edm;
-
-//
-// For ggqqlnu, I need a diphoton, lepton and neutrino. 
-// Do I need a vector of photons? 
-// Check VH and ZH for W info. Will need two W's: One on shell one off shell 
-// Fully leptonic, semileptonic, fully hadronic 
 
 namespace flashgg {
   // HHWWggCandidateProducer is a sub class or derived class of EDProducer 
@@ -87,6 +75,14 @@ namespace flashgg {
     EDGetTokenT<View<flashgg::Met> > METToken_;
     Handle<View<flashgg::Met> > METs;
 
+    // std::vector<edm::EDGetTokenT<View<flashgg::Jet> > > tokenJets_;
+    //std::vector<edm::EDGetTokenT<View<flashgg::Jet> > > JetToken_;
+    //EDGetTokenT<View<flashgg::Jet> > JetToken_;
+    //Handle<View<flashgg::Jet> > jets;
+
+    //std::vector<edm::InputTag> inputTagJets_;
+    //EDGetTokenT<int> njetsToken_;
+    //typedef std::vector<edm::Handle<edm::View<flashgg::Jet> > > JetCollectionVector;
     //---ID selector
     ConsumesCollector cc_;
     CutBasedDiPhotonObjectSelector idSelector_;
@@ -104,6 +100,7 @@ namespace flashgg {
   electronToken_(),
   muonToken_(),
   METToken_(),
+  //JetToken_(),
   cc_( consumesCollector() ),
   idSelector_( ParameterSet(), cc_ )
 
@@ -115,21 +112,28 @@ namespace flashgg {
     diphotonToken_( consumes<View<DiPhotonCandidate> >( pSet.getParameter<InputTag> ( "DiPhotonTag" ) ) ),
     vertexToken_( consumes<View<reco::Vertex> >( pSet.getParameter<InputTag> ( "VertexTag" ) ) ),
     genParticleToken_( consumes<View<reco::GenParticle> >( pSet.getParameter<InputTag> ( "GenParticleTag" ) ) ),
-    electronToken_( consumes<View<Electron> >( pSet.getParameter<InputTag> ( "ElectronTag" ) ) ), // prev iConfig.get..
+    electronToken_( consumes<View<Electron> >( pSet.getParameter<InputTag> ( "ElectronTag" ) ) ), // previously iConfig.get
     muonToken_( consumes<View<Muon> >( pSet.getParameter<InputTag> ( "MuonTag" ) ) ),
     //METToken_( consumes<View<flashgg::Met> >( pSet.getParameter<InputTag> ( "METTag" ) ) ),
     METToken_( consumes<View<Met> >( pSet.getParameter<InputTag> ( "METTag" ) ) ),
+    //inputTagJets_( consumes<View< pSet.getParameter<std::vector<edm::InputTag> >( "JetTag" ) ),
+    //JetToken_( consumes<View<Jet> >( pSet.getParameter<InputTag> ( "JetTag" ) ) ),
 
     cc_( consumesCollector() ),
     idSelector_( pSet.getParameter<ParameterSet> ( "idSelection" ), cc_ )
 
     {
+      // for (unsigned i = 0 ; i < inputTagJets_.size() ; i++) {
+      //       auto token = consumes<View<flashgg::Jet> >(inputTagJets_[i]);
+      //       tokenJets_.push_back(token);
+      //   }
       produces<vector<HHWWggCandidate> > ();
     }
 
-    // I'm not sure where HHWWggCandidateProducer::produce is called, but this is called event by event 
     void HHWWggCandidateProducer::produce( Event &event, const EventSetup & )
     {
+      //Handle<int> stage0cat, stage1cat, njets;
+      //Handle<int> njets;
       event.getByToken( photonToken_, photons );
       event.getByToken( diphotonToken_, diphotons );
       event.getByToken( vertexToken_, vertex );
@@ -137,6 +141,12 @@ namespace flashgg {
       event.getByToken( electronToken_, electrons );
       event.getByToken( muonToken_, muons );
       event.getByToken( METToken_, METs );
+      //event.getByToken( njetsToken_,njets);
+
+      // JetCollectionVector Jets( inputTagJets_.size() );
+      // for( size_t j = 0; j < inputTagJets_.size(); ++j ) {
+      //     evt.getByToken( tokenJets_[j], Jets[j] );
+      // }
 
       //---output collection
       std::unique_ptr<vector<HHWWggCandidate> > HHWWggColl_( new vector<HHWWggCandidate> );
@@ -145,7 +155,6 @@ namespace flashgg {
       //std::cout << "vertex_zero = " << vertex_zero << std::endl;
       reco::GenParticle::Point genVertex;
       
-
       //std::cout << "diphotons->size() = " << diphotons->size() << std::endl;
 
       std::vector<const flashgg::Photon*> phosTemp;
@@ -162,20 +171,57 @@ namespace flashgg {
       //if (n_photons == 0) std::cout << "***************************n_photons = " << n_photons << std::endl;
       int n_diphotons = diphotons->size();
       int n_METs = METs->size(); // Should be 1..But using this as a way to obtain met four vector 
+      //int n_jets = jets->size();
       std::vector<flashgg::Photon> phoVector;
       std::vector<flashgg::DiPhotonCandidate> diphoVector;
       std::vector<flashgg::Electron> electronVector;
       std::vector<flashgg::Muon> muonVector;
       std::vector<flashgg::Met> METVector;
+      //std::vector<flashgg::Jet> JetVector;
 
-      // Save gen particles 
-      // Save all gen particles, sort out later 
-      //std::vector
-      //std::vector<> GENelectronVector;
+      //std::vector<edm::Ptr<Jet> > tagJets;
+
+
+
+      // for( unsigned int candIndex_outer = 0; candIndex_outer < Jets[jetCollectionIndex]->size() ; candIndex_outer++ ) 
+      //     {
+      //         //bool keepJet=true;
+      //         edm::Ptr<flashgg::Jet> thejet = Jets[jetCollectionIndex]->ptrAt( candIndex_outer );
+      //         //if(!thejet->passesJetID  ( flashgg::Tight2017 ) ) { continue; }
+      //         //if( fabs( thejet->eta() ) > jetEtaThreshold_ ) { keepJet=false; }
+      //         //if( thejet->pt() < jetPtThreshold_ ) { keepJet=false; }
+      //         //float dRPhoLeadJet = deltaR( thejet->eta(), thejet->phi(), dipho->leadingPhoton()->superCluster()->eta(), dipho->leadingPhoton()->superCluster()->phi() ) ;
+      //         //float dRPhoSubLeadJet = deltaR( thejet->eta(), thejet->phi(), dipho->subLeadingPhoton()->superCluster()->eta(),
+      //                                         //dipho->subLeadingPhoton()->superCluster()->phi() );
+              
+      //         // if( dRPhoLeadJet < deltaRPhoLeadJet_ || dRPhoSubLeadJet < deltaRPhoSubLeadJet_ ) { keepJet=false; }
+      //         // if( hasGoodElec ) 
+      //         //     for( unsigned int electronIndex = 0; electronIndex < goodElectrons.size(); electronIndex++ ) 
+      //         //         {
+      //         //             Ptr<flashgg::Electron> electron = goodElectrons[electronIndex];
+      //         //             float dRJetElectron = deltaR( thejet->eta(), thejet->phi(), electron->eta(), electron->phi() ) ;
+      //         //             if( dRJetElectron < deltaRJetMuonThreshold_ ) { keepJet=false; }
+      //         //         }
+      //         // if( hasGoodMuons ) 
+      //         //     for( unsigned int muonIndex = 0; muonIndex < goodMuons.size(); muonIndex++ ) 
+      //         //         {
+      //         //             Ptr<flashgg::Muon> muon = goodMuons[muonIndex];
+      //         //             float dRJetMuon = deltaR( thejet->eta(), thejet->phi(), muon->eta(), muon->phi() ) ;
+      //         //             if( dRJetMuon < deltaRJetMuonThreshold_ ) { keepJet=false; }
+      //         //         }
+      //         //if(keepJet)
+      //         cout << "thejet = " << thejet << endl;
+      //         tagJets.push_back( thejet );
+      //     }
+
+
+
+
 
       //flashgg::Met
       // if (atLeastOneDiphoPass)
       // {
+
         // Append electronVector
         for( int electronIndex = 0; electronIndex < n_electrons; electronIndex++ )
         {
@@ -200,8 +246,10 @@ namespace flashgg {
           flashgg::Photon * thisPPointer = const_cast<flashgg::Photon *>(pho.get());
           phoVector.push_back(*thisPPointer);
         }
+
         // Append diphoVector if it passes preselection 
         bool PassPS = false;
+        bool one_PS_dpho = false; // at least one diphoton passes preselection
         for( int diphoIndex = 0; diphoIndex < n_diphotons; diphoIndex++ )
         {
           edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( diphoIndex );
@@ -209,11 +257,14 @@ namespace flashgg {
           //---at least one diphoton should pass the low mass hgg pre-selection
           PassPS = false;
           PassPS |= idSelector_(*thisDPPointer, event);
-          if (PassPS) diphoVector.push_back(*thisDPPointer);
+          if (PassPS) {
+            diphoVector.push_back(*thisDPPointer);
+            if (!one_PS_dpho) one_PS_dpho = true;
+          }
           
         }
 
-        // Trying MET vector
+        // Store MET as one element in MET vector 
         if( METs->size() != 1 ) { std::cout << "WARNING - #MET is not 1" << std::endl;}
         for( int METIndex = 0; METIndex < n_METs; METIndex++ )
         {
@@ -222,12 +273,22 @@ namespace flashgg {
           METVector.push_back(*thisMETPointer);
         }
 
+        // Jet vector 
+        // for( int jetIndex = 0; jetIndex < n_jets; jetIndex++ )
+        // {
+        //   edm::Ptr<flashgg::Jet> jet = jets->ptrAt( jetIndex );
+        //   flashgg::Jet * thisJetPointer = const_cast<flashgg::Jet *>(jet.get());
+        //   JetVector.push_back(*thisJetPointer);
+        // }
+
+
+
         // Want to save GEN particles to compare variables to RECO 
-        // Only want to save GEN particles coming from mother particle of interest
+        // Only want to save GEN particles coming from mother particles of interest
 
         // Mother Daughter pdgid pairs 
-        // if a particle of pdgid [0] came from pdgid [1], save it 
-        std::vector<std::vector<int>> md_pairs = {};
+        // if a particle of abs(pdgid) = [0] came from abs(pdgid) = [1], store it 
+        std::vector<std::vector<int>> md_pairs = {}; // mother daughter pairs 
         md_pairs.push_back({24,25}); // W from H 
         md_pairs.push_back({22,25}); // Photon from H 
         md_pairs.push_back({11,24}); // Electron from W
@@ -235,7 +296,8 @@ namespace flashgg {
         md_pairs.push_back({13,24}); // Muon from W
         md_pairs.push_back({14,24}); // Muon neutrino from W 
         
-        std::vector<int> quark_pdgids = {1,2,3,4,5};
+        //std::vector<int> quark_pdgids = {1,2,3,4,5}; // if you want to look for b quarks coming from W's 
+        std::vector<int> quark_pdgids = {1,2,3,4}; // down, up, strange, charm 
 
         for (unsigned int i = 0; i < quark_pdgids.size(); i++){
           int qid = quark_pdgids[i];
@@ -254,103 +316,32 @@ namespace flashgg {
             // If the particle has a mother 
             if (gen->mother(0) != 0){
               int pid = gen->pdgId();
-              int pmotid = gen->mother(0)->pdgId();              
+              int pmotid = gen->mother(0)->pdgId();   
+
+              if ( ( abs(pid) == 5) && (abs(pmotid) == 24) ) cout << "***B quark Found!***" << endl;           
 
               for(unsigned int i = 0; i < md_pairs.size(); i++){
-                  int vec_id = md_pairs[i][0];
-                  int vec_mid = md_pairs[i][1]; 
+                int vec_id = md_pairs[i][0];
+                int vec_mid = md_pairs[i][1]; 
 
-                  // if event gen particle and mother are on list of desired particles, add to genParticlesVector 
-                  if ( (abs(pid) == abs(vec_id)) && (abs(pmotid) == abs(vec_mid))){ 
-                    cout << "Found " << abs(pid) << " from " << abs(pmotid) << endl;
-                    reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-                    genParticlesVector.push_back(*thisGENPointer);
+                // if event gen particle and mother are on list of desired particles, add to genParticlesVector 
+                if ( (abs(pid) == abs(vec_id)) && (abs(pmotid) == abs(vec_mid))){ 
+                  //cout << "Found " << abs(pid) << " from " << abs(pmotid) << endl;
+                  reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
+                  genParticlesVector.push_back(*thisGENPointer);
 
-                  }
-
-
+                }
               }
             }
           }
         }
 
+        HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector); // before adding jets 
+        //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector, JetVector);
+        //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector, tagJets);
+        
+        //std::vector<edm::Ptr<Jet> > tagJets;
 
-      //   // If MC event
-      //   if (! event.isRealData() ) 
-      //   {
-
-      //     for(size_t g=0; g < genParticle->size(); g++) {
-
-      //         auto gen = genParticle->ptrAt(g);
-
-      //         // 2212: proton 
-      //         // If the particle has a mother 
-      //         if (gen->mother(0) != 0){
-      //           int pid = gen->pdgId();
-      //           int pmotid = gen->mother(0)->pdgId();
-
-      //           if (abs(pid) == 24 && pmotid == 25 ){
-      //             cout << "Found W boson from Higgs boson" << endl;
-      //             reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-      //             genParticlesVector.push_back(*thisGENPointer);
-
-      //           }
-
-      //           if (abs(pid) == 22 && pmotid == 25 ){
-      //             cout << "Found photon from Higgs boson" << endl;
-      //             reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-      //             genParticlesVector.push_back(*thisGENPointer);
-
-      //           }
-
-      //           if (abs(pid) == 11 && abs(pmotid) == 24){
-      //             cout << "Found electron from W boson" << endl;
-      //             reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-      //             genParticlesVector.push_back(*thisGENPointer);
-      //           }
-
-      //           if (abs(pid) == 12 && abs(pmotid) == 24 ){
-      //             cout << "Found neutrino from W boson" << endl;
-      //             reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-      //             genParticlesVector.push_back(*thisGENPointer);
-
-      //           }
-
-      //           for (unsigned int i = 0; i < quark_pdgids.size(); i++){
-      //               int val = quark_pdgids[i];
-      //               if (abs(pid) == val && abs(pmotid) == 24 ){
-      //                   std::cout << "found a quark from W boson" << endl;
-      //                   reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
-      //                   genParticlesVector.push_back(*thisGENPointer);
-      //               }
-
-      //           }
-
-                
-
-      //         }
-
-      //     }
-
-
-      //   //   // for each gen particle in event 
-      //   //   for( auto &part : *genParticle ) { 
-
-      //   //     if( part.pdgId() != 2212 || part.vertex().z() != 0. ) 
-      //   //     {
-      //   //       genVertex = part.vertex();
-      //   //     }
-            
-      //   // }
-
-      // }
-
-
-        //HHWWggCandidate HHWWgg(phoVector, vertex_zero, genVertex); // I think one for each event 
-        //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex); 
-        //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, theMET); 
-        //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, METVector);  genParticlesVector
-        HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector);
         HHWWggColl_->push_back(HHWWgg);
 
       //}

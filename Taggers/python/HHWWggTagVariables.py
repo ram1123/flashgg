@@ -115,24 +115,45 @@ abe_variables = [
     # Plot from header file utils 
     "n_ps_dipho                   := diphoVector.size()",
     "ps_dipho_mass                := ? Abe_HHWWggDiPho.mass() != 0 ? Abe_HHWWggDiPho.mass() : -999 ",
-    "elec1_pt                     := elec1.pt()", # Leading pT
-    "elec2_pt                     := elec2.pt()",  # Subleading pT 
+    #"elec1_pt                     := elec1.pt()", # Leading pT
+    #"elec2_pt                     := elec2.pt()",  # Subleading pT 
     "muon1_pt                     := muon1.pt()", 
     "MET                          := MET_fourvec.pt()",
-    "gen_lepton_pt                := gen_lepton_pt",
-    "gen_neutrino_pt              := gen_neutrino_pt"
-    # Change to gen_electron_pt
-    # gen_muon_pt 
-    #"Transverse_W_Mass            := (MET + elec1).Mt()"
-    #"W1_TM                        := W1_TM",
-    #"W2_TM                        := (MET + elec1).Mt()"
-    #"MET                          := theMET.mPt()"
-    #"MET                          := theMET.mPt()"
-    # "theMETcorpt                  := theMETcorpt"
-    #"ps_dipho_mass                :=                      "
-    #"dipho_mass	              := "
-    #"npho_                    := phoVector.size()"
 
-    # GEN variables 
+    ## RECO Variables
+
+    # Electrons
+    "leading_elec_pt              := leading_elec.pt() ",
+    "leading_elec_eta              := leading_elec.eta()",
+    "leading_elec_phi              := leading_elec.phi()",
+    "subleading_elec_pt              := subleading_elec.pt()",
+    "subleading_elec_eta              := subleading_elec.eta()",
+    "subleading_elec_phi              := subleading_elec.phi()",
+
+    # Muons 
+    "leading_muon_pt              := leading_muon.pt() ",
+    "leading_muon_eta              := leading_muon.eta()",
+    "leading_muon_phi              := leading_muon.phi()",
+    "subleading_muon_pt              := subleading_muon.pt()",
+    "subleading_muon_eta              := subleading_muon.eta()",
+    "subleading_muon_phi              := subleading_muon.phi()",
+
+    ## GEN Variables 
+
+    # Electrons 
+    "gen_leading_elec_pt              := leading_gen_elec_pt",
+    "gen_leading_elec_eta              := 0",
+    "gen_leading_elec_phi              := 0",
+    "gen_subleading_elec_pt              := subleading_gen_elec_pt",
+    "gen_subleading_elec_eta              := 0",
+    "gen_subleading_elec_phi              := 0",
+
+    # Muons 
+    "gen_leading_muon_pt              := leading_gen_muon_pt",
+    "gen_leading_muon_eta              := 0",
+    "gen_leading_muon_phi              := 0",
+    "gen_subleading_muon_pt              := subleading_gen_muon_pt",
+    "gen_subleading_muon_eta              := 0",
+    "gen_subleading_muon_phi              := 0",
 
 ]

@@ -14,7 +14,8 @@ class MicroAODCustomize(object):
         self.options = VarParsing.VarParsing()
 
         self.options.register ('conditionsJSON',
-                                "/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/MetaData/data/MetaConditions/Era2017_legacy_v1.json", # default value
+                                #"/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/MetaData/data/MetaConditions/Era2017_legacy_v1.json", # default value
+                                "",
                                VarParsing.VarParsing.multiplicity.singleton, # singleton or list
                                VarParsing.VarParsing.varType.string,          # string, int, or float
                                "conditionsJSON")        

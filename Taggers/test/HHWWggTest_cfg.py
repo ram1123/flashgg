@@ -36,12 +36,24 @@ cfgTools.addCategories(process.HHWWggCandidateDumper, # className, src, ... from
                         [
                             # Add the categories you'd like to have in the output file 
                             #("4photons","phoVector.size() > 3", 0), # label, cutbased, subcats
-                            ("Reject", "", -1), # not cut based, and sub cats !>= 0, so nothing will be done 
-                            ("SemiLeptonic","electronVector.size() == 1", 0), # Or muon vector
-                            ("All_Events","electronVector.size() == 0 || electronVector.size() != 0",0), # all events 
+                            #("Reject", "", -1), # not cut based, and sub cats !>= 0, so nothing will be done 
+                            #("Dipho_PS","diphoVector.size() > 0",0),
+                            #("All_Events","electronVector.size() == 0 || electronVector.size() != 0",0), # all events 
+                            #("Dipho_PS","diphoVector.size() > 0",0) # events with at least one diphoton passing preselection  
                             #("SemiLeptonic","electronVector.size() == 1", 0), # Or muon vector
                             #("FullyLeptonic","electronVector.size() == 2", 0), # Or muons 
                             #("FullyHadronic","electronVector.size() == 0 || electronVector.size() > 2", 0)
+
+                             ("Reject", "", -1),
+                             ("All","", 0),
+                             #("DiphoPS","diphoVector.size() > 0", 0),
+                             #("DiphoPSandTwoElec","diphoVector.size() > 0 && electronVector.size() == 2", 0)
+                             #("DiphoPSandgteTwoElec","diphoVector.size() > 0 && electronVector.size() >= 2", 0)
+
+                            #("Reject", "", -1),
+                            #("4photons","phoVector.size() > 3", 0),
+                            #("3photons","phoVector.size() == 3", 0),
+                            #("2photons","phoVector.size() == 2", 0)
 
                             # process.HHWWggCandidateDumper.classifierCfg.categories.append(cb) done for each cut here. phoVector.size() > 3, ... 
                             # default of classifierCfg.categories in _cff file. # categories = cms.VPSet(), (I think empty)
