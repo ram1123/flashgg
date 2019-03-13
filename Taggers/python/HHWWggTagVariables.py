@@ -123,7 +123,7 @@ abe_variables = [
     ## RECO Variables
 
     # Electrons
-    "leading_elec_pt              := leading_elec.pt() ",
+    "leading_elec_pt              := ? leading_elec.pt() != 0 ? leading_elec.pt() : -99 ",  
     "leading_elec_eta              := leading_elec.eta()",
     "leading_elec_phi              := leading_elec.phi()",
     "subleading_elec_pt              := subleading_elec.pt()",

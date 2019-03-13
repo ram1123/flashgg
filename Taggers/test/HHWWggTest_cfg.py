@@ -44,11 +44,28 @@ cfgTools.addCategories(process.HHWWggCandidateDumper, # className, src, ... from
                             #("FullyLeptonic","electronVector.size() == 2", 0), # Or muons 
                             #("FullyHadronic","electronVector.size() == 0 || electronVector.size() > 2", 0)
 
-                             ("Reject", "", -1),
-                             ("All","", 0),
-                             #("DiphoPS","diphoVector.size() > 0", 0),
-                             #("DiphoPSandTwoElec","diphoVector.size() > 0 && electronVector.size() == 2", 0)
-                             #("DiphoPSandgteTwoElec","diphoVector.size() > 0 && electronVector.size() >= 2", 0)
+                            ("Reject", "", -1),
+                            #("All","electronVector.size() != 0", 0),
+                            #("All","diphoVector.size() == 0 || diphoVector.size() != 0", 0),
+
+                            # Cut 1
+                            #("1a3_1","electronVector.size() != 0", 0), 
+                            #("1a3_1","muonVector.size() != 0", 0), 
+
+                            # Cut 2
+                            #("1a3_1","electronVector.size() >= 2", 0), 
+                            #("1a3_1","muonVector.size() >= 2", 0), 
+
+                            # Cut 3
+                            #("1a3_1","diphoVector.size() > 0", 0),
+
+                            # Cuts 1 and 3 
+                            #("1a3_1","electronVector.size() != 0 && diphoVector.size() > 0", 0), 
+                            #("1a3_1","muonVector.size() != 0 && diphoVector.size() > 0", 0), 
+
+                            # Cuts 2 and 3 
+                            #("1a3_1","electronVector.size() >= 2 && diphoVector.size() > 0", 0), 
+                            ("1a3_1","muonVector.size() >= 2 && diphoVector.size() > 0", 0), 
 
                             #("Reject", "", -1),
                             #("4photons","phoVector.size() > 3", 0),
@@ -79,7 +96,11 @@ cfgTools.addCategories(process.HHWWggCandidateDumper, # className, src, ... from
 
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring(
-"file:myMicroAODOutputFile.root"
+#"file:myMicroAODOutputFile.root"
+#"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqenu 
+#"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqmunugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqmunu
+#"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_enuenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # enuenu 
+"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_munumunugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # munumunu 
 ))
 
 

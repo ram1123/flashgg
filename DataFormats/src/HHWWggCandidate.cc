@@ -109,7 +109,7 @@ subleading_gen_muon_pt_ ()
     // --- 
 
     // Get leading electron 
-    float l_elec_pt = 0.;
+    float l_elec_pt = -99;
     for (unsigned int i = 0; i < electronVector_.size(); i++ )
     {
       flashgg::Electron current_elec = electronVector_[i];
@@ -126,7 +126,7 @@ subleading_gen_muon_pt_ ()
     } 
 
     // Get Subleading electron 
-    float sl_elec_pt = 0.;
+    float sl_elec_pt = -99;
     for (unsigned int i = 0; i < electronVector_.size(); i++ )
     {
       flashgg::Electron current_elec = electronVector_[i];
@@ -143,7 +143,10 @@ subleading_gen_muon_pt_ ()
     } 
 
     // Get leading muon
-    float l_muon_pt = 0.;
+    float l_muon_pt = -99;
+
+    //if (muonVector_.size() == 0 ) cout << "muonVector_.size() == 0" << endl;
+
     for (unsigned int i = 0; i < muonVector_.size(); i++ )
     {
       flashgg::Muon current_muon = muonVector_[i];
@@ -159,8 +162,10 @@ subleading_gen_muon_pt_ ()
       }
     } 
 
+    //if (l_muon_pt == 0.) l_muon_pt = -999;
+
     // Get Subleading muon
-    float sl_muon_pt = 0.;
+    float sl_muon_pt = -99;
     for (unsigned int i = 0; i < muonVector_.size(); i++ )
     {
       flashgg::Muon current_muon = muonVector_[i];
@@ -371,7 +376,7 @@ subleading_gen_muon_pt_ ()
     // Get gen electrons
 
     // Get leading pt gen_electron 
-    float l_gen_elec_pt = 0.;
+    float l_gen_elec_pt = -99;
     for (unsigned int i = 0; i < gen_electronVector.size(); i++ )
     {
       reco::GenParticle current_gen_elec = gen_electronVector[i];
@@ -385,8 +390,10 @@ subleading_gen_muon_pt_ ()
       }
     }     
 
+    if (l_gen_elec_pt == -99) leading_gen_elec_pt_ = -99;
+
     // Get subleading pt gen_electron 
-    float sl_gen_elec_pt = 0.;
+    float sl_gen_elec_pt = -99;
     for (unsigned int i = 0; i < gen_electronVector.size(); i++ )
     {
       reco::GenParticle current_gen_elec = gen_electronVector[i];
@@ -400,10 +407,13 @@ subleading_gen_muon_pt_ ()
       }
     } 
 
+    if (sl_gen_elec_pt == -99) subleading_gen_elec_pt_ = -99;
+
     // Get gen muons 
 
+    //cout << "gen_muonVector.size() = " << gen_muonVector.size() << endl;
     // Get leading pt gen_muon
-    float l_gen_muon_pt = 0.;
+    float l_gen_muon_pt = -99;
     for (unsigned int i = 0; i < gen_muonVector.size(); i++ )
     {
       reco::GenParticle current_gen_muon = gen_muonVector[i];
@@ -413,12 +423,15 @@ subleading_gen_muon_pt_ ()
       if (current_gen_muon_pt > l_gen_muon_pt){ 
         l_gen_muon_pt = current_gen_muon_pt; 
         leading_gen_muon_pt_ = l_gen_muon_pt;
+        //cout << "leading_gen_muon_pt_ = " << leading_gen_muon_pt_ << endl;
 
       }
     }     
 
+    if (l_gen_muon_pt == -99) leading_gen_muon_pt_ = -99;
+
     // Get subleading pt gen_muon
-    float sl_gen_muon_pt = 0.;
+    float sl_gen_muon_pt = -99;
     for (unsigned int i = 0; i < gen_muonVector.size(); i++ )
     {
       reco::GenParticle current_gen_muon = gen_muonVector[i];
@@ -432,7 +445,8 @@ subleading_gen_muon_pt_ ()
       }
     } 
 
-
+    cout << "sl_gen_elec_pt = " << sl_gen_elec_pt << endl;
+    if (sl_gen_elec_pt == -99) subleading_gen_muon_pt_ = -99;
 
     //cout << "quarkVector.size() = " << quarkVector.size() << endl;
 
