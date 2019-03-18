@@ -20,7 +20,7 @@ muonVector_ (),
 METVector_ (),
 GenParticlesVector_ (),
 //tagJets_ (),
-//JetVector_ (),
+JetVector_ (),
 phoP4Corrected_ (),
 pho1_MVA_ (),
 pho2_MVA_ (),
@@ -58,11 +58,11 @@ subleading_gen_muon_pt_ ()
   // HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, edm::Ptr<flashgg::Met> theMET):
   // diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), theMET_(theMET)
 
-  HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector):
-  diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector)
+  //HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector):
+  //diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector)
 
-  //HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector):
-  //diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), JetVector_(JetVector)
+  HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector):
+  diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), JetVector_(JetVector)
  
   //HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<edm::Ptr<Jet>> tagJets):
   //diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), tagJets_(tagJets)
@@ -281,6 +281,11 @@ subleading_gen_muon_pt_ ()
     
     // Jets 
 
+    // Create all possible jet pairs 
+    // Match to gen quarks 
+    // Split into Wqq pair or not Wqq pairs 
+    // Plot variables 
+
     // if (JetVector_.size() > 0)
     // {
     //   flashgg::Jet firstjet = JetVector_[0];
@@ -351,25 +356,90 @@ subleading_gen_muon_pt_ ()
       }
 
 
+      // Create quark vector (gen) 
+      for (unsigned int i = 0; i < quark_pdgids.size(); i++){
+        int val = quark_pdgids[i];
 
-      //for (unsigned int i = 0; i < quark_pdgids.size(); i++){
-        //int val = quark_pdgids[i];
+        // all gen_ quark objects in genparticles vector came from W bosons, as dictated by HHWWggCandidateProducer.cc 
+        // Should break into W+ quarks and W- quarks so you know if two quarks came from the same W and can accurately call a pair a match 
+        if (abs(gen_.pdgId()) == val ){
+            cout << "quark mother = " << gen_.mother(0) << endl;
+            quarkVector.push_back(gen_);
 
-        //if (abs(gen_.pdgId()) == val ){
-            //quarkVector.push_back(gen_);
 
-
-            // will want a vector of quarks 
-            // if 2 quarks: order by leading, subleading  
-            // Want to order by leading, subleading then save pt values 
+            //will want a vector of quarks 
+            //if 2 quarks: order by leading, subleading  
+            //Want to order by leading, subleading then save pt values 
             //std::cout << "found a quark from W boson" << endl;
-            //reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen.get());
+            //reco::GenParticle * thisGENPointer = const_cast<reco::GenParticle *>(gen_.get());
             //genParticlesVector.push_back(*thisGENPointer);
-        //} 
+        } 
 
-      //}
+      }
 
     }
+
+    // Now that we have gen quark vector, use to match to jets 
+    unsigned int JVSize = JetVector_.size(), QVSize = quarkVector.size();
+    bool match1 = false, match2 = false;
+    double dr = 0.;
+    int mii = 0; 
+
+    //vector<reco::GenParticle> qVecCopy = quarkVector;
+    for (unsigned int i = 0; i < JVSize; i++){
+      flashgg::Jet ijet = JetVector_[i];
+
+      auto ij = ijet.p4(); 
+
+      // Loop with all GEN jets to see if it has exactly one match 
+      // if a quark matches a jet, remove it from the temporary vector 
+      double mdr = 100.; // minimum dr 
+      // Loop 
+      //double dr = 0.,; 
+      vector<reco::GenParticle> qVecCopy = quarkVector; // make new copy with all quarks in
+      for (unsigned int ii = 0; ii < QVSize; ii++){
+        dr = 0.;
+        dr = sqrt( (qVecCopy[ii].eta()-ij.eta())*(qVecCopy[ii].eta()-ij.eta()) + (qVecCopy[ii].phi()-ij.phi())*(qVecCopy[ii].phi()-ij.phi()) );
+        cout << "dr = " << dr << endl;
+        if (dr < mdr) {
+          mdr = dr;
+          mii = ii; // index of minimum dr quark 
+        }
+      // Save whatever you need before deleting the matching quark 
+      qVecCopy.erase(qVecCopy.begin() + mii);
+
+      //if (match1) break; // if match found, stop looping quarks 
+      }
+      // remove matched quark from cloned vector 
+
+      //quarkVector
+
+      for (unsigned int j = i; j < JVSize; j++){
+        flashgg::Jet jjet = JetVector_[j];
+
+        auto jj = jjet.p4(); // get eta and phi from this 
+
+        mdr = 100.;
+        mii = 0;
+        for (unsigned int jjj = 0; jjj < QVSize - 1; jjj++){
+          dr = 0.;
+          dr = sqrt( (qVecCopy[jjj].eta()-jj.eta())*(qVecCopy[jjj].eta()-jj.eta()) + (qVecCopy[jjj].phi()-jj.phi())*(qVecCopy[jjj].phi()-jj.phi()) );
+          cout << "dr = " << dr << endl;
+          if (dr < mdr) {
+            mdr = dr;
+            mii = jjj; // index of minimum dr quark 
+          }
+        // Save whatever you need before deleting the matching quark 
+        qVecCopy.erase(qVecCopy.begin() + jjj);
+
+        //if (match1) break; // if match found, stop looping quarks 
+        }
+
+      }
+
+    }
+
+
 
     // Get leading and subleading GEN leptons 
 
@@ -445,16 +515,16 @@ subleading_gen_muon_pt_ ()
       }
     } 
 
-    cout << "sl_gen_elec_pt = " << sl_gen_elec_pt << endl;
+    //cout << "sl_gen_elec_pt = " << sl_gen_elec_pt << endl;
     if (sl_gen_elec_pt == -99) subleading_gen_muon_pt_ = -99;
 
     //cout << "quarkVector.size() = " << quarkVector.size() << endl;
 
-    if (quarkVector.size() == 2){
-      //cout << ""
-      // order particles by pt 
+    // if (quarkVector.size() == 2){
+    //   //cout << ""
+    //   // order particles by pt 
 
-    }
+    // }
 
     // W transverse mass
 

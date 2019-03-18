@@ -30,10 +30,10 @@ namespace flashgg {
     // when constructor overloading, each must have different number or specific types of input variables 
     HHWWggCandidate() ;
     // before adding jets
-    HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector);
+    //HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector);
     
     // After adding jets 
-    //HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector); 
+    HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector); 
     //HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<edm::Ptr<Jet>> tagJets); 
 
 
@@ -46,10 +46,10 @@ namespace flashgg {
     const std::vector<flashgg::DiPhotonCandidate> diphoVector() const { return diphoVector_; };
     const std::vector<flashgg::Photon> phoVector() const { return phoVector_; };
     const std::vector<flashgg::Electron> electronVector() const {return electronVector_;} 
-    //const std::vector<flashgg::Jet> JetVector() const {return JetVector_;}
     const std::vector<flashgg::Muon> muonVector() const {return muonVector_;}
     const std::vector<flashgg::Met> METVector() const {return METVector_;}
     const std::vector<reco::GenParticle> GenParticlesVector() const {return GenParticlesVector_;}
+    const std::vector<flashgg::Jet> JetVector() const {return JetVector_;}
     //const std::vector<edm::Ptr<Jet>> tagJets() const {return tagJets_;}
     //const reco::Candidate::LorentzVector& jet1() const { return jet1_; };
     const edm::Ptr<reco::Vertex> & vertex() const { return vertex_;  };
@@ -90,7 +90,7 @@ namespace flashgg {
     std::vector<flashgg::Met> METVector_;
     std::vector<reco::GenParticle> GenParticlesVector_;
     //std::vector<edm::Ptr<Jet>> tagJets_;
-    //std::vector<flashgg::Jet> JetVector_;
+    std::vector<flashgg::Jet> JetVector_;
     std::vector<flashgg::Photon> phoP4Corrected_;
     float pho1_MVA_;
     float pho2_MVA_;

@@ -279,179 +279,40 @@ namespace flashgg {
 // later put in diphoton loop later on? 
 //for( unsigned int candIndex = 0; candIndex < diphotons->size() ; candIndex++ ) {
 
-  cout << "In diphoton cand loop" << endl;
+  //cout << "In diphoton cand loop" << endl;
   //edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( candIndex );
-  edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( 0 );
-  size_t vtx = (size_t)dipho->jetCollectionIndex();
-  cout << "vtx = " << vtx << endl;
-
-  // kinematic cuts on diphotons
-  //auto & leadPho = *(dipho->leadingPhoton());
-  //auto & subleadPho = *(dipho->subLeadingPhoton());
-
-  //Handle<View<flashgg::Jet> > jets;
-  edm::Handle<edm::View<flashgg::Jet> > jets;
-  event.getByToken( jetTokens_[vtx], jets);
-
-  for( size_t ijet=0; ijet < jets->size(); ++ijet ) {//jets are ordered in pt
-      auto jet = jets->ptrAt(ijet);
-      cout << "jet pt " << jet->pt() << endl;
-  }
-
-  //cout << "jetTokens_[vtx] = " << jetTokens_[vtx] << endl;
-  //cout << "jets = " << jets << endl;
-
-  //edm::Ptr<flashgg::Jet> jjet = jets->ptrAt(vtx);
-  //flashgg::Jet * thisJetPointer = const_cast<flashgg::Jet *>(jjet.get());
-  //JetVector.push_back(*thisJetPointer);
-
-  //cout << "jets = " << jets << endl;
-
-  //edm::Ptr<flashgg::Jet> jet = jets->ptrAt(vtx);
-  //cout << "jet pt = " << jet->pt() << endl;
-
-  // Append phoVector example 
-  // for( int phoIndex = 0; phoIndex < n_photons; phoIndex++ )
-  // {
-    // edm::Ptr<flashgg::Photon> pho = photons->ptrAt( phoIndex );
-    // flashgg::Photon * thisPPointer = const_cast<flashgg::Photon *>(pho.get());
-    // phoVector.push_back(*thisPPointer);
-  // }
-
-
-  // photon-jet cross-cleaning and pt/eta/btag/jetid cuts for jets
-  //std::vector<edm::Ptr<flashgg::Jet> > cleaned_jets;
-  //cout << "jets->size() = " << jets->size() << endl;
+  //cout << "n_diphotons = " << n_diphotons << endl;
+  if (n_diphotons != 0){
   
-  //if (jets->size()){
-  //  cout << "jets->size() = " << jets->size() << endl;
-  //}
+    edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( 0 ); // When I loop over diphotons, it seems to just loop over the same vector of jets each time. 
+                                                                        // So just looping over jets associated with one diphoton vertex 
+    size_t vtx = (size_t)dipho->jetCollectionIndex();
+    //cout << "vtx = " << vtx << endl;
 
-  //cout << "jets->size() = " << jets->size() << endl;
-  // for( size_t ijet=0; ijet < jets->size(); ++ijet ) {//jets are ordered in pt
-  //   cout << "ijet = " << ijet << endl;
-  //    auto jet = jets->ptrAt(ijet);
-  //    cout << "jet pt = " << jet->pt() << endl;
-  // }
+    // kinematic cuts on diphotons
+    //auto & leadPho = *(dipho->leadingPhoton());
+    //auto & subleadPho = *(dipho->subLeadingPhoton());
 
-//}
-//             edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( candIndex );
-//             cout << "Hello" << endl;
-            
-//             // kinematic cuts on diphotons
-//             //auto & leadPho = *(dipho->leadingPhoton());
-//             //auto & subleadPho = *(dipho->subLeadingPhoton());
-            
-//             //double leadPt = leadPho.pt();
-//             //double subleadPt = subleadPho.pt();
-//             // if( scalingPtCuts_ ) {
-//             //     leadPt /= dipho->mass();
-//             //     subleadPt /= dipho->mass();
-//             // }
-//             // if( leadPt <= minLeadPhoPt_ || subleadPt <= minSubleadPhoPt_ ) { continue; }
-//             //apply egm photon id with given working point
-//             // if(doPhotonId_){
-//             //     if(leadPho.userFloat("EGMPhotonMVA")<photonIDCut_ || subleadPho.userFloat("EGMPhotonMVA")<photonIDCut_){
-//             //         continue;
-//             //     }
-//             // }
-//             // //electron veto
-//             // if(leadPho.passElectronVeto()<photonElectronVeto_[0] || subleadPho.passElectronVeto()<photonElectronVeto_[1]){
-//             //     continue;
-//             // }
+    //Handle<View<flashgg::Jet> > jets;
+    edm::Handle<edm::View<flashgg::Jet> > jets;
+    event.getByToken( jetTokens_[vtx], jets);
+
+    for( size_t ijet=0; ijet < jets->size(); ++ijet ) { //jets are ordered in pt
+        auto jet = jets->ptrAt(ijet);
+        cout << "jet pt " << jet->pt() << endl;
+
+        //Jet vector 
+        //for( int jetIndex = 0; jetIndex < n_jets; jetIndex++ )
+        //{
+          //edm::Ptr<flashgg::Jet> jet = jets->ptrAt( jetIndex );
+        flashgg::Jet * thisJetPointer = const_cast<flashgg::Jet *>(jet.get());
+        JetVector.push_back(*thisJetPointer);
+        //}
 
 
-//  // find vertex associated to diphoton object
-//             //unsigned int jetCollectionIndex = diphotons->ptrAt( diphoIndex )->jetCollectionIndex();
-//             size_t vtx = (size_t)dipho->jetCollectionIndex();
-//             // and read corresponding jet collection
-//             edm::Handle<edm::View<flashgg::Jet> > jets;
-//             event.getByToken( jetTokens_[vtx], jets);
-            
-//             // photon-jet cross-cleaning and pt/eta/btag/jetid cuts for jets
-//             std::vector<edm::Ptr<flashgg::Jet> > cleaned_jets;
-//             for( size_t ijet=0; ijet < jets->size(); ++ijet ) {//jets are ordered in pt
-//                 auto jet = jets->ptrAt(ijet);
-//                 cout << "jet pt = " << jet->pt() << endl;
+    }
 
-
-//                 //if (jet->pt()<minJetPt_ || fabs(jet->eta())>maxJetEta_)continue;
-//                 //double btag=0.;
-//                 //for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
-//                 //        btag+=jet->bDiscriminator(bTagType_[btag_num]); 
-//                 //if (btag<0) continue;//FIXME threshold might not be 0? For CMVA and DeepCSV it is 0.
-//                 // if( useJetID_ ){
-//                 //     if( JetIDLevel_ == "Loose" && !jet->passesJetID  ( flashgg::Loose ) ) continue;
-//                 //     if( JetIDLevel_ == "Tight" && !jet->passesJetID  ( flashgg::Tight ) ) continue;
-//                 //     if( JetIDLevel_ == "Tight2017" && !jet->passesJetID  ( flashgg::Tight2017 ) ) continue;
-//                 // }
-//                 // if( reco::deltaR( *jet, *(dipho->leadingPhoton()) ) > vetoConeSize_ && reco::deltaR( *jet, *(dipho->subLeadingPhoton()) ) > vetoConeSize_ ) {
-//                 //     cleaned_jets.push_back( jet );
-//                 // }
-//             }
-
-
-//             // if( cleaned_jets.size() < 2 ) { continue; }
-//             // //dijet pair selection. Do pair according to pt and choose the pair with highest b-tag
-//             // double sumbtag_ref = -999;
-//             // bool hasDijet = false;
-//             // edm::Ptr<flashgg::Jet>  jet1, jet2;
-//             // for( size_t ijet=0; ijet < cleaned_jets.size()-1;++ijet){
-//             //     auto jet_1 = cleaned_jets[ijet];
-//             //     for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
-//             //         auto jet_2 = cleaned_jets[kjet];
-//             //         auto dijet_mass = (jet_1->p4()+jet_2->p4()).mass(); 
-//             //         if (dijet_mass<mjjBoundaries_[0] || dijet_mass>mjjBoundaries_[1]) continue;
-//             //         double sumbtag=0.;
-//             //         for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
-//             //             sumbtag+=jet_1->bDiscriminator(bTagType_[btag_num]) + jet_2->bDiscriminator(bTagType_[btag_num]);
-//             //         if (sumbtag > sumbtag_ref) {
-//             //             hasDijet = true;
-//             //             sumbtag_ref = sumbtag;
-//             //             jet1 = jet_1;
-//             //             jet2 = jet_2;
-//             //         }
-//             //     }
-//             // }
-
-
-
-// } // for diphotons 
-
-      // for( unsigned int candIndex_outer = 0; candIndex_outer < Jets[jetCollectionIndex]->size() ; candIndex_outer++ ) 
-      //     {
-      //         //bool keepJet=true;
-      //         edm::Ptr<flashgg::Jet> thejet = Jets[jetCollectionIndex]->ptrAt( candIndex_outer );
-      //         //if(!thejet->passesJetID  ( flashgg::Tight2017 ) ) { continue; }
-      //         //if( fabs( thejet->eta() ) > jetEtaThreshold_ ) { keepJet=false; }
-      //         //if( thejet->pt() < jetPtThreshold_ ) { keepJet=false; }
-      //         //float dRPhoLeadJet = deltaR( thejet->eta(), thejet->phi(), dipho->leadingPhoton()->superCluster()->eta(), dipho->leadingPhoton()->superCluster()->phi() ) ;
-      //         //float dRPhoSubLeadJet = deltaR( thejet->eta(), thejet->phi(), dipho->subLeadingPhoton()->superCluster()->eta(),
-      //                                         //dipho->subLeadingPhoton()->superCluster()->phi() );
-              
-      //         // if( dRPhoLeadJet < deltaRPhoLeadJet_ || dRPhoSubLeadJet < deltaRPhoSubLeadJet_ ) { keepJet=false; }
-      //         // if( hasGoodElec ) 
-      //         //     for( unsigned int electronIndex = 0; electronIndex < goodElectrons.size(); electronIndex++ ) 
-      //         //         {
-      //         //             Ptr<flashgg::Electron> electron = goodElectrons[electronIndex];
-      //         //             float dRJetElectron = deltaR( thejet->eta(), thejet->phi(), electron->eta(), electron->phi() ) ;
-      //         //             if( dRJetElectron < deltaRJetMuonThreshold_ ) { keepJet=false; }
-      //         //         }
-      //         // if( hasGoodMuons ) 
-      //         //     for( unsigned int muonIndex = 0; muonIndex < goodMuons.size(); muonIndex++ ) 
-      //         //         {
-      //         //             Ptr<flashgg::Muon> muon = goodMuons[muonIndex];
-      //         //             float dRJetMuon = deltaR( thejet->eta(), thejet->phi(), muon->eta(), muon->phi() ) ;
-      //         //             if( dRJetMuon < deltaRJetMuonThreshold_ ) { keepJet=false; }
-      //         //         }
-      //         //if(keepJet)
-      //         cout << "thejet = " << thejet << endl;
-      //         tagJets.push_back( thejet );
-      //     }
-
-
-
-
+  }
 
       //flashgg::Met
       // if (atLeastOneDiphoPass)
@@ -508,15 +369,6 @@ namespace flashgg {
           METVector.push_back(*thisMETPointer);
         }
 
-        // Jet vector 
-        // for( int jetIndex = 0; jetIndex < n_jets; jetIndex++ )
-        // {
-        //   edm::Ptr<flashgg::Jet> jet = jets->ptrAt( jetIndex );
-        //   flashgg::Jet * thisJetPointer = const_cast<flashgg::Jet *>(jet.get());
-        //   JetVector.push_back(*thisJetPointer);
-        // }
-
-
 
         // Want to save GEN particles to compare variables to RECO 
         // Only want to save GEN particles coming from mother particles of interest
@@ -571,8 +423,8 @@ namespace flashgg {
           }
         }
 
-        HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector); // before adding jets 
-        //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector, JetVector);
+        //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector); // before adding jets 
+        HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector, JetVector);
         //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector, tagJets);
         //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector, );
         
