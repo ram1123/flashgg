@@ -32,6 +32,9 @@
 
 #include "flashgg/MicroAOD/interface/CutBasedDiPhotonObjectSelector.h"
 
+#include "SimDataFormats/HTXS/interface/HiggsTemplateCrossSections.h"
+#include "flashgg/DataFormats/interface/WHLeptonicTag.h"
+
 #include <vector>
 #include <algorithm>
 #include "TGraph.h"
@@ -54,6 +57,11 @@ namespace flashgg {
   private:
     void produce( Event &, const EventSetup & ) override;
 
+    // Adding Jets 
+    std::vector<edm::EDGetTokenT<edm::View<flashgg::Jet> > > jetTokens_;
+    //std::vector<edm::EDGetTokenT<View<flashgg::Jet> > > tokenJets_;
+    //typedef std::vector<edm::Handle<edm::View<flashgg::Jet> > > JetCollectionVector;
+
     EDGetTokenT<View<Photon> > photonToken_;
     Handle<View<flashgg::Photon> > photons;
 
@@ -75,8 +83,18 @@ namespace flashgg {
     EDGetTokenT<View<flashgg::Met> > METToken_;
     Handle<View<flashgg::Met> > METs;
 
-    // std::vector<edm::EDGetTokenT<View<flashgg::Jet> > > tokenJets_;
-    //std::vector<edm::EDGetTokenT<View<flashgg::Jet> > > JetToken_;
+    //EDGetTokenT<int> stage0catToken_, stage1catToken_, njetsToken_;
+    //EDGetTokenT<HTXS::HiggsClassification> newHTXSToken_;
+    //std::vector<edm::InputTag> inputTagJets_;
+    //std::vector<edm::InputTag> inputTagJets_;
+
+
+    //double jetsNumberThreshold_;
+    //double jetPtThreshold_;
+    //double jetEtaThreshold_;
+
+    //std::vector<edm::EDGetTokenT<View<flashgg::Jet> > > tokenJets_;
+    std::vector<edm::EDGetTokenT<View<flashgg::Jet> > > JetToken_;
     //EDGetTokenT<View<flashgg::Jet> > JetToken_;
     //Handle<View<flashgg::Jet> > jets;
 
@@ -100,7 +118,7 @@ namespace flashgg {
   electronToken_(),
   muonToken_(),
   METToken_(),
-  //JetToken_(),
+  //JetTags_(),
   cc_( consumesCollector() ),
   idSelector_( ParameterSet(), cc_ )
 
@@ -109,29 +127,44 @@ namespace flashgg {
     //---standard
     HHWWggCandidateProducer::HHWWggCandidateProducer( const ParameterSet & pSet):
     photonToken_( consumes<View<Photon> >( pSet.getParameter<InputTag> ( "PhotonTag" ) ) ),
-    diphotonToken_( consumes<View<DiPhotonCandidate> >( pSet.getParameter<InputTag> ( "DiPhotonTag" ) ) ),
+    diphotonToken_( consumes<View<flashgg::DiPhotonCandidate> >( pSet.getParameter<InputTag> ( "DiPhotonTag" ) ) ),
     vertexToken_( consumes<View<reco::Vertex> >( pSet.getParameter<InputTag> ( "VertexTag" ) ) ),
     genParticleToken_( consumes<View<reco::GenParticle> >( pSet.getParameter<InputTag> ( "GenParticleTag" ) ) ),
-    electronToken_( consumes<View<Electron> >( pSet.getParameter<InputTag> ( "ElectronTag" ) ) ), // previously iConfig.get
+    electronToken_( consumes<View<Electron> >( pSet.getParameter<InputTag> ( "ElectronTag" ) ) ), 
     muonToken_( consumes<View<Muon> >( pSet.getParameter<InputTag> ( "MuonTag" ) ) ),
     //METToken_( consumes<View<flashgg::Met> >( pSet.getParameter<InputTag> ( "METTag" ) ) ),
     METToken_( consumes<View<Met> >( pSet.getParameter<InputTag> ( "METTag" ) ) ),
     //inputTagJets_( consumes<View< pSet.getParameter<std::vector<edm::InputTag> >( "JetTag" ) ),
     //JetToken_( consumes<View<Jet> >( pSet.getParameter<InputTag> ( "JetTag" ) ) ),
+    //inputTagJets_( pSet.getParameter<std::vector<edm::InputTag> >( "inputTagJets" ) ),
 
     cc_( consumesCollector() ),
     idSelector_( pSet.getParameter<ParameterSet> ( "idSelection" ), cc_ )
 
     {
-      // for (unsigned i = 0 ; i < inputTagJets_.size() ; i++) {
+      //jetsNumberThreshold_ = pSet.getParameter<double>( "jetsNumberThreshold");
+      //jetPtThreshold_ = pSet.getParameter<double>( "jetPtThreshold");
+      //jetEtaThreshold_ = pSet.getParameter<double>( "jetEtaThreshold");
+
+
+      auto jetTags = pSet.getParameter<std::vector<edm::InputTag> > ( "JetTags" ); 
+      for( auto & tag : jetTags ) { jetTokens_.push_back( consumes<edm::View<flashgg::Jet> >( tag ) ); }
+
+      // ParameterSet HTXSps = pSet.getParameterSet( "HTXSTags" );
+      // njetsToken_ = consumes<int>( HTXSps.getParameter<InputTag>("njets") );
+      // newHTXSToken_ = consumes<HTXS::HiggsClassification>( HTXSps.getParameter<InputTag>("ClassificationObj") );
+
+      //   for (unsigned i = 0 ; i < inputTagJets_.size() ; i++) {
       //       auto token = consumes<View<flashgg::Jet> >(inputTagJets_[i]);
       //       tokenJets_.push_back(token);
       //   }
+
       produces<vector<HHWWggCandidate> > ();
     }
 
     void HHWWggCandidateProducer::produce( Event &event, const EventSetup & )
     {
+      //Handle<int> stage0cat, stage1cat, njets;
       //Handle<int> stage0cat, stage1cat, njets;
       //Handle<int> njets;
       event.getByToken( photonToken_, photons );
@@ -141,6 +174,18 @@ namespace flashgg {
       event.getByToken( electronToken_, electrons );
       event.getByToken( muonToken_, muons );
       event.getByToken( METToken_, METs );
+      //event.getByToken( JetToken_,jets);
+
+
+      //Handle<HTXS::HiggsClassification> htxsClassification;
+      //event.getByToken(newHTXSToken_,htxsClassification);
+
+
+      // JetCollectionVector Jets( inputTagJets_.size() );
+      // for( size_t j = 0; j < inputTagJets_.size(); ++j ) {
+      //     event.getByToken( tokenJets_[j], Jets[j] );
+      // }
+
       //event.getByToken( njetsToken_,njets);
 
       // JetCollectionVector Jets( inputTagJets_.size() );
@@ -177,11 +222,201 @@ namespace flashgg {
       std::vector<flashgg::Electron> electronVector;
       std::vector<flashgg::Muon> muonVector;
       std::vector<flashgg::Met> METVector;
-      //std::vector<flashgg::Jet> JetVector;
+      std::vector<flashgg::Jet> JetVector;
 
       //std::vector<edm::Ptr<Jet> > tagJets;
 
+      // for( unsigned int diphoIndex = 0; diphoIndex < diphotons->size(); diphoIndex++ ) {
+      //     // hasGoodElec = false;
+      //     // hasGoodMuons = false;
+      //     // if(!passMETfilters) {continue;}
+      //     // if(useVertex0only_)
+      //     //     if(diPhotons->ptrAt(diphoIndex)->vertexIndex()!=0)
+      //     //         {continue;}
+      //     unsigned int jetCollectionIndex = diphotons->ptrAt( diphoIndex )->jetCollectionIndex();
 
+      //     std::vector<edm::Ptr<Jet> > tagJets;
+
+
+      //     for( unsigned int candIndex_outer = 0; candIndex_outer < Jets[jetCollectionIndex]->size() ; candIndex_outer++ ) 
+      //         {
+      //             bool keepJet=true;
+      //             edm::Ptr<flashgg::Jet> thejet = Jets[jetCollectionIndex]->ptrAt( candIndex_outer );
+      //             // if(!thejet->passesJetID  ( flashgg::Tight2017 ) ) { continue; }
+      //             // if( fabs( thejet->eta() ) > jetEtaThreshold_ ) { keepJet=false; }
+      //             // if( thejet->pt() < jetPtThreshold_ ) { keepJet=false; }
+      //             // float dRPhoLeadJet = deltaR( thejet->eta(), thejet->phi(), dipho->leadingPhoton()->superCluster()->eta(), dipho->leadingPhoton()->superCluster()->phi() ) ;
+      //             // float dRPhoSubLeadJet = deltaR( thejet->eta(), thejet->phi(), dipho->subLeadingPhoton()->superCluster()->eta(),
+      //             //                                 dipho->subLeadingPhoton()->superCluster()->phi() );
+                  
+      //             //if( dRPhoLeadJet < deltaRPhoLeadJet_ || dRPhoSubLeadJet < deltaRPhoSubLeadJet_ ) { keepJet=false; }
+      //             // if( hasGoodElec ) 
+      //             //     for( unsigned int electronIndex = 0; electronIndex < goodElectrons.size(); electronIndex++ ) 
+      //             //         {
+      //             //             Ptr<flashgg::Electron> electron = goodElectrons[electronIndex];
+      //             //             float dRJetElectron = deltaR( thejet->eta(), thejet->phi(), electron->eta(), electron->phi() ) ;
+      //             //             if( dRJetElectron < deltaRJetMuonThreshold_ ) { keepJet=false; }
+      //             //         }
+      //             // if( hasGoodMuons ) 
+      //             //     for( unsigned int muonIndex = 0; muonIndex < goodMuons.size(); muonIndex++ ) 
+      //             //         {
+      //             //             Ptr<flashgg::Muon> muon = goodMuons[muonIndex];
+      //             //             float dRJetMuon = deltaR( thejet->eta(), thejet->phi(), muon->eta(), muon->phi() ) ;
+      //             //             if( dRJetMuon < deltaRJetMuonThreshold_ ) { keepJet=false; }
+      //             //         }
+      //             if(keepJet)
+      //             {
+      //                 cout << "jet pt = " << thejet->pt() << endl;
+      //                 tagJets.push_back( thejet );
+      //             }
+      //         }
+      // } //dipho 
+
+
+//       // try to access jets 
+
+
+// later put in diphoton loop later on? 
+//for( unsigned int candIndex = 0; candIndex < diphotons->size() ; candIndex++ ) {
+
+  cout << "In diphoton cand loop" << endl;
+  //edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( candIndex );
+  edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( 0 );
+  size_t vtx = (size_t)dipho->jetCollectionIndex();
+  cout << "vtx = " << vtx << endl;
+
+  // kinematic cuts on diphotons
+  //auto & leadPho = *(dipho->leadingPhoton());
+  //auto & subleadPho = *(dipho->subLeadingPhoton());
+
+  //Handle<View<flashgg::Jet> > jets;
+  edm::Handle<edm::View<flashgg::Jet> > jets;
+  event.getByToken( jetTokens_[vtx], jets);
+
+  for( size_t ijet=0; ijet < jets->size(); ++ijet ) {//jets are ordered in pt
+      auto jet = jets->ptrAt(ijet);
+      cout << "jet pt " << jet->pt() << endl;
+  }
+
+  //cout << "jetTokens_[vtx] = " << jetTokens_[vtx] << endl;
+  //cout << "jets = " << jets << endl;
+
+  //edm::Ptr<flashgg::Jet> jjet = jets->ptrAt(vtx);
+  //flashgg::Jet * thisJetPointer = const_cast<flashgg::Jet *>(jjet.get());
+  //JetVector.push_back(*thisJetPointer);
+
+  //cout << "jets = " << jets << endl;
+
+  //edm::Ptr<flashgg::Jet> jet = jets->ptrAt(vtx);
+  //cout << "jet pt = " << jet->pt() << endl;
+
+  // Append phoVector example 
+  // for( int phoIndex = 0; phoIndex < n_photons; phoIndex++ )
+  // {
+    // edm::Ptr<flashgg::Photon> pho = photons->ptrAt( phoIndex );
+    // flashgg::Photon * thisPPointer = const_cast<flashgg::Photon *>(pho.get());
+    // phoVector.push_back(*thisPPointer);
+  // }
+
+
+  // photon-jet cross-cleaning and pt/eta/btag/jetid cuts for jets
+  //std::vector<edm::Ptr<flashgg::Jet> > cleaned_jets;
+  //cout << "jets->size() = " << jets->size() << endl;
+  
+  //if (jets->size()){
+  //  cout << "jets->size() = " << jets->size() << endl;
+  //}
+
+  //cout << "jets->size() = " << jets->size() << endl;
+  // for( size_t ijet=0; ijet < jets->size(); ++ijet ) {//jets are ordered in pt
+  //   cout << "ijet = " << ijet << endl;
+  //    auto jet = jets->ptrAt(ijet);
+  //    cout << "jet pt = " << jet->pt() << endl;
+  // }
+
+//}
+//             edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( candIndex );
+//             cout << "Hello" << endl;
+            
+//             // kinematic cuts on diphotons
+//             //auto & leadPho = *(dipho->leadingPhoton());
+//             //auto & subleadPho = *(dipho->subLeadingPhoton());
+            
+//             //double leadPt = leadPho.pt();
+//             //double subleadPt = subleadPho.pt();
+//             // if( scalingPtCuts_ ) {
+//             //     leadPt /= dipho->mass();
+//             //     subleadPt /= dipho->mass();
+//             // }
+//             // if( leadPt <= minLeadPhoPt_ || subleadPt <= minSubleadPhoPt_ ) { continue; }
+//             //apply egm photon id with given working point
+//             // if(doPhotonId_){
+//             //     if(leadPho.userFloat("EGMPhotonMVA")<photonIDCut_ || subleadPho.userFloat("EGMPhotonMVA")<photonIDCut_){
+//             //         continue;
+//             //     }
+//             // }
+//             // //electron veto
+//             // if(leadPho.passElectronVeto()<photonElectronVeto_[0] || subleadPho.passElectronVeto()<photonElectronVeto_[1]){
+//             //     continue;
+//             // }
+
+
+//  // find vertex associated to diphoton object
+//             //unsigned int jetCollectionIndex = diphotons->ptrAt( diphoIndex )->jetCollectionIndex();
+//             size_t vtx = (size_t)dipho->jetCollectionIndex();
+//             // and read corresponding jet collection
+//             edm::Handle<edm::View<flashgg::Jet> > jets;
+//             event.getByToken( jetTokens_[vtx], jets);
+            
+//             // photon-jet cross-cleaning and pt/eta/btag/jetid cuts for jets
+//             std::vector<edm::Ptr<flashgg::Jet> > cleaned_jets;
+//             for( size_t ijet=0; ijet < jets->size(); ++ijet ) {//jets are ordered in pt
+//                 auto jet = jets->ptrAt(ijet);
+//                 cout << "jet pt = " << jet->pt() << endl;
+
+
+//                 //if (jet->pt()<minJetPt_ || fabs(jet->eta())>maxJetEta_)continue;
+//                 //double btag=0.;
+//                 //for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
+//                 //        btag+=jet->bDiscriminator(bTagType_[btag_num]); 
+//                 //if (btag<0) continue;//FIXME threshold might not be 0? For CMVA and DeepCSV it is 0.
+//                 // if( useJetID_ ){
+//                 //     if( JetIDLevel_ == "Loose" && !jet->passesJetID  ( flashgg::Loose ) ) continue;
+//                 //     if( JetIDLevel_ == "Tight" && !jet->passesJetID  ( flashgg::Tight ) ) continue;
+//                 //     if( JetIDLevel_ == "Tight2017" && !jet->passesJetID  ( flashgg::Tight2017 ) ) continue;
+//                 // }
+//                 // if( reco::deltaR( *jet, *(dipho->leadingPhoton()) ) > vetoConeSize_ && reco::deltaR( *jet, *(dipho->subLeadingPhoton()) ) > vetoConeSize_ ) {
+//                 //     cleaned_jets.push_back( jet );
+//                 // }
+//             }
+
+
+//             // if( cleaned_jets.size() < 2 ) { continue; }
+//             // //dijet pair selection. Do pair according to pt and choose the pair with highest b-tag
+//             // double sumbtag_ref = -999;
+//             // bool hasDijet = false;
+//             // edm::Ptr<flashgg::Jet>  jet1, jet2;
+//             // for( size_t ijet=0; ijet < cleaned_jets.size()-1;++ijet){
+//             //     auto jet_1 = cleaned_jets[ijet];
+//             //     for( size_t kjet=ijet+1; kjet < cleaned_jets.size();++kjet){
+//             //         auto jet_2 = cleaned_jets[kjet];
+//             //         auto dijet_mass = (jet_1->p4()+jet_2->p4()).mass(); 
+//             //         if (dijet_mass<mjjBoundaries_[0] || dijet_mass>mjjBoundaries_[1]) continue;
+//             //         double sumbtag=0.;
+//             //         for (unsigned int btag_num=0;btag_num<bTagType_.size();btag_num++)
+//             //             sumbtag+=jet_1->bDiscriminator(bTagType_[btag_num]) + jet_2->bDiscriminator(bTagType_[btag_num]);
+//             //         if (sumbtag > sumbtag_ref) {
+//             //             hasDijet = true;
+//             //             sumbtag_ref = sumbtag;
+//             //             jet1 = jet_1;
+//             //             jet2 = jet_2;
+//             //         }
+//             //     }
+//             // }
+
+
+
+// } // for diphotons 
 
       // for( unsigned int candIndex_outer = 0; candIndex_outer < Jets[jetCollectionIndex]->size() ; candIndex_outer++ ) 
       //     {
@@ -339,6 +574,7 @@ namespace flashgg {
         HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector); // before adding jets 
         //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector, JetVector);
         //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector, tagJets);
+        //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector, );
         
         //std::vector<edm::Ptr<Jet> > tagJets;
 
