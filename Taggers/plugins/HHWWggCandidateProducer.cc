@@ -299,7 +299,7 @@ namespace flashgg {
 
     for( size_t ijet=0; ijet < jets->size(); ++ijet ) { //jets are ordered in pt
         auto jet = jets->ptrAt(ijet);
-        cout << "jet pt " << jet->pt() << endl;
+        //cout << "jet pt " << jet->pt() << endl;
 
         //Jet vector 
         //for( int jetIndex = 0; jetIndex < n_jets; jetIndex++ )

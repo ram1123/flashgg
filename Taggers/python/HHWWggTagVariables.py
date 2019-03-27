@@ -11,14 +11,21 @@ HHWWgg_variables = [
 
     # One entry per event 
     # Plot from header file utils 
-    "n_ps_dipho                   := diphoVector.size()",
-    "ps_dipho_mass                := ? Abe_HHWWggDiPho.mass() != 0 ? Abe_HHWWggDiPho.mass() : -999 ",
-    #"elec1_pt                     := elec1.pt()", # Leading pT
-    #"elec2_pt                     := elec2.pt()",  # Subleading pT 
-    "muon1_pt                     := muon1.pt()", 
-    "MET                          := MET_fourvec.pt()",
+
+    ## General Variables 
+    #"muon1_pt                     := muon1.pt()", 
 
     ## RECO Variables
+
+    # Photons
+
+    # DiPhoton(s)
+    # leading_dpho = diphoton with highest pt 
+    "n_ps_dipho                   := diphoVector.size()",
+    "leading_dpho_mass                := ? leading_dpho.mass() != 0 ? leading_dpho.mass() : -999 ", 
+    "leading_dpho_pt              := leading_dpho.pt()",
+    "leading_dpho_eta              := leading_dpho.eta()",
+    "leading_dpho_phi              := leading_dpho.phi()",
 
     # Electrons
     "leading_elec_pt              := ? leading_elec.pt() != 0 ? leading_elec.pt() : -99 ",  
@@ -37,8 +44,15 @@ HHWWgg_variables = [
     "subleading_muon_phi              := subleading_muon.phi()",
 
     # Jets 
-    
-    "n_jets                   := JetVector.size()", 
+    "n_jets                        := JetVector.size()", 
+    "mdj_invmass                   := MatchingDiJet.mass()",
+    "nmdj_invmass                   := NonMatchingDiJet.mass()",
+    #"nmdj_invmass                   := NonMatchedDiJetMasses[0] && -99",
+
+    # MET 
+    "MET                          := MET_fourvec.pt()",
+
+    #-----------------------------------------------------------------#
 
     ## GEN Variables 
 
@@ -51,12 +65,16 @@ HHWWgg_variables = [
     "gen_subleading_elec_phi              := 0",
 
     # Muons 
-    "gen_leading_muon_pt              := leading_gen_muon_pt",
-    "gen_leading_muon_eta              := 0",
-    "gen_leading_muon_phi              := 0",
-    "gen_subleading_muon_pt              := subleading_gen_muon_pt",
+    "gen_leading_muon_pt                  := leading_gen_muon_pt",
+    "gen_leading_muon_eta                 := 0",
+    "gen_leading_muon_phi                 := 0",
+    "gen_subleading_muon_pt               := subleading_gen_muon_pt",
     "gen_subleading_muon_eta              := 0",
     "gen_subleading_muon_phi              := 0",
+
+    # Quarks 
+    "mdq_invmass                   := MatchingDiQuark.mass()",
+    "nmdq_invmass                   := NonMatchingDiQuark.mass()",
 
 ]
 

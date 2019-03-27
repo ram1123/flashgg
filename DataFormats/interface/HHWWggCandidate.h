@@ -35,8 +35,6 @@ namespace flashgg {
     // After adding jets 
     HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector); 
     //HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<edm::Ptr<Jet>> tagJets); 
-
-
     // Testing with new constructor to make plot of variable from new item such as diphoton vector size 
 
     //---dtor---
@@ -60,7 +58,7 @@ namespace flashgg {
     const float pho3_MVA() const { return pho3_MVA_; };
     const float pho4_MVA() const { return pho4_MVA_; };
     const reco::Candidate::LorentzVector& MET_fourvec() const { return MET_fourvec_; };
-    const reco::Candidate::LorentzVector& Abe_HHWWggDiPho() const { return abe_dp_; };
+    const reco::Candidate::LorentzVector& leading_dpho() const { return leading_dpho_; };
     const reco::Candidate::LorentzVector& leading_elec() const { return leading_elec_; };
     const reco::Candidate::LorentzVector& subleading_elec() const { return subleading_elec_; };
     const reco::Candidate::LorentzVector& leading_muon() const { return leading_muon_; };
@@ -68,7 +66,11 @@ namespace flashgg {
     const reco::Candidate::LorentzVector& muon1() const { return muon1_; };
     const reco::Candidate::LorentzVector& HHWWggDiPho1() const { return dp1_; };
     const reco::Candidate::LorentzVector& HHWWggDiPho2() const { return dp2_; };
-    const reco::Candidate::LorentzVector& HHWWggFourVect() const { return tp_; };
+    const reco::Candidate::LorentzVector& HHWWggFourVect() const { return tp_; };     
+    const reco::Candidate::LorentzVector& MatchingDiJet() const { return mdij_; }; 
+    const reco::Candidate::LorentzVector& NonMatchingDiJet() const { return nmdij_; }; 
+    const reco::Candidate::LorentzVector& MatchingDiQuark() const { return mdiq_; }; 
+    const reco::Candidate::LorentzVector& NonMatchingDiQuark() const { return nmdiq_; }; 
     //float getCosThetaStar_CS(float ebeam) const;
     //std::vector<float> CosThetaAngles() const;
     //float HelicityCosTheta( TLorentzVector Booster, TLorentzVector Boosted) const;
@@ -78,6 +80,7 @@ namespace flashgg {
     const float subleading_gen_elec_pt() const { return subleading_gen_elec_pt_; };
     const float leading_gen_muon_pt() const { return leading_gen_muon_pt_; };
     const float subleading_gen_muon_pt() const { return subleading_gen_muon_pt_; };
+    //std::vector<float> () const;
 
   private:
 
@@ -97,7 +100,7 @@ namespace flashgg {
     float pho3_MVA_;
     float pho4_MVA_;
     reco::Candidate::LorentzVector MET_fourvec_;
-    reco::Candidate::LorentzVector abe_dp_;
+    reco::Candidate::LorentzVector leading_dpho_;
     reco::Candidate::LorentzVector leading_elec_;
     reco::Candidate::LorentzVector subleading_elec_;
     reco::Candidate::LorentzVector leading_muon_;
@@ -106,6 +109,10 @@ namespace flashgg {
     reco::Candidate::LorentzVector dp1_;
     reco::Candidate::LorentzVector dp2_;
     reco::Candidate::LorentzVector tp_;
+    reco::Candidate::LorentzVector mdij_;
+    reco::Candidate::LorentzVector nmdij_;
+    reco::Candidate::LorentzVector mdiq_;
+    reco::Candidate::LorentzVector nmdiq_;
     float theMETcorpt_;
     float W1_TM_;
     float leading_gen_elec_pt_;
@@ -115,7 +122,6 @@ namespace flashgg {
 
   };
   typedef std::vector<HHWWggCandidate> HHWWggCandidateCollection; // define new type: vector of HHWWggCandidates 
-
 
 }
 
