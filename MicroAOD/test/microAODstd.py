@@ -27,9 +27,12 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_Tra
 
 abe_files = [] 
 #file_path = '/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqmunugg_10000events_woPU_MINIAOD/190305_151213/0000/ggF_X1250_WWgg_qqmunugg_10000events_woPU_MINIAOD_'
-file_path = '/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_woPU_MINIAOD/190225_135123/0000/ggF_X1250_WWgg_qqenugg_10000events_woPU_MINIAOD_' 
-#for i in range(11):
+
+#file_path = '/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_woPU_MINIAOD/190225_135123/0000/ggF_X1250_WWgg_qqenugg_10000events_woPU_MINIAOD_' 
+file_path = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_lnulnugg/100000events_wPU_MINIAOD/190403_092057/0000/ggF_X1250_WWgg_lnulnugg_100000events_wPU_MINIAOD_'
+#for i in range(25):
 for i in range(1):
+# for i in range(3):
     j = i + 1
     this_path = file_path + str(j) + '.root'
     #this_path += 
@@ -38,7 +41,8 @@ for i in range(1):
 
 process.GlobalTag = GlobalTag(process.GlobalTag,'','')
 process.source = cms.Source("PoolSource",
-                            fileNames=cms.untracked.vstring('/store/user/atishelm/ggF_X1250_WWgg_qqmunugg/10000events_woPU_MINIAOD/190311_162402/0000/ggF_X1250_WWgg_qqmunugg_10000events_woPU_MINIAOD_1.root'))
+                            #fileNames=cms.untracked.vstring('/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_lnulnugg/100000events_wPU_MINIAOD/190403_092057/0000/ggF_X1250_WWgg_lnulnugg_100000events_wPU_MINIAOD_3.root'))
+                            fileNames=cms.untracked.vstring('/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_qqlnugg/100000events_wPU_MINIAOD/190403_092149/0000/ggF_X1250_WWgg_qqlnugg_100000events_wPU_MINIAOD_30.root'))
                             #fileNames=cms.untracked.vstring(abe_files))
 #    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('/store/mc/RunIISummer16MiniAODv2/GluGluHToGG_M-125_13TeV_powheg_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/60000/024E4FA3-8BBC-E611-8E3D-00266CFFBE88.root'))
     #process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/mc/RunIIFall17MiniAOD/GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/40000/4A2ACB0A-1BD9-E711-AF54-141877410316.root'))

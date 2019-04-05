@@ -76,12 +76,11 @@ namespace flashgg {
     //float HelicityCosTheta( TLorentzVector Booster, TLorentzVector Boosted) const;
     const float theMETcorpt() const { return theMETcorpt_; };
     const float W1_TM() const { return W1_TM_; };
-    const float leading_gen_elec_pt() const { return leading_gen_elec_pt_; };
-    const float subleading_gen_elec_pt() const { return subleading_gen_elec_pt_; };
-    const float leading_gen_muon_pt() const { return leading_gen_muon_pt_; };
-    const float subleading_gen_muon_pt() const { return subleading_gen_muon_pt_; };
-    //std::vector<float> () const;
-
+    const reco::Candidate::LorentzVector& gen_leading_elec() const { return gen_leading_elec_; };
+    const reco::Candidate::LorentzVector& gen_subleading_elec() const { return gen_subleading_elec_; };
+    const reco::Candidate::LorentzVector& gen_leading_muon() const { return gen_leading_muon_; };
+    const reco::Candidate::LorentzVector& gen_subleading_muon() const { return gen_subleading_muon_; };
+    const reco::Candidate::LorentzVector& lsl_dij() const { return lsl_dij_; };
   private:
 
     std::vector<flashgg::DiPhotonCandidate> diphoVector_;
@@ -115,10 +114,11 @@ namespace flashgg {
     reco::Candidate::LorentzVector nmdiq_;
     float theMETcorpt_;
     float W1_TM_;
-    float leading_gen_elec_pt_;
-    float subleading_gen_elec_pt_;
-    float leading_gen_muon_pt_;
-    float subleading_gen_muon_pt_;
+    reco::Candidate::LorentzVector gen_leading_elec_;
+    reco::Candidate::LorentzVector gen_subleading_elec_;
+    reco::Candidate::LorentzVector gen_leading_muon_;
+    reco::Candidate::LorentzVector gen_subleading_muon_;
+    reco::Candidate::LorentzVector lsl_dij_;
 
   };
   typedef std::vector<HHWWggCandidate> HHWWggCandidateCollection; // define new type: vector of HHWWggCandidates 

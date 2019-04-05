@@ -164,6 +164,9 @@ namespace flashgg {
 
     void HHWWggCandidateProducer::produce( Event &event, const EventSetup & )
     {
+
+      // cout << "Hello Hello" << endl;
+
       //Handle<int> stage0cat, stage1cat, njets;
       //Handle<int> stage0cat, stage1cat, njets;
       //Handle<int> njets;
@@ -192,6 +195,8 @@ namespace flashgg {
       // for( size_t j = 0; j < inputTagJets_.size(); ++j ) {
       //     evt.getByToken( tokenJets_[j], Jets[j] );
       // }
+
+      // cout << "Hello, in produce" << endl;
 
       //---output collection
       std::unique_ptr<vector<HHWWggCandidate> > HHWWggColl_( new vector<HHWWggCandidate> );
