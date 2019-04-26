@@ -59,6 +59,7 @@ namespace flashgg {
     const float pho4_MVA() const { return pho4_MVA_; };
     const reco::Candidate::LorentzVector& MET_fourvec() const { return MET_fourvec_; };
     const reco::Candidate::LorentzVector& leading_dpho() const { return leading_dpho_; };
+    const reco::Candidate::LorentzVector& leading_pho() const { return leading_pho_; };
     const reco::Candidate::LorentzVector& leading_elec() const { return leading_elec_; };
     const reco::Candidate::LorentzVector& subleading_elec() const { return subleading_elec_; };
     const reco::Candidate::LorentzVector& leading_muon() const { return leading_muon_; };
@@ -100,6 +101,7 @@ namespace flashgg {
     float pho4_MVA_;
     reco::Candidate::LorentzVector MET_fourvec_;
     reco::Candidate::LorentzVector leading_dpho_;
+    reco::Candidate::LorentzVector leading_pho_;
     reco::Candidate::LorentzVector leading_elec_;
     reco::Candidate::LorentzVector subleading_elec_;
     reco::Candidate::LorentzVector leading_muon_;

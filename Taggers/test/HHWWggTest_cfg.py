@@ -8,8 +8,13 @@ import flashgg.Taggers.dumperConfigTools as cfgTools
 
 
 process = cms.Process("FLASHggHHWWggTest") # Process name. Can't use HH_WWgg because '_' is a non-alphanumeric character
+
 from flashgg.Taggers.flashggTags_cff import flashggUnpackedJets
 process.flashggUnpackedJets = flashggUnpackedJets
+
+from flashgg.Taggers.flashggDiPhotonMVA_cfi import flashggDiPhotonMVA
+process.flashggDiPhotonMVA = flashggDiPhotonMVA 
+process.flashggDiPhotonMVA.DiPhotonTag = "flashggDiPhotons"
 
 ###---HHWWgg candidates production
 process.FlashggHHWWggCandidate = FlashggHHWWggCandidate.clone() # clone flashgg HHWWggCandidate parameters here 
@@ -41,8 +46,8 @@ cfgTools.addCategories(process.HHWWggCandidateDumper, # className, src, ... from
                             #("4photons","phoVector.size() > 3", 0), # label, cutbased, subcats
                             #("Reject", "", -1), # not cut based, and sub cats !>= 0, so nothing will be done 
                             #("Dipho_PS","diphoVector.size() > 0",0),
-                            #("All_Events","1",0), # all events 
-                            ("Dipho_PS","diphoVector.size() >= 1",0) # events with at least one diphoton passing preselection  
+                            ("All_Events","1",0), # all events 
+                            #("Dipho_PS","diphoVector.size() >= 1",0) # events with at least one diphoton passing preselection  
                             #("SemiLeptonic","electronVector.size() == 1", 0), # Or muon vector
                             #("FullyLeptonic","electronVector.size() == 2", 0), # Or muons 
                             #("FullyHadronic","electronVector.size() == 0 || electronVector.size() > 2", 0)
@@ -99,8 +104,10 @@ cfgTools.addCategories(process.HHWWggCandidateDumper, # className, src, ... from
 
 process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring(
-"file:myMicroAODOutputFile.root"
-#"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqenu 
+#"file:/eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIISummer16-2_4_1-25ns_Moriond17_extra/2_4_1/GJets_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16-2_4_1-25ns_Moriond17_extra-2_4_1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/171212_152732/0000/myMicroAODOutputFile_10.root"                               
+#"file:myMicroAODOutputFile_testtest.root"     
+#"file:myMicroAODOutputFile_qqlnugg_8Apr2019.root"
+"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqenu 
 #"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqmunugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqmunu
 #"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_enuenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # enuenu 
 #"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_munumunugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # munumunu 
@@ -112,12 +119,12 @@ process.TFileService = cms.Service("TFileService",
                                    closeFileFast = cms.untracked.bool(True)
 )
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 
 from flashgg.MetaData.JobConfig import customize
 customize.setDefault("maxEvents",-1)
-#customize.setDefault("maxEvents",100)
+#customize.setDefault("maxEvents",1000)
 
 
 # customize.setDefault("puTarget",'2.39e+05,8.38e+05,2.31e+06,3.12e+06,4.48e+06,6e+06,7e+06,1.29e+07,3.53e+07,7.87e+07,1.77e+08,3.6e+08,6.03e+08,8.77e+08,1.17e+09,1.49e+09,1.76e+09,1.94e+09,2.05e+09,2.1e+09,2.13e+09,2.15e+09,2.13e+09,2.06e+09,1.96e+09,1.84e+09,1.7e+09,1.55e+09,1.4e+09,1.24e+09,1.09e+09,9.37e+08,7.92e+08,6.57e+08,5.34e+08,4.27e+08,3.35e+08,2.58e+08,1.94e+08,1.42e+08,1.01e+08,6.9e+07,4.55e+07,2.88e+07,1.75e+07,1.02e+07,5.64e+06,2.99e+06,1.51e+06,7.32e+05,3.4e+05,1.53e+05,6.74e+04,3.05e+04,1.52e+04,8.98e+03,6.5e+03,5.43e+03,4.89e+03,4.52e+03,4.21e+03,3.91e+03,3.61e+03,3.32e+03,3.03e+03,2.75e+03,2.47e+03,2.21e+03,1.97e+03,1.74e+03,1.52e+03,1.32e+03,1.14e+03,983,839')
@@ -160,7 +167,7 @@ process.dataRequirements = cms.Sequence()
 #process.dataRequirements += process.hltHighLevel # HLT 
 
 if customize.processId == "Data":
-   # process.dataRequirements += process.hltHighLevel
+   process.dataRequirements += process.hltHighLevel
    process.dataRequirements += process.eeBadScFilter
 
 # customize.register('puTarget',
@@ -173,7 +180,8 @@ if customize.processId == "Data":
 # if customize.PURW == False:
 # 	process.HHWWggCandidateDumper.puTarget = cms.vdouble()
 
-process.path = cms.Path(process.flashggUnpackedJets*process.dataRequirements*process.FlashggHHWWggCandidate*process.HHWWggCandidateDumper)
+process.path = cms.Path(process.flashggDiPhotonMVA*process.flashggUnpackedJets*process.dataRequirements*process.FlashggHHWWggCandidate*process.HHWWggCandidateDumper)
+#process.path = cms.Path(process.flashggUnpackedJets*process.dataRequirements*process.FlashggHHWWggCandidate*process.HHWWggCandidateDumper)
 
 # process.path = cms.Path(process.FlashggHHWWggCandidate+process.HHWWggCandidateDumper)
 #process.e = cms.EndPath(process.out)

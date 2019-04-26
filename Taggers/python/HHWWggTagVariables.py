@@ -49,11 +49,11 @@ HHWWgg_variables = [
 
     # DiPhoton(s)
     # leading_dpho = diphoton with highest pt 
-    "n_ps_dipho                   := diphoVector.size()",
-    "leading_dpho_mass                := ? leading_dpho.mass() != 0 ? leading_dpho.mass() : -999 ", 
-    "leading_dpho_pt              := leading_dpho.pt()",
-    "leading_dpho_eta              := leading_dpho.eta()",
-    "leading_dpho_phi              := leading_dpho.phi()",
+    "n_ps_dipho                     := diphoVector.size()",
+    "leading_dpho_mass              := ? leading_dpho.mass() != 0 ? leading_dpho.mass() : -999 ", 
+    "leading_dpho_pt                := leading_dpho.pt()",
+    "leading_dpho_eta               := leading_dpho.eta()",
+    "leading_dpho_phi               := leading_dpho.phi()",
 
     # Electrons
     # If there is no leading electron (electronVector_.size() == 0) or no subleading electron (electronVector_.size() <= 1) plot -99 
@@ -82,6 +82,9 @@ HHWWgg_variables = [
         # Not using GEN information 
         # JetVector is ordered by pT
         "jet0_pt                        := ? JetVector.size() >= 1 ? JetVector[0].pt() : -99 ",
+        "jet0_eta                        := ? JetVector.size() >= 1 ? JetVector[0].eta() : -99 ",
+        "jet0_phi                        := ? JetVector.size() >= 1 ? JetVector[0].phi() : -99 ",
+
         "jet1_pt                        := ? JetVector.size() >= 2 ? JetVector[1].pt() : -99 ",
         "jet2_pt                        := ? JetVector.size() >= 3 ? JetVector[2].pt() : -99 ",
         "jet3_pt                        := ? JetVector.size() >= 4 ? JetVector[3].pt() : -99 ",

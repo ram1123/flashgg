@@ -29,14 +29,29 @@ abe_files = []
 #file_path = '/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqmunugg_10000events_woPU_MINIAOD/190305_151213/0000/ggF_X1250_WWgg_qqmunugg_10000events_woPU_MINIAOD_'
 
 #file_path = '/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_woPU_MINIAOD/190225_135123/0000/ggF_X1250_WWgg_qqenugg_10000events_woPU_MINIAOD_' 
-file_path = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_lnulnugg/100000events_wPU_MINIAOD/190403_092057/0000/ggF_X1250_WWgg_lnulnugg_100000events_wPU_MINIAOD_'
+#file_path = '/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_lnulnugg/100000events_wPU_MINIAOD/190403_092057/0000/'
+#file_path = '/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_qqlnugg/100000events_wPU_MINIAOD/190403_092149/0000/'
+file_path = '/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_qqqqgg/100000events_wPU_MINIAOD/190404_124223/0000/'
 #for i in range(25):
-for i in range(1):
-# for i in range(3):
-    j = i + 1
-    this_path = file_path + str(j) + '.root'
-    #this_path += 
-    abe_files.append(this_path)
+
+from os import listdir
+from os.path import isfile, join
+abe_files = [f for f in listdir(file_path) if isfile(join(file_path, f))]
+#print 'abe_files = ',abe_files 
+# Get all file names 
+shortened_path = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_qqqqgg/100000events_wPU_MINIAOD/190404_124223/0000/'
+for i in range(len(abe_files)):
+    tmp_path = shortened_path 
+    tmp_path += abe_files[i]
+    #tmp_path = tmp_path[-8:]
+    abe_files[i] = tmp_path
+#print 'abe_files = ',abe_files 
+# for i in range(1):
+# # for i in range(3):
+#     j = i + 1
+#     this_path = file_path + str(j) + '.root'
+#     #this_path += 
+#     abe_files.append(this_path)
 
 
 process.GlobalTag = GlobalTag(process.GlobalTag,'','')
@@ -44,6 +59,7 @@ process.source = cms.Source("PoolSource",
                             #fileNames=cms.untracked.vstring('/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_lnulnugg/100000events_wPU_MINIAOD/190403_092057/0000/ggF_X1250_WWgg_lnulnugg_100000events_wPU_MINIAOD_3.root'))
                             fileNames=cms.untracked.vstring('/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_qqlnugg/100000events_wPU_MINIAOD/190403_092149/0000/ggF_X1250_WWgg_qqlnugg_100000events_wPU_MINIAOD_30.root'))
                             #fileNames=cms.untracked.vstring(abe_files))
+                            #fileNames=cms.untracked.vstring(abe_files[0],abe_files[1]))
 #    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('/store/mc/RunIISummer16MiniAODv2/GluGluHToGG_M-125_13TeV_powheg_pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/60000/024E4FA3-8BBC-E611-8E3D-00266CFFBE88.root'))
     #process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/mc/RunIIFall17MiniAOD/GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8/MINIAODSIM/94X_mc2017_realistic_v10-v1/40000/4A2ACB0A-1BD9-E711-AF54-141877410316.root'))
 #    process.source = cms.Source("PoolSource",fileNames=cms.untracked.vstring('root://eoscms.cern.ch//eos/cms/store/mc/RunIIFall17MiniAOD/GluGluToHHTo2B2G_node_SM_13TeV-madgraph/MINIAODSIM/94X_mc2017_realistic_v10-v1/00000/2E0E165D-8E05-E811-909C-FA163E80AE1F.root'))
@@ -100,7 +116,7 @@ process.load("flashgg/MicroAOD/flashggMicroAODSequence_cff")
 #process.weightsCount.pileupInfo = "addPileupInfo"
 
 from flashgg.MicroAOD.flashggMicroAODOutputCommands_cff import microAODDefaultOutputCommand
-process.out = cms.OutputModule("PoolOutputModule", fileName = cms.untracked.string('myMicroAODOutputFile.root'),
+process.out = cms.OutputModule("PoolOutputModule", fileName = cms.untracked.string('myMicroAODOutputFile_testtest.root'),
                                outputCommands = microAODDefaultOutputCommand
                                )
 
