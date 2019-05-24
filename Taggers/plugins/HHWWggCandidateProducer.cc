@@ -215,8 +215,6 @@ namespace flashgg {
     void HHWWggCandidateProducer::produce( Event &event, const EventSetup & )
     {
 
-      bool passMETfilters=1;
-
       event.getByToken( photonToken_, photons );
       event.getByToken( diphotonToken_, diphotons );
       event.getByToken( vertexToken_, vertex );
@@ -286,6 +284,19 @@ namespace flashgg {
         }
 
       }
+
+      bool passMETfilters=1;
+      //Get trigger results relevant to MET filters                                                                                                                                              
+
+      edm::Handle<edm::TriggerResults> triggerBits;
+      if(! evt.isRealData() )
+          evt.getByToken( triggerPAT_, triggerBits );
+      else
+          evt.getByToken( triggerRECO_, triggerBits );
+
+      edm::Handle<edm::TriggerResults> triggerFLASHggMicroAOD;
+      evt.getByToken( triggerFLASHggMicroAOD_, triggerFLASHggMicroAOD );
+      const edm::TriggerNames &triggerNames = evt.triggerNames( *triggerBits );
 
       // check if passMETfilters 
       // std::vector<std::string> flagList {"Flag_HBHENoiseFilter","Flag_HBHENoiseIsoFilter","Flag_EcalDeadCellTriggerPrimitiveFilter","Flag_goodVertices","Flag_eeBadScFilter"};
