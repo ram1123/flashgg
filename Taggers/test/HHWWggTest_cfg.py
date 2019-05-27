@@ -95,35 +95,39 @@ process.HHWWggCandidateDumper.dumpWorkspace = False
 
 ### Using addCateogries once:
 
-# cfgTools.addCategories(process.HHWWggCandidateDumper,
-#                         [
-#                           ("All_Events","1",0), # all events
-#                           ("Passed_Cut1","test",0), # passed cut1 (test is boolean)
-#                         ],
-
-#                         variables = all_variables, 
-#                         histograms=[]
-#                         )
-
-### Using addCategories multiple times:
-
 cfgTools.addCategories(process.HHWWggCandidateDumper,
                         [
-                          ("All_Events","1",0), # all events
+                          ("SLW_tag","SLW_tag",0), # Semileptonic decaying W tag 
+                          #("Pass_PS","Pass_PS && !SLW_tag",0), # At least one preselected diphoton 
+                          #("Remaining","1",0), # Remaining events 
+                            # cut 1
+                            # rest of events 
+                            # 
                         ],
 
                         variables = all_variables, 
                         histograms=[]
                         )
 
-cfgTools.addCategories(process.HHWWggCandidateDumper, 
-                        [
-                          ("Passed_Cut1","test",0), # passed cut1 (test is boolean)
-                        ],
+### Using addCategories multiple times:
 
-                        variables = all_variables, 
-                        histograms=[]
-                        )                      
+# cfgTools.addCategories(process.HHWWggCandidateDumper,
+#                         [
+#                           ("All_Events","1",0), # all events
+#                         ],
+
+#                         variables = all_variables, 
+#                         histograms=[]
+#                         )
+
+# cfgTools.addCategories(process.HHWWggCandidateDumper, 
+#                         [
+#                           ("Passed_Cut1","test",0), # passed cut1 (test is boolean)
+#                         ],
+
+#                         variables = all_variables, 
+#                         histograms=[]
+#                         )                      
 
 ###
 
@@ -159,8 +163,10 @@ process.source = cms.Source ("PoolSource",
                              fileNames = cms.untracked.vstring(
 #"file:/eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIISummer16-2_4_1-25ns_Moriond17_extra/2_4_1/GJets_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16-2_4_1-25ns_Moriond17_extra-2_4_1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/171212_152732/0000/myMicroAODOutputFile_10.root"                               
 #"file:myMicroAODOutputFile_testtest.root"     
-#"root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016B-03Feb2017_ver2-v2/170310_111417/0000/myMicroAODOutputFile_101.root"
-"file:myMicroAODOutputFile_lnulnugg_8Apr2019.root"
+#"root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/cmshgg/ferriff/flashgg/RunIISpring16DR80X-2_3_0-25ns_Moriond17_MiniAODv2_p3/2_3_0/DoubleEG/RunIISpring16DR80X-2_3_0-25ns_Moriond17_MiniAODv2_p3-2_3_0-v0-Run2016G-23Sep2016-v1/170116_174903/0000/myMicroAODOutputFile_4.root"
+"root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016B-03Feb2017_ver2-v2/170310_111417/0000/myMicroAODOutputFile_101.root"
+#"file:myMicroAODOutputFile_lnulnugg_8Apr2019.root"
+#"file:myMicroAODOutputFile_qqlnugg_8Apr2019.root"
 #"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqenu 
 #"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqmunugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqmunu
 #"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_enuenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # enuenu 
@@ -200,7 +206,7 @@ customize.setDefault("maxEvents",1000)
 # if customize.outputFile:
 #     outputFile = customize.outputFile
 
-# customize.parse()
+customize.parse()
 # process.TFileService = cms.Service("TFileService",
 #                                    fileName = cms.string("output.root"),
 #                                    closeFileFast = cms.untracked.bool(True)
@@ -209,7 +215,7 @@ customize.setDefault("maxEvents",1000)
 # Require low mass diphoton triggers
 from HLTrigger.HLTfilters.hltHighLevel_cfi import hltHighLevel
 process.hltHighLevel= hltHighLevel.clone(HLTPaths = cms.vstring(  
-                                                                "HLT_Diphoton30_18_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v*" # 
+                                                                "HLT_Diphoton30_18_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v*" 
                                                                 #"HLT_Diphoton30_18_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90"
                                                               #"HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55_v*",
                                                               #"HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55_v*"
@@ -228,6 +234,7 @@ process.dataRequirements = cms.Sequence()
 
 #process.dataRequirements += process.hltHighLevel # HLT 
 
+print'customize.processId = ',customize.processId
 if customize.processId == "Data":
    process.dataRequirements += process.hltHighLevel # HLT 
    process.dataRequirements += process.eeBadScFilter

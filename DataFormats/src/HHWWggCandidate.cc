@@ -48,29 +48,32 @@ gen_subleading_elec_ (),
 gen_leading_muon_ (),
 gen_subleading_muon_ (), 
 test_ (),
+SLW_tag_ (),
+Pass_PS_ (),
 lsl_dij_ () // Need absence of comma on last variable 
 
 {}
 
   HHWWggCandidate::~HHWWggCandidate() {}
 
-  HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector):
-  diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), JetVector_(JetVector)
+  HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, bool SLW_tag, bool Pass_PS):
+  diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), JetVector_(JetVector), SLW_tag_(SLW_tag), Pass_PS_(Pass_PS)
  
   {
 
     
-
-    cout << "sizes:" << endl;
-    cout << "" << endl;
-    cout << "diphoVector_.size() = " << diphoVector_.size() << endl;
-    cout << "phoVector_.size() = " << phoVector_.size() << endl;
-    cout << "electronVector_.size() = " << electronVector_.size() << endl;
-    cout << "muonVector_.size() = " << muonVector_.size() << endl;
-    cout << "METVector_.size() = " << METVector_.size() << endl;
-    cout << "GenParticlesVector_.size() = " << GenParticlesVector_.size() << endl;
-    cout << "JetVector_.size() = " << JetVector_.size() << endl;
-
+    // if (SLW_tag_){
+    // cout << "sizes:" << endl;
+    // cout << "" << endl;
+    // cout << "diphoVector_.size() = " << diphoVector_.size() << endl;
+    // cout << "phoVector_.size() = " << phoVector_.size() << endl;
+    // cout << "electronVector_.size() = " << electronVector_.size() << endl;
+    // cout << "muonVector_.size() = " << muonVector_.size() << endl;
+    // cout << "METVector_.size() = " << METVector_.size() << endl;
+    // cout << "GenParticlesVector_.size() = " << GenParticlesVector_.size() << endl;
+    // cout << "JetVector_.size() = " << JetVector_.size() << endl;
+    // }
+    
     // if (diphoVector_.size() >= 1) test = 1;
     // else test = 0;
 

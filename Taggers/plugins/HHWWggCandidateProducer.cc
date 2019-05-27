@@ -11,6 +11,8 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/EDMException.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
 
 #include "flashgg/DataFormats/interface/DiPhotonCandidate.h"
 #include "flashgg/DataFormats/interface/SinglePhotonView.h"
@@ -29,6 +31,7 @@
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
 #include "flashgg/MicroAOD/interface/CutBasedDiPhotonObjectSelector.h"
 
@@ -56,7 +59,13 @@ namespace flashgg {
     //---ctors
     HHWWggCandidateProducer();
     HHWWggCandidateProducer( const ParameterSet & );
+
+    //---Outtree 
+    edm::Service<TFileService> fs;  
+    TH1F* cutFlow;
+
   private:
+    double genTotalWeight;
     void produce( Event &, const EventSetup & ) override;
 
     // Adding Jets 
@@ -138,6 +147,9 @@ namespace flashgg {
     bool useElectronMVARecipe_;
     bool useElectronLooseID_;
 
+    edm::InputTag genInfo_;
+    edm::EDGetTokenT<GenEventInfoProduct> genInfoToken_;
+
   };
 
   //---constructors
@@ -171,6 +183,9 @@ namespace flashgg {
     idSelector_( pSet.getParameter<ParameterSet> ( "idSelection" ), cc_ )
 
     {
+      genInfo_ = pSet.getUntrackedParameter<edm::InputTag>( "genInfo", edm::InputTag("generator") );
+      genInfoToken_ = consumes<GenEventInfoProduct>( genInfo_ );
+      cutFlow = fs->make<TH1F> ("cutFlow","Cut Flow",10,0,10);
 
       leptonPtThreshold_ = pSet.getParameter<double>( "leptonPtThreshold");
       muonEtaThreshold_ = pSet.getParameter<double>( "muonEtaThreshold");
@@ -214,7 +229,7 @@ namespace flashgg {
 
     void HHWWggCandidateProducer::produce( Event &event, const EventSetup & )
     {
-
+      // Get particle objects
       event.getByToken( photonToken_, photons );
       event.getByToken( diphotonToken_, diphotons );
       event.getByToken( vertexToken_, vertex );
@@ -227,6 +242,12 @@ namespace flashgg {
       event.getByToken( rhoTag_, rho);
 
       double rho_    = *rho;
+
+      // Set cut booleans
+      bool one_slw_tag = 0; // one SL W tagged  
+      bool SLW_tag = 0; // Semi-Leptonically Decaying W 
+      bool one_ps_dp = 0; // one preselected diphoton found 
+      bool Pass_PS = 0; // Preselected Diphoton (may also pass SLW_tag)
 
       //---output collection
       std::unique_ptr<vector<HHWWggCandidate> > HHWWggColl_( new vector<HHWWggCandidate> );
@@ -246,6 +267,7 @@ namespace flashgg {
       int n_photons = photons->size();
       int n_diphotons = diphotons->size();
       int n_METs = METs->size(); // Should be 1, but using as a way to obtain met four vector 
+      int n_jets;
       std::vector<flashgg::Photon> phoVector;
       std::vector<flashgg::DiPhotonCandidate> diphoVector;
       std::vector<flashgg::Electron> electronVector;
@@ -274,7 +296,7 @@ namespace flashgg {
 
         edm::Handle<edm::View<flashgg::Jet> > jets;
         event.getByToken( jetTokens_[vtx], jets);
-
+        n_jets = jets->size();
         for( size_t ijet=0; ijet < jets->size(); ++ijet ) { //jets are ordered in pt
             auto jet = jets->ptrAt(ijet);
 
@@ -425,8 +447,11 @@ namespace flashgg {
 
             //has Nj<thresh; photonSelection; muons>=1||electrons>=1; metPt>thresh
             if( (tagJets.size() < jetsNumberThreshold_) && photonSelection && theMET->getCorPt()>METThreshold_) {
-                cout << "Tagging semi-leptonic W decay " << endl;
-
+                //cout << "Tagging semi-leptonic W decay " << endl;
+                if (!one_slw_tag){
+                    one_slw_tag = 1;
+                    SLW_tag = 1; 
+                  }
                 // how to go from pointer 'jet' to object '*thisJetPointer'
                 //flashgg::Jet * thisJetPointer = const_cast<flashgg::Jet *>(jet.get());
                 //JetVector.push_back(*thisJetPointer);
@@ -459,8 +484,12 @@ namespace flashgg {
                 edm::Ptr<flashgg::DiPhotonCandidate> dipho_ = dipho;
                 flashgg::DiPhotonCandidate * thisDPPointer = const_cast<flashgg::DiPhotonCandidate *>(dipho_.get());
                 // diphoton preselection 
-                // PassPS = false;
-                // PassPS |= idSelector_(*thisDPPointer, event);
+                //Pass_PS = false;
+                // Pass_PS |= idSelector_(*thisDPPointer, event);
+                // if ( (Pass_PS) && (!one_ps_dp) ) {
+                //   one_ps_dp = 1;
+                //   Pass_PS = 1;
+                // }
                 // if (PassPS) {
                 diphoVector_.push_back(*thisDPPointer);
 
@@ -551,13 +580,15 @@ namespace flashgg {
 
 //         // Get all electrons 
 //         // Append electronVector
-//         for( int electronIndex = 0; electronIndex < n_electrons; electronIndex++ )
-//         {
+        // for( int electronIndex = 0; electronIndex < n_electrons; electronIndex++ )
+        // {
 
-//           edm::Ptr<flashgg::Electron> elec = electrons->ptrAt( electronIndex );
-//           flashgg::Electron * thisElecPointer = const_cast<flashgg::Electron *>(elec.get());
-//           electronVector.push_back(*thisElecPointer);
-//         }
+        //   edm::Ptr<flashgg::Electron> elec = electrons->ptrAt( electronIndex );
+        //   flashgg::Electron * thisElecPointer = const_cast<flashgg::Electron *>(elec.get());
+        //   electronVector.push_back(*thisElecPointer);
+        // }
+
+        // if (n_electrons >= 0) 
 
 //         //Save Good electrons 
 
@@ -602,19 +633,24 @@ namespace flashgg {
 //         // Append diphoVector if it passes preselection 
 //         bool PassPS = false;
 //         bool one_PS_dpho = false; // at least one diphoton passes preselection
-//         for( int diphoIndex = 0; diphoIndex < n_diphotons; diphoIndex++ )
-//         {
-//           edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( diphoIndex );
-//           flashgg::DiPhotonCandidate * thisDPPointer = const_cast<flashgg::DiPhotonCandidate *>(dipho.get());
-//           //---at least one diphoton should pass the low mass hgg pre-selection
-//           PassPS = false;
-//           PassPS |= idSelector_(*thisDPPointer, event);
-//           if (PassPS) {
-//             diphoVector.push_back(*thisDPPointer);
-//             if (!one_PS_dpho) one_PS_dpho = true;
-//           }
+        for( int diphoIndex = 0; diphoIndex < n_diphotons; diphoIndex++ )
+        {
+          edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( diphoIndex );
+          flashgg::DiPhotonCandidate * thisDPPointer = const_cast<flashgg::DiPhotonCandidate *>(dipho.get());
+          Pass_PS |= idSelector_(*thisDPPointer, event);
+          if ( (Pass_PS) && (!one_ps_dp) ) {
+            one_ps_dp = 1;
+            Pass_PS = 1;
+          }
+          //---at least one diphoton should pass the low mass hgg pre-selection
+          // PassPS = false;
+          // PassPS |= idSelector_(*thisDPPointer, event);
+          // if (PassPS) {
+          //   diphoVector.push_back(*thisDPPointer);
+          //   if (!one_PS_dpho) one_PS_dpho = true;
+          // }
           
-//         }
+        }
 
 //         //-- Get MET  
 
@@ -691,8 +727,38 @@ namespace flashgg {
         //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector); // before adding jets 
         //HHWWggCandidate HHWWgg(diphoVector, phoVector, vertex_zero, genVertex, electronVector, muonVector, METVector, genParticlesVector, JetVector);
 
-        // After updating to mimic WHLeptonicTagProducer.cc
-        HHWWggCandidate HHWWgg(diphoVector_, phoVector, vertex_zero, genVertex, goodElectrons_, goodMuons_, theMET_, genParticlesVector, tagJets_);
+        // CutFlow for Semi-Leptonic Signal
+
+        // Data 
+        if (event.isRealData()){
+          cutFlow->Fill(0.0,1);
+          if (n_photons >= 2) cutFlow->Fill(1.0,1);
+          if (n_electrons >= 1) cutFlow->Fill(2.0,1);
+          if (n_muons >= 1) cutFlow->Fill(3.0,1);
+          if (n_jets >= 1) cutFlow->Fill(4.0,1);
+          if (Pass_PS) cutFlow->Fill(5.0,1);
+          if (SLW_tag) cutFlow->Fill(6.0,1);
+          if ( (Pass_PS) and (SLW_tag) ) cutFlow->Fill(7.0,1);
+        }
+
+        // MC 
+        if (!event.isRealData()){
+
+          Handle<GenEventInfoProduct> genInfo;
+          event.getByToken(genInfoToken_, genInfo);
+          genTotalWeight = genInfo->weight();
+
+          cutFlow->Fill(0.0,genTotalWeight);
+          if (n_photons >= 2) cutFlow->Fill(1.0,genTotalWeight);
+          if (n_electrons >= 1) cutFlow->Fill(2.0,genTotalWeight);
+          if (n_muons >= 1) cutFlow->Fill(3.0,genTotalWeight);
+          if (n_jets >= 1) cutFlow->Fill(4.0,genTotalWeight);
+          if (Pass_PS) cutFlow->Fill(5.0,genTotalWeight);
+          if (SLW_tag) cutFlow->Fill(6.0,genTotalWeight);
+          if ( (Pass_PS) and (SLW_tag) ) cutFlow->Fill(7.0,genTotalWeight);
+        }
+
+        HHWWggCandidate HHWWgg(diphoVector_, phoVector, vertex_zero, genVertex, goodElectrons_, goodMuons_, theMET_, genParticlesVector, tagJets_, SLW_tag, Pass_PS);
 
         HHWWggColl_->push_back(HHWWgg);
 

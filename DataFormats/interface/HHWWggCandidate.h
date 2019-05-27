@@ -33,7 +33,8 @@ namespace flashgg {
     //HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector);
     
     // After adding jets 
-    HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector); 
+    //diphoVector_, phoVector, vertex_zero, genVertex, goodElectrons_, goodMuons_, theMET_, genParticlesVector, tagJets_, SLW_tag
+    HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, bool SLW_tag, bool Pass_PS); 
     //HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<edm::Ptr<Jet>> tagJets); 
     // Testing with new constructor to make plot of variable from new item such as diphoton vector size 
 
@@ -82,6 +83,8 @@ namespace flashgg {
     const reco::Candidate::LorentzVector& gen_leading_muon() const { return gen_leading_muon_; };
     const reco::Candidate::LorentzVector& gen_subleading_muon() const { return gen_subleading_muon_; };
     bool test() const { return test_; };
+    bool SLW_tag() const { return SLW_tag_; }; 
+    bool Pass_PS() const { return Pass_PS_; }; 
     const reco::Candidate::LorentzVector& lsl_dij() const { return lsl_dij_; };
   private:
 
@@ -122,6 +125,8 @@ namespace flashgg {
     reco::Candidate::LorentzVector gen_leading_muon_;
     reco::Candidate::LorentzVector gen_subleading_muon_;
     bool test_;
+    bool SLW_tag_;
+    bool Pass_PS_;
     reco::Candidate::LorentzVector lsl_dij_;
 
   };
