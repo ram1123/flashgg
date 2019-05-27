@@ -288,15 +288,15 @@ namespace flashgg {
       bool passMETfilters=1;
       //Get trigger results relevant to MET filters                                                                                                                                              
 
-      edm::Handle<edm::TriggerResults> triggerBits;
-      if(! evt.isRealData() )
-          evt.getByToken( triggerPAT_, triggerBits );
-      else
-          evt.getByToken( triggerRECO_, triggerBits );
+      // edm::Handle<edm::TriggerResults> triggerBits;
+      // if(! event.isRealData() )
+      //     event.getByToken( triggerPAT_, triggerBits );
+      // else
+      //     event.getByToken( triggerRECO_, triggerBits );
 
-      edm::Handle<edm::TriggerResults> triggerFLASHggMicroAOD;
-      evt.getByToken( triggerFLASHggMicroAOD_, triggerFLASHggMicroAOD );
-      const edm::TriggerNames &triggerNames = evt.triggerNames( *triggerBits );
+      // edm::Handle<edm::TriggerResults> triggerFLASHggMicroAOD;
+      // event.getByToken( triggerFLASHggMicroAOD_, triggerFLASHggMicroAOD );
+      // const edm::TriggerNames &triggerNames = event.triggerNames( *triggerBits );
 
       // check if passMETfilters 
       // std::vector<std::string> flagList {"Flag_HBHENoiseFilter","Flag_HBHENoiseIsoFilter","Flag_EcalDeadCellTriggerPrimitiveFilter","Flag_goodVertices","Flag_eeBadScFilter"};
@@ -314,7 +314,7 @@ namespace flashgg {
       //     }
 
       // std::vector<std::string> flashggFlagList {"flag_BadChargedCandidateFilter","flag_BadPFMuonFilter","flag_globalTightHalo2016Filter"};
-      // const edm::TriggerNames &flashggtriggerNames = evt.triggerNames( *triggerFLASHggMicroAOD );
+      // const edm::TriggerNames &flashggtriggerNames = event.triggerNames( *triggerFLASHggMicroAOD );
       // for( unsigned int i = 0; i < flashggtriggerNames.triggerNames().size(); i++ )
       //     {
       //         if(!triggerFLASHggMicroAOD->accept(i))
@@ -564,12 +564,12 @@ namespace flashgg {
 //         // std::vector<edm::Ptr<Electron> >goodElectrons = selectStdElectrons( electronVector->ptrs(), dipho,vertices->ptrs(), leptonPtThreshold_, electronEtaThresholds_,
 //         //                                                           useElectronMVARecipe_,useElectronLooseID_,
 //         //                                                           deltaRPhoElectronThreshold_,DeltaRTrkElec_,deltaMassElectronZThreshold_,
-//         //                                                           rho_, evt.isRealData() );
+//         //                                                           rho_, event.isRealData() );
 
 //         // std::vector<edm::Ptr<Electron> >goodElectrons = selectStdElectrons( theElectrons->ptrs(), dipho,vertices->ptrs(), leptonPtThreshold_, electronEtaThresholds_,
 //         //                                                           useElectronMVARecipe_,useElectronLooseID_,
 //         //                                                           deltaRPhoElectronThreshold_,DeltaRTrkElec_,deltaMassElectronZThreshold_,
-//         //                                                           rho_, evt.isRealData() );
+//         //                                                           rho_, event.isRealData() );
 
 //         //-- Get Muons
 

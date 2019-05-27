@@ -47,6 +47,7 @@ gen_leading_elec_ (),
 gen_subleading_elec_ (),
 gen_leading_muon_ (),
 gen_subleading_muon_ (), 
+test_ (),
 lsl_dij_ () // Need absence of comma on last variable 
 
 {}
@@ -58,6 +59,8 @@ lsl_dij_ () // Need absence of comma on last variable
  
   {
 
+    
+
     cout << "sizes:" << endl;
     cout << "" << endl;
     cout << "diphoVector_.size() = " << diphoVector_.size() << endl;
@@ -68,6 +71,8 @@ lsl_dij_ () // Need absence of comma on last variable
     cout << "GenParticlesVector_.size() = " << GenParticlesVector_.size() << endl;
     cout << "JetVector_.size() = " << JetVector_.size() << endl;
 
+    // if (diphoVector_.size() >= 1) test = 1;
+    // else test = 0;
 
     // Might eventually sort by object, not GEN/RECO 
 
@@ -169,6 +174,12 @@ lsl_dij_ () // Need absence of comma on last variable
     unsigned int JVSize = JetVector_.size(), QVSize = quarkVector.size();
     //bool match1 = false, match2 = false;
     bool is_pair = 0;
+    // if (diphoVector_.size() >= 1) {
+    //   test = 1;
+    //   }
+    // else {
+    //   test = 0;
+    //   }
     double dr = 0., dpt = 0.;
     int mii = 0; 
     int qim = 0, qjm = 0; // i and j quark mothers 
@@ -414,10 +425,12 @@ lsl_dij_ () // Need absence of comma on last variable
     //-- Diphotons 
     unsigned int ndpho = diphoVector_.size(); // number of diphotons 
     double tmp_dp_pt = 0, max_dp_pt = -99; // temporary diphoton pt 
+    //bool test = 0;
 
     // If only one diphoton, save its four vector 
     if (ndpho == 1)
     {
+      test_ = 1; 
       flashgg::DiPhotonCandidate dipho_ = diphoVector_[0];
       auto dipho = dipho_.p4();
       leading_dpho_ = dipho;
@@ -427,6 +440,7 @@ lsl_dij_ () // Need absence of comma on last variable
     // If more than one diphoton, take the highest pt diphoton 
     else if (ndpho > 1)
     {
+      test_ = 1;
       
       for (unsigned int i = 0; i < ndpho; i ++)
       {

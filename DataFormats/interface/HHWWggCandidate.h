@@ -81,6 +81,7 @@ namespace flashgg {
     const reco::Candidate::LorentzVector& gen_subleading_elec() const { return gen_subleading_elec_; };
     const reco::Candidate::LorentzVector& gen_leading_muon() const { return gen_leading_muon_; };
     const reco::Candidate::LorentzVector& gen_subleading_muon() const { return gen_subleading_muon_; };
+    bool test() const { return test_; };
     const reco::Candidate::LorentzVector& lsl_dij() const { return lsl_dij_; };
   private:
 
@@ -120,6 +121,7 @@ namespace flashgg {
     reco::Candidate::LorentzVector gen_subleading_elec_;
     reco::Candidate::LorentzVector gen_leading_muon_;
     reco::Candidate::LorentzVector gen_subleading_muon_;
+    bool test_;
     reco::Candidate::LorentzVector lsl_dij_;
 
   };
