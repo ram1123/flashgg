@@ -1,0 +1,8 @@
+{
+"processes": {
+        "Data"   : [
+"/DoubleEG/sethzenz-ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016C-03Feb2017-v1-a56cd34be537fa6f2c9a0e455e52bfcd/USER"
+   ]
+ },
+     "cmdLine" : "campaign=ReMiniAOD-03Feb2017-2_5_Y targetLumi=35.87e+3 processId=Data processType=Data"
+}
