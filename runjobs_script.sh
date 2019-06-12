@@ -15,8 +15,8 @@ bkg_output+="_Bkg"
 # Make output directories if they don't exist 
 mkdir -p $data_output;
 mkdir -p $bkg_output;
-mkdir -p /eos/cms/store/user/atishelm/$data_output;
-mkdir -p /eos/cms/store/user/atishelm/$bkg_output;
+mkdir -p /eos/user/a/atishelm/$data_output;
+mkdir -p /eos/user/a/atishelm/$bkg_output;
 # Get all files 
 data_direc="/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/Taggers/test/Data_Jsons" # where singular data configs are 
 bkg_direc="/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/Taggers/test/Bkg_Jsons" # where singular bkg configs are 
@@ -57,7 +57,7 @@ do
     echo "Running on path: $path"
     command='fggRunJobs.py --load '
     command+=$path
-    command+=' -D -P -n 100 -d ' # Might need to be careful not to have too many output files. EOS has a limit. 
+    command+=' -D -P -n 500 -d ' # Might need to be careful not to have too many output files. EOS has a limit. 
     command+=$data_output
     command+=' -x cmsRun Taggers/test/HHWWggTest_cfg.py maxEvents='
     command+=$num_events
@@ -65,7 +65,7 @@ do
     echo "command: $command"
     eval "$command" 
     echo "Finished job for file: $path"
-    mv $data_output/*.root /eos/cms/store/user/atishelm/$data_output/
+    mv $data_output/*.root /eos/user/a/atishelm/$data_output/
     echo "Finished moving files for: $path"
     echo " "
     dp_i=$(($dp_i+1))
@@ -83,7 +83,7 @@ do
     echo "Running on path: $path"
     command='fggRunJobs.py --load '
     command+=$path
-    command+=' -D -P -n 100 -d ' # Might need to be careful not to have too many output files. EOS has a limit. 
+    command+=' -D -P -n 500 -d ' # Might need to be careful not to have too many output files. EOS has a limit. 
     command+=$bkg_output
     command+=' -x cmsRun Taggers/test/HHWWggTest_cfg.py maxEvents='
     command+=$num_events
@@ -91,7 +91,7 @@ do
     echo "command: $command"
     eval "$command" 
     echo "Finished job for file: $path"
-    mv $bkg_output/*.root /eos/cms/store/user/atishelm/$bkg_output/
+    mv $bkg_output/*.root /eos/user/a/atishelm/$bkg_output/ 
     echo "Finished moving files for: $path"
     echo " "
     bp_i=$(($bp_i+1))

@@ -40,111 +40,18 @@ process.HHWWggCandidateDumper.dumpTrees = True # Needs to be set to true here. D
 process.HHWWggCandidateDumper.dumpWorkspace = False
 
 # Create histograms 
-# cfgTools.addCategories(process.HHWWggCandidateDumper, # className, src, ... from _cff ^^ 
-#                         [
-#                             # Add the categories you'd like to have in the output file 
-#                             #("4photons","phoVector.size() > 3", 0), # label, cutbased, subcats
-#                             #("Reject", "", -1), # not cut based, and sub cats !>= 0, so nothing will be done 
-#                             #("Dipho_PS","diphoVector.size() > 0",0),
-#                             ("All_Events","1",0), # all events with subcategories 
-#                             #("Passed_Cut1","test",0), # passed cut1 (test is boolean)
-#                             # ("Cut2","1",0),  
-#                             # ("Cut3","1",0), 
-
-#                             #("Dipho_PS","diphoVector.size() >= 1",0) # events with at least one diphoton passing preselection  
-#                             #("SemiLeptonic","electronVector.size() == 1", 0), # Or muon vector
-#                             #("FullyLeptonic","electronVector.size() == 2", 0), # Or muons 
-#                             #("FullyHadronic","electronVector.size() == 0 || electronVector.size() > 2", 0)
-
-#                             #("Reject", "", -1),
-#                             #("All","electronVector.size() != 0", 0),
-#                             #("All","diphoVector.size() == 0 || diphoVector.size() != 0", 0),
-
-#                             # Cut 1
-#                             #("1a3_1","electronVector.size() != 0", 0), 
-#                             #("1a3_1","muonVector.size() != 0", 0), 
-
-#                             # Cut 2
-#                             #("1a3_1","electronVector.size() >= 2", 0), 
-#                             #("1a3_1","muonVector.size() >= 2", 0), 
-
-#                             # Cut 3
-#                             #("1a3_1","diphoVector.size() > 0", 0),
-
-#                             # Cuts 1 and 3 
-#                             #("1a3_1","electronVector.size() != 0 && diphoVector.size() > 0", 0), 
-#                             #("1a3_1","muonVector.size() != 0 && diphoVector.size() > 0", 0), 
-
-#                             # Cuts 2 and 3 
-#                             #("1a3_1","electronVector.size() >= 2 && diphoVector.size() > 0", 0), 
-#                             #("1a3_1","muonVector.size() >= 2 && diphoVector.size() > 0", 0), 
-
-#                             #("Reject", "", -1),
-#                             #("4photons","phoVector.size() > 3", 0),
-#                             #("3photons","phoVector.size() == 3", 0),
-#                             #("2photons","phoVector.size() == 2", 0)
-
-#                             # process.HHWWggCandidateDumper.classifierCfg.categories.append(cb) done for each cut here. phoVector.size() > 3, ... 
-#                             # default of classifierCfg.categories in _cff file. # categories = cms.VPSet(), (I think empty)
-#                         ],
-
-#                         variables = all_variables, # input desired variables from HHWWggTagVariables. They end up getting added by dumperConfigTools.py 
-#                         # I think you can add things like binning as well, but I can just deal with this in the off-flashgg plotter 
-#                         histograms=[]
-#                         )
-
-### Using addCateogries once:
 
 cfgTools.addCategories(process.HHWWggCandidateDumper,
                         [
-                          ("SLW_tag","SLW_tag",0), # Semileptonic decaying W tag 
-                          #("Pass_PS","Pass_PS && !SLW_tag",0), # At least one preselected diphoton 
+                          ("All_HLT_Events","Cut_Results[0]",0), # All events that passed HLT 
                           #("Remaining","1",0), # Remaining events 
                             # cut 1
                             # rest of events 
-                            # 
                         ],
 
                         variables = all_variables, 
                         histograms=[]
                         )
-
-### Using addCategories multiple times:
-
-# cfgTools.addCategories(process.HHWWggCandidateDumper,
-#                         [
-#                           ("All_Events","1",0), # all events
-#                         ],
-
-#                         variables = all_variables, 
-#                         histograms=[]
-#                         )
-
-# cfgTools.addCategories(process.HHWWggCandidateDumper, 
-#                         [
-#                           ("Passed_Cut1","test",0), # passed cut1 (test is boolean)
-#                         ],
-
-#                         variables = all_variables, 
-#                         histograms=[]
-#                         )                      
-
-###
-
-# cfgTools.addCategories(process.HHWWggCandidateDumper, # className, src, ... from _cff ^^ 
-#                         [
-#                             # Add the categories you'd like to have in the output file 
-#                             #("4photons","phoVector.size() > 3", 0), # label, cutbased, subcats
-#                             #("Reject", "", -1), # not cut based, and sub cats !>= 0, so nothing will be done 
-#                             ("SemiLeptonic","electronVector.size() == 1", 0), # Or muon vector
-#                             # process.HHWWggCandidateDumper.classifierCfg.categories.append(cb) done for each cut here. phoVector.size() > 3, ... 
-#                             # default of classifierCfg.categories in _cff file. # categories = cms.VPSet(), (I think empty)
-#                         ],
-
-#                         variables = all_variables, # input desired variables from HHWWggTagVariables. They end up getting added by dumperConfigTools.py 
-#                         # I think you can add things like binning as well, but I can just deal with this in the off-flashgg plotter 
-#                         histograms=[]
-#                         )  
 
 # process.source = cms.Source ("PoolSource",
 #                              fileNames = cms.untracked.vstring(
@@ -164,9 +71,10 @@ process.source = cms.Source ("PoolSource",
 #"file:/eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIISummer16-2_4_1-25ns_Moriond17_extra/2_4_1/GJets_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16-2_4_1-25ns_Moriond17_extra-2_4_1-v0-RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/171212_152732/0000/myMicroAODOutputFile_10.root"                               
 #"file:myMicroAODOutputFile_testtest.root"     
 #"root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/cmshgg/ferriff/flashgg/RunIISpring16DR80X-2_3_0-25ns_Moriond17_MiniAODv2_p3/2_3_0/DoubleEG/RunIISpring16DR80X-2_3_0-25ns_Moriond17_MiniAODv2_p3-2_3_0-v0-Run2016G-23Sep2016-v1/170116_174903/0000/myMicroAODOutputFile_4.root"
-"root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016B-03Feb2017_ver2-v2/170310_111417/0000/myMicroAODOutputFile_101.root"
+#"root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016B-03Feb2017_ver2-v2/170310_111417/0000/myMicroAODOutputFile_101.root"
 #"file:myMicroAODOutputFile_lnulnugg_8Apr2019.root"
-#"file:myMicroAODOutputFile_qqlnugg_8Apr2019.root"
+"file:myMicroAODOutputFile_qqlnugg_8Apr2019.root"
+#"file:myMicroAODOutputFile_qqqqgg_8Apr2019.root"
 #"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqenu 
 #"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqmunugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqmunu
 #"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_enuenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # enuenu 
@@ -199,14 +107,14 @@ customize.setDefault("maxEvents",1000)
 
 
 # import FWCore.ParameterSet.VarParsing as VarParsing
-# customize(process)
+customize(process)
 # if customize.inputFiles:
 #     inputFile = customize.inputFiles
 #
 # if customize.outputFile:
 #     outputFile = customize.outputFile
 
-customize.parse()
+#customize.parse()
 # process.TFileService = cms.Service("TFileService",
 #                                    fileName = cms.string("output.root"),
 #                                    closeFileFast = cms.untracked.bool(True)
@@ -214,8 +122,8 @@ customize.parse()
 
 # Require low mass diphoton triggers
 from HLTrigger.HLTfilters.hltHighLevel_cfi import hltHighLevel
-process.hltHighLevel= hltHighLevel.clone(HLTPaths = cms.vstring(  
-                                                                "HLT_Diphoton30_18_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v*" 
+process.hltHighLevel= hltHighLevel.clone(HLTPaths = cms.vstring(   
+                                                                "HLT_Diphoton30_18_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90_v*" # 2016 Hgg HLT path 
                                                                 #"HLT_Diphoton30_18_R9Id_OR_IsoCaloId_AND_HE_R9Id_Mass90"
                                                               #"HLT_Diphoton30PV_18PV_R9Id_AND_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55_v*",
                                                               #"HLT_Diphoton30EB_18EB_R9Id_OR_IsoCaloId_AND_HE_R9Id_DoublePixelVeto_Mass55_v*"
@@ -255,4 +163,4 @@ process.path = cms.Path(process.flashggDiPhotonMVA*process.flashggUnpackedJets*p
 # process.path = cms.Path(process.FlashggHHWWggCandidate+process.HHWWggCandidateDumper)
 #process.e = cms.EndPath(process.out)
 
-customize(process) 
+# customize(process) 

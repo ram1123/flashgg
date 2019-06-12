@@ -29,6 +29,7 @@ pho4_MVA_ (),
 MET_fourvec_ (),
 leading_dpho_ (),
 leading_pho_ (),
+sub_leading_pho_ (),
 leading_elec_(),
 subleading_elec_(),
 leading_muon_(),
@@ -50,18 +51,22 @@ gen_subleading_muon_ (),
 test_ (),
 SLW_tag_ (),
 Pass_PS_ (),
+Cut_Results_ (),
 lsl_dij_ () // Need absence of comma on last variable 
 
 {}
 
   HHWWggCandidate::~HHWWggCandidate() {}
 
-  HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, bool SLW_tag, bool Pass_PS):
-  diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), JetVector_(JetVector), SLW_tag_(SLW_tag), Pass_PS_(Pass_PS)
+  HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, std::vector<double> Cut_Results):
+  diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), JetVector_(JetVector), Cut_Results_(Cut_Results)
  
   {
 
-    
+    // for (unsigned int i = 0; i < Cut_Results_.size(); i++){
+    //   cout << "Cut_Results_[" << i << "] = " << Cut_Results_[i] << endl;
+    // }
+
     // if (SLW_tag_){
     // cout << "sizes:" << endl;
     // cout << "" << endl;
@@ -183,7 +188,7 @@ lsl_dij_ () // Need absence of comma on last variable
     // else {
     //   test = 0;
     //   }
-    double dr = 0., dpt = 0.;
+    double dr = 0.; //, dpt = 0.;
     int mii = 0; 
     int qim = 0, qjm = 0; // i and j quark mothers 
     //float inv_mass = 0;
@@ -217,7 +222,7 @@ lsl_dij_ () // Need absence of comma on last variable
       // Loop 'i' quarks 
       for (unsigned int i = 0; i < QVSize - 1; i++){ // last quark cannot be ith quark because then there will be no j quark 
 
-        cout << "Looking at quark " << i << endl;
+        //cout << "Looking at quark " << i << endl;
 
         //flashgg::Jet ijet = JetVector_[i];
         reco::GenParticle quarki = quarkVector[i]; //quark i 
@@ -338,7 +343,8 @@ lsl_dij_ () // Need absence of comma on last variable
 
     }
 
-    else cout << "There are more quarks than jets, and/or no jets at all. Skipping." << endl;
+    //else cout << "There are more quarks than jets, and/or no jets at all. Skipping." << endl;
+    else {};
 
     //cout << "Hello, outside of matching loop" << endl;
 
@@ -464,7 +470,7 @@ lsl_dij_ () // Need absence of comma on last variable
       unsigned int npho = phoVector_.size(); // number of photons 
       double tmp_p_pt = 0, max_p_pt = -99; // temporary photon pt 
 
-      
+      // Get Leading photon
       for (unsigned int i = 0; i < npho; i ++)
       {
         flashgg::Photon tmp_pho_ = phoVector_[i];
@@ -476,8 +482,21 @@ lsl_dij_ () // Need absence of comma on last variable
           leading_pho_ = pho_;
         }
       }
+      double leading_pho_pt = max_p_pt;
 
-    //cout << "Right before MET" << endl;
+      // Get Subleading photon 
+      max_p_pt = -99;
+      for (unsigned int i = 0; i < npho; i ++)
+      {
+        flashgg::Photon tmp_pho_ = phoVector_[i];
+        auto pho_ = tmp_pho_.p4();
+        tmp_p_pt = pho_.pt();
+        if ((tmp_p_pt > max_p_pt) &&  (tmp_p_pt != leading_pho_pt)) 
+        {
+          max_p_pt = tmp_p_pt;
+          sub_leading_pho_ = pho_;
+        }
+      }
 
     // MET 
     if (METVector_.size() == 1)
@@ -490,12 +509,6 @@ lsl_dij_ () // Need absence of comma on last variable
       //W1_TM_ = W.Mt();
 
     } 
-
-    //cout << "Right after MET" << endl;
-
-    // ---
-    // Get leading and subleading leptons
-    // --- 
 
     // Get leading electron 
     float l_elec_pt = -99;
@@ -569,5 +582,4 @@ lsl_dij_ () // Need absence of comma on last variable
 
       }
     } 
-
   }

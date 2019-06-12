@@ -29,14 +29,7 @@ namespace flashgg {
     //---ctors---
     // when constructor overloading, each must have different number or specific types of input variables 
     HHWWggCandidate() ;
-    // before adding jets
-    //HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector);
-    
-    // After adding jets 
-    //diphoVector_, phoVector, vertex_zero, genVertex, goodElectrons_, goodMuons_, theMET_, genParticlesVector, tagJets_, SLW_tag
-    HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, bool SLW_tag, bool Pass_PS); 
-    //HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<edm::Ptr<Jet>> tagJets); 
-    // Testing with new constructor to make plot of variable from new item such as diphoton vector size 
+    HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, std::vector<double> Cut_Results); 
 
     //---dtor---
     ~HHWWggCandidate();
@@ -61,6 +54,7 @@ namespace flashgg {
     const reco::Candidate::LorentzVector& MET_fourvec() const { return MET_fourvec_; };
     const reco::Candidate::LorentzVector& leading_dpho() const { return leading_dpho_; };
     const reco::Candidate::LorentzVector& leading_pho() const { return leading_pho_; };
+    const reco::Candidate::LorentzVector& sub_leading_pho() const { return sub_leading_pho_; };
     const reco::Candidate::LorentzVector& leading_elec() const { return leading_elec_; };
     const reco::Candidate::LorentzVector& subleading_elec() const { return subleading_elec_; };
     const reco::Candidate::LorentzVector& leading_muon() const { return leading_muon_; };
@@ -85,6 +79,7 @@ namespace flashgg {
     bool test() const { return test_; };
     bool SLW_tag() const { return SLW_tag_; }; 
     bool Pass_PS() const { return Pass_PS_; }; 
+    const std::vector<double> Cut_Results() const { return Cut_Results_; };
     const reco::Candidate::LorentzVector& lsl_dij() const { return lsl_dij_; };
   private:
 
@@ -106,6 +101,7 @@ namespace flashgg {
     reco::Candidate::LorentzVector MET_fourvec_;
     reco::Candidate::LorentzVector leading_dpho_;
     reco::Candidate::LorentzVector leading_pho_;
+    reco::Candidate::LorentzVector sub_leading_pho_;
     reco::Candidate::LorentzVector leading_elec_;
     reco::Candidate::LorentzVector subleading_elec_;
     reco::Candidate::LorentzVector leading_muon_;
@@ -127,6 +123,7 @@ namespace flashgg {
     bool test_;
     bool SLW_tag_;
     bool Pass_PS_;
+    std::vector<double> Cut_Results_;
     reco::Candidate::LorentzVector lsl_dij_;
 
   };
