@@ -378,9 +378,9 @@ namespace flashgg {
             if( !hasGoodElec && !hasGoodMuons ) { continue; }
             //including SFs for leading muon or electron 
             if(goodMuons.size()>0){
-                whleptonictags_obj.includeWeightsByLabel( *goodMuons.at(0), "MuonWeight");
+                //whleptonictags_obj.includeWeightsByLabel( *goodMuons.at(0), "MuonWeight");
             } else if (goodElectrons.size() > 0){
-                whleptonictags_obj.includeWeights( *goodElectrons.at(0));
+                //whleptonictags_obj.includeWeights( *goodElectrons.at(0));
             }
 
             for( unsigned int candIndex_outer = 0; candIndex_outer < Jets[jetCollectionIndex]->size() ; candIndex_outer++ ) 

@@ -27,6 +27,10 @@ HHWWgg_variables = [
     "Cut_5                               := Cut_Results[5]",
     "Cut_6                               := Cut_Results[6]",
     "Cut_7                               := Cut_Results[7]",
+    "n_good_electrons                    := Cut_Variables[0]", 
+    "n_good_muons                        := Cut_Variables[1]", 
+    "n_good_jets                         := Cut_Variables[2]", 
+    "passMETfilters                      := Cut_Variables[3]",
 
     #---------------------------------------------------------------------------------------------------#
 
@@ -71,7 +75,7 @@ HHWWgg_variables = [
 
     # DiPhoton(s)
     # leading_dpho = diphoton with highest pt 
-    "n_ps_dipho                          := diphoVector.size()",
+    "n_dipho                          := diphoVector.size()",
     "leading_dpho_mass                   := ? leading_dpho.mass() != 0 ? leading_dpho.mass() : -99 ", 
     "leading_dpho_pt                     := ? leading_dpho.pt() != 0 ? leading_dpho.pt() : -99",
     "leading_dpho_eta                    := ? leading_dpho.eta() != 0 ? leading_dpho.eta() : -99",

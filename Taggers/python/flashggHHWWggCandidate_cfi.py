@@ -1,5 +1,4 @@
 import FWCore.ParameterSet.Config as cms
-#from flashgg.MicroAOD.flashggJets_cfi import flashggBTag, flashggDeepCSV, maxJetCollections
 from HHWWggCandidateDumper_cfi import HHWWggCandidateDumper
 from flashggHHWWggTag_cfi import flashggHHWWggTag
 
@@ -18,7 +17,7 @@ FlashggHHWWggCandidate = cms.EDProducer("FlashggHHWWggCandidateProducer",
                                      MuonTag                = cms.InputTag('flashggSelectedMuons'),
                                      METTag                 = cms.InputTag('flashggMets'),
                                      #JetTag                 = cms.InputTag('flashggJets'),
-                                     JetTags                = UnpackedJetCollectionVInputTag, # one jet per vertex (or all jets in 0th vertex. Coordinate with boolean below.)
+                                     JetTags                = UnpackedJetCollectionVInputTag, 
                                      useVertex0only=cms.bool(False),
                                      MVAResultTag=cms.InputTag('flashggDiPhotonMVA'),
                                      leptonPtThreshold = cms.double(20),
@@ -27,7 +26,7 @@ FlashggHHWWggCandidate = cms.EDProducer("FlashggHHWWggCandidateProducer",
                                      subleadPhoOverMassThreshold = cms.double(0.25),
                                      MVAThreshold = cms.double(0.0),                                                     
                                      deltaRMuonPhoThreshold = cms.double(0.5),
-                                     jetsNumberThreshold = cms.double(3.),
+                                     jetsNumberThreshold = cms.double(99.), # originially 3. 
                                      jetPtThreshold = cms.double(20.),
                                      jetEtaThreshold= cms.double(2.4),
                                      deltaRPhoLeadJet = cms.double(0.4),
@@ -53,9 +52,5 @@ FlashggHHWWggCandidate = cms.EDProducer("FlashggHHWWggCandidateProducer",
                                      RECOfilters = cms.InputTag('TriggerResults::RECO'),
                                      PATfilters = cms.InputTag('TriggerResults::PAT'),
                                      FLASHfilters = cms.InputTag('TriggerResults::FLASHggMicroAOD'),
-                                     #HTXSTags     = HTXSInputTags
-                                     #SkipEvent = cms.untracked.vstring('ProductNotFound')
-                                     #HTXSTags               = HTXSInputTags
-
                                      )
 flashggHHWWggTagSequence = cms.Sequence( flashggHHWWggTag )

@@ -29,7 +29,10 @@ namespace flashgg {
     //---ctors---
     // when constructor overloading, each must have different number or specific types of input variables 
     HHWWggCandidate() ;
-    HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, std::vector<double> Cut_Results); 
+    HHWWggCandidate(std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector,
+                    std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector,
+                    std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, std::vector<double> Cut_Results, std::vector<double> Cut_Variables);     
+    //HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, std::vector<double> Cut_Results); 
 
     //---dtor---
     ~HHWWggCandidate();
@@ -44,8 +47,8 @@ namespace flashgg {
     const std::vector<flashgg::Jet> JetVector() const {return JetVector_;}
     //const std::vector<edm::Ptr<Jet>> tagJets() const {return tagJets_;}
     //const reco::Candidate::LorentzVector& jet1() const { return jet1_; };
-    const edm::Ptr<reco::Vertex> & vertex() const { return vertex_;  };
-    const reco::GenParticle::Point & genVertex() const { return genVertex_;  };
+    //const edm::Ptr<reco::Vertex> & vertex() const { return vertex_;  };
+    //const reco::GenParticle::Point & genVertex() const { return genVertex_;  };
     const std::vector<flashgg::Photon> phoP4Corrected() const { return phoP4Corrected_; };
     const float pho1_MVA() const { return pho1_MVA_; };
     const float pho2_MVA() const { return pho2_MVA_; };
@@ -80,13 +83,14 @@ namespace flashgg {
     bool SLW_tag() const { return SLW_tag_; }; 
     bool Pass_PS() const { return Pass_PS_; }; 
     const std::vector<double> Cut_Results() const { return Cut_Results_; };
+    const std::vector<double> Cut_Variables() const { return Cut_Results_; };
     const reco::Candidate::LorentzVector& lsl_dij() const { return lsl_dij_; };
   private:
 
     std::vector<flashgg::DiPhotonCandidate> diphoVector_;
     std::vector<flashgg::Photon> phoVector_;
-    edm::Ptr<reco::Vertex>               vertex_;
-    reco::GenParticle::Point genVertex_;
+    //edm::Ptr<reco::Vertex>               vertex_;
+    //reco::GenParticle::Point genVertex_;
     std::vector<flashgg::Electron> electronVector_;
     std::vector<flashgg::Muon> muonVector_;
     std::vector<flashgg::Met> METVector_;
@@ -124,6 +128,7 @@ namespace flashgg {
     bool SLW_tag_;
     bool Pass_PS_;
     std::vector<double> Cut_Results_;
+    std::vector<double> Cut_Variables_;
     reco::Candidate::LorentzVector lsl_dij_;
 
   };

@@ -14,7 +14,7 @@ using namespace flashgg; // makes flashgg sub members visible
 HHWWggCandidate::HHWWggCandidate():
 diphoVector_ (),
 phoVector_ (),
-vertex_ (),
+//vertex_ (),
 electronVector_ (),
 muonVector_ (),
 METVector_ (),
@@ -52,38 +52,23 @@ test_ (),
 SLW_tag_ (),
 Pass_PS_ (),
 Cut_Results_ (),
+Cut_Variables_ (),
 lsl_dij_ () // Need absence of comma on last variable 
 
 {}
 
   HHWWggCandidate::~HHWWggCandidate() {}
+  
+  HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, std::vector<flashgg::Electron> electronVector, 
+                                    std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector,
+                                    std::vector<flashgg::Jet> JetVector, std::vector<double> Cut_Results, std::vector<double> Cut_Variables):
+  diphoVector_(diphoVector), phoVector_(phoVector), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), 
+  JetVector_(JetVector), Cut_Results_(Cut_Results), Cut_Variables_(Cut_Variables)
 
-  HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, std::vector<double> Cut_Results):
-  diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), JetVector_(JetVector), Cut_Results_(Cut_Results)
+  //HHWWggCandidate::HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, std::vector<double> Cut_Results):
+  //diphoVector_(diphoVector), phoVector_(phoVector), vertex_(vertex), electronVector_(electronVector), muonVector_(muonVector), METVector_(METVector), GenParticlesVector_(GenParticlesVector), JetVector_(JetVector), Cut_Results_(Cut_Results)
  
   {
-
-    // for (unsigned int i = 0; i < Cut_Results_.size(); i++){
-    //   cout << "Cut_Results_[" << i << "] = " << Cut_Results_[i] << endl;
-    // }
-
-    // if (SLW_tag_){
-    // cout << "sizes:" << endl;
-    // cout << "" << endl;
-    // cout << "diphoVector_.size() = " << diphoVector_.size() << endl;
-    // cout << "phoVector_.size() = " << phoVector_.size() << endl;
-    // cout << "electronVector_.size() = " << electronVector_.size() << endl;
-    // cout << "muonVector_.size() = " << muonVector_.size() << endl;
-    // cout << "METVector_.size() = " << METVector_.size() << endl;
-    // cout << "GenParticlesVector_.size() = " << GenParticlesVector_.size() << endl;
-    // cout << "JetVector_.size() = " << JetVector_.size() << endl;
-    // }
-    
-    // if (diphoVector_.size() >= 1) test = 1;
-    // else test = 0;
-
-    // Might eventually sort by object, not GEN/RECO 
-
     //-- GEN and Jets 
 
     //std::vector<int> quark_pdgids = {1,2,3,4,5}; // Include b quarks
@@ -98,8 +83,6 @@ lsl_dij_ () // Need absence of comma on last variable
     for (unsigned int i = 0; i < GenParticlesVector_.size(); i++){
 
       // cout << "Hello, in genparticlesvector lop" << endl;
-
-    
       reco::GenParticle gen_ = GenParticlesVector_[i];  
       //cout << "i = " << i << endl;
       //cout << "gen_.pdgId() = " << gen_.pdgId() << endl;
@@ -436,67 +419,54 @@ lsl_dij_ () // Need absence of comma on last variable
     double tmp_dp_pt = 0, max_dp_pt = -99; // temporary diphoton pt 
     //bool test = 0;
 
-    // If only one diphoton, save its four vector 
-    if (ndpho == 1)
-    {
-      test_ = 1; 
+    // First diphoton has highest pt 
+    if (diphoVector_.size() > 0){
       flashgg::DiPhotonCandidate dipho_ = diphoVector_[0];
       auto dipho = dipho_.p4();
       leading_dpho_ = dipho;
-
-    } 
-
-    // If more than one diphoton, take the highest pt diphoton 
-    else if (ndpho > 1)
-    {
-      test_ = 1;
-      
-      for (unsigned int i = 0; i < ndpho; i ++)
-      {
-        flashgg::DiPhotonCandidate tmp_dipho_ = diphoVector_[i];
-        auto dipho_ = tmp_dipho_.p4();
-        tmp_dp_pt = dipho_.pt();
-        if (tmp_dp_pt > max_dp_pt) 
-        {
-          max_dp_pt = tmp_dp_pt;
-          leading_dpho_ = dipho_;
-        }
-      }
-
     }
+
+    // if (ndpho == 1)
+    // {
+    //   test_ = 1; 
+    //   flashgg::DiPhotonCandidate dipho_ = diphoVector_[0];
+    //   auto dipho = dipho_.p4();
+    //   leading_dpho_ = dipho;
+
+    // } 
+
+    // // If more than one diphoton, take the highest pt diphoton 
+    // else if (ndpho > 1)
+    // {
+    //   test_ = 1;
+      
+    //   for (unsigned int i = 0; i < ndpho; i ++)
+    //   {
+    //     flashgg::DiPhotonCandidate tmp_dipho_ = diphoVector_[i];
+    //     auto dipho_ = tmp_dipho_.p4();
+    //     tmp_dp_pt = dipho_.pt();
+    //     if (tmp_dp_pt > max_dp_pt) 
+    //     {
+    //       max_dp_pt = tmp_dp_pt;
+    //       leading_dpho_ = dipho_;
+    //     }
+    //   }
+
+    // }
 
     //-- Photons
 
-      unsigned int npho = phoVector_.size(); // number of photons 
-      double tmp_p_pt = 0, max_p_pt = -99; // temporary photon pt 
-
-      // Get Leading photon
-      for (unsigned int i = 0; i < npho; i ++)
-      {
-        flashgg::Photon tmp_pho_ = phoVector_[i];
-        auto pho_ = tmp_pho_.p4();
-        tmp_p_pt = pho_.pt();
-        if (tmp_p_pt > max_p_pt) 
-        {
-          max_p_pt = tmp_p_pt;
-          leading_pho_ = pho_;
-        }
-      }
-      double leading_pho_pt = max_p_pt;
-
-      // Get Subleading photon 
-      max_p_pt = -99;
-      for (unsigned int i = 0; i < npho; i ++)
-      {
-        flashgg::Photon tmp_pho_ = phoVector_[i];
-        auto pho_ = tmp_pho_.p4();
-        tmp_p_pt = pho_.pt();
-        if ((tmp_p_pt > max_p_pt) &&  (tmp_p_pt != leading_pho_pt)) 
-        {
-          max_p_pt = tmp_p_pt;
-          sub_leading_pho_ = pho_;
-        }
-      }
+    // Leading/subleading photons are indices 0 and 1 in photon vector 
+    if (phoVector_.size() > 0){
+      flashgg::Photon lead_pho_ = phoVector_[0];
+      auto l_pho_ = lead_pho_.p4();
+      leading_pho_ = l_pho_;
+    }
+    if (phoVector_.size() > 1){
+      flashgg::Photon sublead_pho_ = phoVector_[1];
+      auto sl_pho_ = sublead_pho_.p4();
+      sub_leading_pho_ = sl_pho_;
+    }
 
     // MET 
     if (METVector_.size() == 1)
@@ -510,76 +480,137 @@ lsl_dij_ () // Need absence of comma on last variable
 
     } 
 
-    // Get leading electron 
-    float l_elec_pt = -99;
-    for (unsigned int i = 0; i < electronVector_.size(); i++ )
-    {
-      flashgg::Electron current_elec = electronVector_[i];
-      auto current_elec_4vec = current_elec.p4();
-      float current_elec_pt = current_elec_4vec.pt();
+    // unsigned int npho = phoVector_.size(); // number of photons 
+    // double tmp_p_pt = 0, max_p_pt = -99; // temporary photon pt 
 
-      // If current electron pt is greater than maximum so far, make it the leading pt electron 
-      if (current_elec_pt > l_elec_pt){ 
-        l_elec_pt = current_elec_pt; 
-        auto leading_elec = current_elec_4vec;
-        leading_elec_ = leading_elec;
+    // // Get Leading photon
+    // for (unsigned int i = 0; i < npho; i ++)
+    // {
+    //   flashgg::Photon tmp_pho_ = phoVector_[i];
+    //   auto pho_ = tmp_pho_.p4();
+    //   tmp_p_pt = pho_.pt();
+    //   if (tmp_p_pt > max_p_pt) 
+    //   {
+    //     max_p_pt = tmp_p_pt;
+    //     leading_pho_ = pho_;
+    //   }
+    // }
+    // double leading_pho_pt = max_p_pt;
 
-      }
-    } 
+    // Get Subleading photon 
+    // max_p_pt = -99;
+    // for (unsigned int i = 0; i < npho; i ++)
+    // {
+    //   flashgg::Photon tmp_pho_ = phoVector_[i];
+    //   auto pho_ = tmp_pho_.p4();
+    //   tmp_p_pt = pho_.pt();
+    //   if ((tmp_p_pt > max_p_pt) &&  (tmp_p_pt != leading_pho_pt)) 
+    //   {
+    //     max_p_pt = tmp_p_pt;
+    //     sub_leading_pho_ = pho_;
+    //   }
+    // }
 
-    // Get Subleading electron 
-    float sl_elec_pt = -99;
-    for (unsigned int i = 0; i < electronVector_.size(); i++ )
-    {
-      flashgg::Electron current_elec = electronVector_[i];
-      auto current_elec_4vec = current_elec.p4();
-      float current_elec_pt = current_elec_4vec.pt();
+    // Leading/subleading electrons
+    if (electronVector_.size() > 0){
+      flashgg::Electron l_elec = electronVector_[0];
+      auto l_elec_4vec = l_elec.p4();
+      auto leading_elec = l_elec_4vec;
+      leading_elec_ = leading_elec;
+    }
+    
+    if (electronVector_.size() > 1){    
+      flashgg::Electron sl_elec = electronVector_[1];
+      auto sl_elec_4vec = sl_elec.p4();
+      auto subleading_elec = sl_elec_4vec;
+      subleading_elec_ = subleading_elec;    
+    }
+    // Leading/subleading Muons 
+    if (muonVector_.size() > 0){
+      flashgg::Muon l_muon = muonVector_[0];
+      auto l_muon_4vec = l_muon.p4();
+      auto leading_muon = l_muon_4vec;
+      leading_muon_ = leading_muon;
+    }
 
-      // If current electron pt is greater than max subleading pt, and isn't the leading pt electron, make it the subleading electron 
-      if ( (current_elec_pt > sl_elec_pt) && (current_elec_pt != l_elec_pt) ){ 
-        sl_elec_pt = current_elec_pt; 
-        auto subleading_elec = current_elec_4vec;
-        subleading_elec_ = subleading_elec;
+    if (muonVector_.size() > 1){
+      flashgg::Muon sl_muon = muonVector_[1];
+      auto sl_muon_4vec = sl_muon.p4();
+      auto subleading_muon = sl_muon_4vec;
+      subleading_muon_ = subleading_muon;   
+    }
 
-      }
-    } 
+    // // Get leading electron 
+    // float l_elec_pt = -99;
+    // for (unsigned int i = 0; i < electronVector_.size(); i++ )
+    // {
+    //   flashgg::Electron current_elec = electronVector_[i];
+    //   auto current_elec_4vec = current_elec.p4();
+    //   float current_elec_pt = current_elec_4vec.pt();
 
-    // Get leading muon
-    float l_muon_pt = -99;
+    //   // If current electron pt is greater than maximum so far, make it the leading pt electron 
+    //   if (current_elec_pt > l_elec_pt){ 
+    //     l_elec_pt = current_elec_pt; 
+    //     auto leading_elec = current_elec_4vec;
+    //     leading_elec_ = leading_elec;
 
-    //if (muonVector_.size() == 0 ) cout << "muonVector_.size() == 0" << endl;
+    //   }
+    // } 
 
-    for (unsigned int i = 0; i < muonVector_.size(); i++ )
-    {
-      flashgg::Muon current_muon = muonVector_[i];
-      auto current_muon_4vec = current_muon.p4();
-      float current_muon_pt = current_muon_4vec.pt();
+    // // Get Subleading electron 
+    // float sl_elec_pt = -99;
+    // for (unsigned int i = 0; i < electronVector_.size(); i++ )
+    // {
+    //   flashgg::Electron current_elec = electronVector_[i];
+    //   auto current_elec_4vec = current_elec.p4();
+    //   float current_elec_pt = current_elec_4vec.pt();
 
-      // If current muon pt is greater than maximum so far, make it the leading pt muon
-      if (current_muon_pt > l_muon_pt){ 
-        l_muon_pt = current_muon_pt; 
-        auto leading_muon = current_muon_4vec;
-        leading_muon_ = leading_muon;
+    //   // If current electron pt is greater than max subleading pt, and isn't the leading pt electron, make it the subleading electron 
+    //   if ( (current_elec_pt > sl_elec_pt) && (current_elec_pt != l_elec_pt) ){ 
+    //     sl_elec_pt = current_elec_pt; 
+    //     auto subleading_elec = current_elec_4vec;
+    //     subleading_elec_ = subleading_elec;
 
-      }
-    } 
+    //   }
+    // } 
 
-    //if (l_muon_pt == 0.) l_muon_pt = -999;
+    // // Get leading muon
+    // float l_muon_pt = -99;
 
-    // Get Subleading muon
-    float sl_muon_pt = -99;
-    for (unsigned int i = 0; i < muonVector_.size(); i++ )
-    {
-      flashgg::Muon current_muon = muonVector_[i];
-      auto current_muon_4vec = current_muon.p4();
-      float current_muon_pt = current_muon_4vec.pt();
+    // //if (muonVector_.size() == 0 ) cout << "muonVector_.size() == 0" << endl;
 
-      // If current muon pt is greater than max subleading pt, and isn't the leading pt muon, make it the subleading muon 
-      if ( (current_muon_pt > sl_muon_pt) && (current_muon_pt != l_muon_pt) ){ 
-        sl_muon_pt = current_muon_pt; 
-        auto subleading_muon = current_muon_4vec;
-        subleading_muon_ = subleading_muon;
+    // for (unsigned int i = 0; i < muonVector_.size(); i++ )
+    // {
+    //   flashgg::Muon current_muon = muonVector_[i];
+    //   auto current_muon_4vec = current_muon.p4();
+    //   float current_muon_pt = current_muon_4vec.pt();
 
-      }
-    } 
-  }
+    //   // If current muon pt is greater than maximum so far, make it the leading pt muon
+    //   if (current_muon_pt > l_muon_pt){ 
+    //     l_muon_pt = current_muon_pt; 
+    //     auto leading_muon = current_muon_4vec;
+    //     leading_muon_ = leading_muon;
+
+    //   }
+    // } 
+
+    // //if (l_muon_pt == 0.) l_muon_pt = -999;
+
+    // // Get Subleading muon
+    // float sl_muon_pt = -99;
+    // for (unsigned int i = 0; i < muonVector_.size(); i++ )
+    // {
+    //   flashgg::Muon current_muon = muonVector_[i];
+    //   auto current_muon_4vec = current_muon.p4();
+    //   float current_muon_pt = current_muon_4vec.pt();
+
+    //   // If current muon pt is greater than max subleading pt, and isn't the leading pt muon, make it the subleading muon 
+    //   if ( (current_muon_pt > sl_muon_pt) && (current_muon_pt != l_muon_pt) ){ 
+    //     sl_muon_pt = current_muon_pt; 
+    //     auto subleading_muon = current_muon_4vec;
+    //     subleading_muon_ = subleading_muon;
+
+    //   }
+    // } 
+
+  } //end 
