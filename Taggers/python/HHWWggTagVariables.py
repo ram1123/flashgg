@@ -13,28 +13,60 @@ HHWWgg_variables = [
 
     # One entry per event 
     # Plot from header file utils 
+    # Variable names can't have dashes '-'
 
     #---------------------------------------------------------------------------------------------------#
 
     ## Booleans (1.0 or 0.0)
 
     # These allow you to plot variables with whichever cut combinations you'd like with plotter 
-    "Cut_0                               := Cut_Results[0]", 
-    "Cut_1                               := Cut_Results[1]",
-    "Cut_2                               := Cut_Results[2]",
-    "Cut_3                               := Cut_Results[3]",
-    "Cut_4                               := Cut_Results[4]",
-    "Cut_5                               := Cut_Results[5]",
-    "Cut_6                               := Cut_Results[6]",
-    "Cut_7                               := Cut_Results[7]",
-    "n_good_electrons                    := Cut_Variables[0]", 
-    "n_good_muons                        := Cut_Variables[1]", 
-    "n_good_jets                         := Cut_Variables[2]", 
-    "passMETfilters                      := Cut_Variables[3]",
+    # "Cut_0                               := Cut_Results[0]", 
+    # "Cut_1                               := Cut_Results[1]",
+    # "Cut_2                               := Cut_Results[2]",
+    # "Cut_3                               := Cut_Results[3]",
+    # "Cut_4                               := Cut_Results[4]",
+    # "PS_Dipho                            := Cut_Results[5]",
+    # "SLW_Tag                             := Cut_Results[6]",
+    # "PS_Dipho_and_SLW_Tag                := Cut_Results[7]",
+    # "n_good_electrons                    := Cut_Variables[0]", 
+    # "n_good_muons                        := Cut_Variables[1]", 
+    # "n_good_leptons                      := Cut_Variables[2]", 
+    # "n_good_jets                         := Cut_Variables[3]",
+    # "passMETfilters                      := Cut_Variables[4]",
+    "Semi_Leptonic_W_Tag                 := Cut_Variables[0]", 
+    "Fully_Leptonic_W_Tag                := Cut_Variables[1]",
+    "Fully_Hadronic_W_Tag                := Cut_Variables[2]",
+    "one_FL_dr                           := Cut_Variables[3]",
+    "one_FH_dr                           := Cut_Variables[4]",
+    "Good_jets                           := Cut_Variables[5]",
+    "Good_electrons                      := Cut_Variables[6]",
+    "Good_muons                          := Cut_Variables[7]",
+    "Good_leptons                        := Cut_Variables[8]",
+    "PS_dipho_tag                        := Cut_Variables[9]",
+    # "j_mass                              := Cut_Variables[10]",
 
     #---------------------------------------------------------------------------------------------------#
 
     ## GEN Variables 
+
+    # Higgs
+    "Higgs_gg_pt                         := ? hgg_p4.pt() != 0 ? hgg_p4.pt() : -99 ",
+    "Higgs_gg_eta                        := ? hgg_p4.eta() != 0 ? hgg_p4.eta() : -99 ",
+    "Higgs_gg_phi                        := ? hgg_p4.phi() != 0 ? hgg_p4.phi() : -99 ",
+    "Higgs_gg_M                          := ? hgg_p4.M() != 0 ? hgg_p4.M() : -99 ",
+
+    # Photons
+    "leading_genpho_pt                   := ? l_genpho.pt() != 0 ? l_genpho.pt() : -99 ",
+    "subleading_genpho_pt                := ? sl_genpho.pt() != 0 ? sl_genpho.pt() : -99 ",
+    # "leading_genpho_SC_Eta               := ? l_genpho.superCluster.eta() != 0 ? l_genpho.superCluster.eta() : -99 ",
+    # "subleading_genpho_SC_Eta            := ? sl_genpho.superCluster.eta() != 0 ? sl_genpho.superCluster.eta() : -99 ",
+    # "leading_genpho_pt                   := ? l_genpho.pt() != 0 ? l_genpho.pt() : -99 ",
+    # "subleading_genpho_pt                := ? sl_genpho.pt() != 0 ? sl_genpho.pt() : -99 ",
+    # "leading_genpho_pt                   := ? l_genpho.pt() != 0 ? l_genpho.pt() : -99 ",
+    # "subleading_genpho_pt                := ? sl_genpho.pt() != 0 ? sl_genpho.pt() : -99 ",
+    # "leading_genpho_eta                         := ? leading_genpho.eta() != 0 ? leading_genpho.eta() : -99 ",
+    # "leading_genpho_phi                         := ? leading_genpho.phi() != 0 ? leading_genpho.phi() : -99 ",
+    # "leading_genpho_                         := ? leading_genpho.pt() != 0 ? leading_genpho.pt() : -99 ", 
 
     # Electrons 
     # Set to -99 if there's no value 
@@ -55,8 +87,14 @@ HHWWgg_variables = [
     "gen_subleading_muon_phi             := ? gen_subleading_muon.phi() != 0 ? gen_subleading_muon.phi() : -99 ",
 
     # Quarks 
+    "m_qq                                := ? m_qq() != 0 ? m_qq() : -99",
     "mdq_invmass                         := MatchingDiQuark.mass()",
     "nmdq_invmass                        := NonMatchingDiQuark.mass()",
+    "dr_1jet_and_q1                      := ? dr_1() != 0 ? dr_1() : -99",
+    "dr_1jet_and_q2                      := ? dr_2() != 0 ? dr_2() : -99",
+    "merged_qs_into_jet                  := ? merged_qs() != 0 ? merged_qs() : -99",
+    "qone_matches                        := ? qone_matches() != 0 ? qone_matches() : -99",
+    "qtwo_matches                        := ? qtwo_matches() != 0 ? qtwo_matches() : -99",
 
     #---------------------------------------------------------------------------------------------------#
 
@@ -75,7 +113,7 @@ HHWWgg_variables = [
 
     # DiPhoton(s)
     # leading_dpho = diphoton with highest pt 
-    "n_dipho                          := diphoVector.size()",
+    "n_dipho                             := diphoVector.size()",
     "leading_dpho_mass                   := ? leading_dpho.mass() != 0 ? leading_dpho.mass() : -99 ", 
     "leading_dpho_pt                     := ? leading_dpho.pt() != 0 ? leading_dpho.pt() : -99",
     "leading_dpho_eta                    := ? leading_dpho.eta() != 0 ? leading_dpho.eta() : -99",

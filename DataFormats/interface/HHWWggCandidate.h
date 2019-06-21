@@ -32,8 +32,7 @@ namespace flashgg {
     HHWWggCandidate(std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector,
                     std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector,
                     std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, std::vector<double> Cut_Results, std::vector<double> Cut_Variables);     
-    //HHWWggCandidate( std::vector<flashgg::DiPhotonCandidate> diphoVector, std::vector<flashgg::Photon> phoVector, edm::Ptr<reco::Vertex> vertex, reco::GenParticle::Point genVertex, std::vector<flashgg::Electron> electronVector, std::vector<flashgg::Muon> muonVector, std::vector<flashgg::Met> METVector, std::vector<reco::GenParticle> GenParticlesVector, std::vector<flashgg::Jet> JetVector, std::vector<double> Cut_Results); 
-
+    
     //---dtor---
     ~HHWWggCandidate();
 
@@ -45,15 +44,7 @@ namespace flashgg {
     const std::vector<flashgg::Met> METVector() const {return METVector_;}
     const std::vector<reco::GenParticle> GenParticlesVector() const {return GenParticlesVector_;}
     const std::vector<flashgg::Jet> JetVector() const {return JetVector_;}
-    //const std::vector<edm::Ptr<Jet>> tagJets() const {return tagJets_;}
-    //const reco::Candidate::LorentzVector& jet1() const { return jet1_; };
-    //const edm::Ptr<reco::Vertex> & vertex() const { return vertex_;  };
-    //const reco::GenParticle::Point & genVertex() const { return genVertex_;  };
     const std::vector<flashgg::Photon> phoP4Corrected() const { return phoP4Corrected_; };
-    const float pho1_MVA() const { return pho1_MVA_; };
-    const float pho2_MVA() const { return pho2_MVA_; };
-    const float pho3_MVA() const { return pho3_MVA_; };
-    const float pho4_MVA() const { return pho4_MVA_; };
     const reco::Candidate::LorentzVector& MET_fourvec() const { return MET_fourvec_; };
     const reco::Candidate::LorentzVector& leading_dpho() const { return leading_dpho_; };
     const reco::Candidate::LorentzVector& leading_pho() const { return leading_pho_; };
@@ -83,25 +74,27 @@ namespace flashgg {
     bool SLW_tag() const { return SLW_tag_; }; 
     bool Pass_PS() const { return Pass_PS_; }; 
     const std::vector<double> Cut_Results() const { return Cut_Results_; };
-    const std::vector<double> Cut_Variables() const { return Cut_Results_; };
+    const std::vector<double> Cut_Variables() const { return Cut_Variables_; };
     const reco::Candidate::LorentzVector& lsl_dij() const { return lsl_dij_; };
+    const float m_qq() const {return m_qq_;};
+    const float dr_1() const {return dr_1_;};
+    const float dr_2() const {return dr_2_;};
+    const float merged_qs() const {return merged_qs_;};
+    const float qone_matches() const {return qone_matches_;};
+    const float qtwo_matches() const {return qtwo_matches_;};
+    const reco::Candidate::LorentzVector& hgg_p4() const { return hgg_p4_; }; 
+    const reco::Candidate::LorentzVector& l_genpho() const { return l_genpho_; }; 
+    const reco::Candidate::LorentzVector& sl_genpho() const { return sl_genpho_; }; 
   private:
 
     std::vector<flashgg::DiPhotonCandidate> diphoVector_;
     std::vector<flashgg::Photon> phoVector_;
-    //edm::Ptr<reco::Vertex>               vertex_;
-    //reco::GenParticle::Point genVertex_;
     std::vector<flashgg::Electron> electronVector_;
     std::vector<flashgg::Muon> muonVector_;
     std::vector<flashgg::Met> METVector_;
     std::vector<reco::GenParticle> GenParticlesVector_;
-    //std::vector<edm::Ptr<Jet>> tagJets_;
     std::vector<flashgg::Jet> JetVector_;
     std::vector<flashgg::Photon> phoP4Corrected_;
-    float pho1_MVA_;
-    float pho2_MVA_;
-    float pho3_MVA_;
-    float pho4_MVA_;
     reco::Candidate::LorentzVector MET_fourvec_;
     reco::Candidate::LorentzVector leading_dpho_;
     reco::Candidate::LorentzVector leading_pho_;
@@ -130,6 +123,16 @@ namespace flashgg {
     std::vector<double> Cut_Results_;
     std::vector<double> Cut_Variables_;
     reco::Candidate::LorentzVector lsl_dij_;
+    float m_qq_;
+    float dr_1_;
+    float dr_2_;
+    float merged_qs_;
+    float qone_matches_;
+    float qtwo_matches_;
+    reco::Candidate::LorentzVector hgg_p4_;
+    reco::Candidate::LorentzVector l_genpho_;
+    reco::Candidate::LorentzVector sl_genpho_;
+    
 
   };
   typedef std::vector<HHWWggCandidate> HHWWggCandidateCollection; // define new type: vector of HHWWggCandidates 

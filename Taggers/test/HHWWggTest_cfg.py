@@ -72,13 +72,13 @@ process.source = cms.Source ("PoolSource",
 #"file:myMicroAODOutputFile_testtest.root"     
 #"root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/cmshgg/ferriff/flashgg/RunIISpring16DR80X-2_3_0-25ns_Moriond17_MiniAODv2_p3/2_3_0/DoubleEG/RunIISpring16DR80X-2_3_0-25ns_Moriond17_MiniAODv2_p3-2_3_0-v0-Run2016G-23Sep2016-v1/170116_174903/0000/myMicroAODOutputFile_4.root"
 #"root://eoscms.cern.ch//eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/ReMiniAOD-03Feb2017-2_5_4/2_5_1/DoubleEG/ReMiniAOD-03Feb2017-2_5_4-2_5_1-v0-Run2016B-03Feb2017_ver2-v2/170310_111417/0000/myMicroAODOutputFile_101.root"
-#"file:myMicroAODOutputFile_lnulnugg_8Apr2019.root"
-"file:myMicroAODOutputFile_qqlnugg_8Apr2019.root"
-#"file:myMicroAODOutputFile_qqqqgg_8Apr2019.root"
-#"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqenu 
-#"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqmunugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # qqmunu
-#"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_enuenugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # enuenu 
-#"file:/eos/cms/store/user/atishelm/ggF_X1250_WWgg_munumunugg/10000events_woPU_MICROAOD/myMicroAODOutputFile.root" # munumunu 
+#"file:myMicroAODOutputFile_qqlnugg_8Apr2019.root" # SL X1250
+#"file:myMicroAODOutputFile_lnulnugg_8Apr2019.root" # FL X1250
+#"file:myMicroAODOutputFile_qqqqgg_8Apr2019.root" # FH  X1250
+#"file:myMicroAODOutputFile_ggF_X250_WWgg_lnulnugg_crabtest_2.root" # FL X250
+#"file:myMicroAODOutputFile_ggF_X250_WWgg_qqlnugg_crabtest_2.root" # SL X250
+#"file:myMicroAODOutputFile_ggF_X250_WWgg_qqqqgg_crabtest.root" # FH X250
+"file:/eos/cms/store/group/phys_higgs/cmshgg/sethzenz/flashgg/RunIIFall17-3_1_0/3_1_0/GluGluHToGG_M-125_13TeV_powheg_pythia8/RunIIFall17-3_1_0-3_1_0-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/180609_081728/0000/myMicroAODOutputFile_4.root"
 ))
 
 
@@ -139,8 +139,6 @@ process.load("Configuration.Geometry.GeometryECALHCAL_cff")
 process.eeBadScFilter.EERecHitSource = cms.InputTag("reducedEgamma","reducedEERecHits") # Saved MicroAOD Collection (data only)
 
 process.dataRequirements = cms.Sequence()
-
-#process.dataRequirements += process.hltHighLevel # HLT 
 
 print'customize.processId = ',customize.processId
 if customize.processId == "Data":
