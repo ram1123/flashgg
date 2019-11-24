@@ -12,6 +12,12 @@
 // #include "RecoEgamma/EgammaTools/plugins/EGExtraInfoModifierFromDB.cc"
 #include "CommonTools/CandAlgos/interface/ModifyObjectValueBase.h"
 #include "flashgg/Taggers/src/IsolationCorrection.C"
+#include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
+#include "DataFormats/ParticleFlowReco/interface/PFRecHit.h"
+#include "DataFormats/CaloRecHit/interface/CaloCluster.h"
+#include "DataFormats/Common/interface/SortedCollection.h"
+#include "DataFormats/EcalDetId/interface/EBDetId.h"
+#include "DataFormats/EcalDetId/interface/EEDetId.h"
 
 #include "TFile.h"
 #include "TGraph.h"
@@ -60,6 +66,15 @@ namespace flashgg {
         bool keepInitialEnergy_;
         bool _doIsoCorrection;
         unique_ptr<IsolationCorrection> _isoCorrector;
+        // edm::EDGetTokenT<edm::View<flashgg::DiPhotonCandidate> >
+        // edm::EDGetTokenT<edm::View<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > > EB_reducedEcalRecHitsToken_;
+        // edm::SortedCollection<EcalRecHit>
+        // edm::EDGetTokenT<edm::SortedCollection<EcalRecHit> > EB_reducedEcalRecHitsToken_;
+        // <edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > >
+        edm::EDGetTokenT<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > EB_reducedEcalRecHitsToken_;
+        // edm::EDGetTokenT<edm::View<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > > EB_reducedEcalRecHitsToken_;
+        // edm::EDGetTokenT<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > EB_reducedEcalRecHitsToken_;
+        
         // edm::EDGetTokenT<edm::View<vector<reco::SuperCluster>> > SCtoken_;
         // vector<reco::SuperCluster> _SuperClusters; 
     };
@@ -75,7 +90,10 @@ namespace flashgg {
         _phoIsoPtScalingCoeff(ps.getParameter<std::vector<double >>("phoIsoPtScalingCoeff")),
         _phoIsoCutoff(ps.getParameter<double>("phoIsoCutoff")),
         keepInitialEnergy_(ps.getParameter<bool>("keepInitialEnergy")),
-        _doIsoCorrection(ps.getParameter<bool>("doIsoCorrection"))
+        _doIsoCorrection(ps.getParameter<bool>("doIsoCorrection")), 
+        // EB_reducedEcalRecHitsToken_(consumes<edm::View<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > >(ps.getParameter<edm::InputTag>("EBreducedEcalRecHits")))
+        EB_reducedEcalRecHitsToken_(consumes<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > >(ps.getParameter<edm::InputTag>("EBreducedEcalRecHits")))
+        // EB_reducedEcalRecHitsToken_(consumes<edm::SortedCollection<EcalRecHit> >(ps.getParameter<edm::InputTag>("EBreducedEcalRecHits")))
         // SCtoken_(ps.getParameter<vector<reco::SuperCluster>>("SuperClusterTag"))
         // _SuperClusters(ps.getParameter<vector<reco::SuperCluster>>("SuperClusterTag")) // need absence of comma for last entry 
         
@@ -207,6 +225,7 @@ namespace flashgg {
 
     void DiPhotonWithUpdatedPhoIdMVAProducer::produce( edm::Event &evt, const edm::EventSetup & es)
     {
+        // edm::EDGetTokenT<edm::View<flashgg::DiPhotonCandidate> > token_;
         edm::Handle<edm::View<flashgg::DiPhotonCandidate> > objects;
         evt.getByToken( token_, objects );
 
@@ -214,13 +233,31 @@ namespace flashgg {
         evt.getByToken( rhoToken_, rhoHandle );
         const double rhoFixedGrd = *( rhoHandle.product() );
 
+        // Abe Tishelman-Charny 
         // For updated photon MVA study 
-        // Trying to add supercluster information 
-        // particleFlowSuperClusterECAL
-        // vector<reco::SuperCluster> 
+        // Handle<View<flashgg::DiPhotonCandidate> > diphotons;
         
-        // edm::Handle<edm::View<vector<reco::SuperCluster>> > SuperClusters;
-        // evt.getByToken( SCtoken_, SuperClusters );        
+        // edm::Handle<edm::SortedCollection<EcalRecHit> > EBReducedRecHits;
+        // edm::Handle<EcalRecHitCollection>   EBReducedRecHits;
+        // // edm::Handle<edm::View<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > > EBReducedRecHits;
+        // evt.getByToken(EB_reducedEcalRecHitsToken_, EBReducedRecHits);
+
+        // cout << "Reading rec hits" << endl;
+        // cout << "----------------" << endl;
+        // for (const auto & obj : *EBReducedRecHits) {
+        //     // cout << "on object" << endl;
+        //     cout << "obj.energy() = " << obj.energy() << endl; 
+        //     // cout << "obj.detid() = " << obj.detid() << endl; 
+        //     DetId id = obj.detid(); 
+        //     // cout << "obj.id() = " << obj.id() << endl; 
+        // }
+        // cout << "Finished reading rec hits" << endl;
+        // cout << "----------------" << endl;
+
+        // // cout << "EBReducedRecHits:" << endl;
+        // // cout << "size: " << EBReducedRecHits.size() << endl;
+        
+
 
         if( reRunRegression_ ) {
             if( reRunRegressionOnData_ || ! evt.isRealData() ) {

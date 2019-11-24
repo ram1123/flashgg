@@ -39,6 +39,19 @@ namespace flashgg {
         // DO NOT USE THIS FUNCTION UNLESS YOU HAVE A GOOD REASON AND KNOW IT WON'T CAUSE INTERNAL INCONSISTENCIES
         void replacePtr( edm::Ptr<flashgg::Photon> replacement ) { phoPtr_ = replacement; }
 
+        // For updated photonid study 
+        // DOF1 = ieta (ix) for EB (EE) 
+        // DOF2 = iphi (iy) for EB (EE) 
+        // DOF3 = iz. 0 (+/- 1) for EB (EE) 
+        void SetDOF1s(std::vector<float> DOF1s);
+        void SetDOF2s(std::vector<float> DOF2s);
+        void SetDOF3s(std::vector<float> DOF3s);
+        void SetRecHits(std::vector<float> recHits);
+        std::vector<float> DOF1s() const {return DOF1s_;};
+        std::vector<float> DOF2s() const {return DOF2s_;};
+        std::vector<float> DOF3s() const {return DOF3s_;};
+        std::vector<float> recHits() const {return recHits_;};
+
     private:
         mutable flashgg::Photon pho_;
         edm::Ptr<flashgg::Photon> phoPtr_;
@@ -47,6 +60,13 @@ namespace flashgg {
         bool hasVtx_;
         bool MakePhoton() const;
         std::vector<flashgg::Photon> persistVec_;
+
+        // want to add nearby rechit info 
+        std::vector<float> DOF1s_;
+        std::vector<float> DOF2s_;
+        std::vector<float> DOF3s_;
+        std::vector<float> recHits_;
+
     };
 }
 

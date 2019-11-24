@@ -78,6 +78,6 @@ flashggUpdatedIdMVADiPhotons = cms.EDProducer("FlashggDiPhotonWithUpdatedPhoIdMV
                                               #isoCorrectionFile = cms.FileInPath("flashgg/Taggers/data/pho_iso_corrections_hybrid_Legacy2016_v1.root") ## for Legacy2016
                                               
                                               # For Updated photon MVA study 
-                                              SuperClusterTag                 = cms.InputTag("particleFlowSuperClusterECAL"),
+                                              EBreducedEcalRecHits                 = cms.InputTag("reducedEcalRecHitsEB")
 
                                               )
