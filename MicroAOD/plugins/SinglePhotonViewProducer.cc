@@ -74,7 +74,7 @@ namespace flashgg {
 
         int pho_DOF1; // ieta (ix) for EB (EE) 
         int pho_DOF2; // iphi (iy) for EB (EE) 
-        // int pho_DOF3; // iz. 0 (+/-1) for EB (EE) 
+        int pho_DOF3; // iz. 0 (+/-1) for EB (EE) 
         int hitNum = 0;
 
         double rechitE;
@@ -104,7 +104,7 @@ namespace flashgg {
             EBDetId pho_eb_id(_ebGeom->getClosestCell(GlobalPoint(pho_x,pho_y,pho_z)));
             pho_DOF1 = pho_eb_id.ieta();
             pho_DOF2 = pho_eb_id.iphi();
-            // pho_DOF3 = 0;
+            pho_DOF3 = 0;
 
             // cout << "pho ieta = " << pho_ieta << endl;
             // cout << "pho iphi = " << pho_iphi << endl;
@@ -146,11 +146,11 @@ namespace flashgg {
             pho_DOF1 = pho_ee_id.ix();
             pho_DOF2 = pho_ee_id.iy();
 
-            // if (pho_z < 0) pho_DOF3 = -1;
-            // else if (pho_z > 0) pho_DOF3 = 1;
-            // else{
-            //     cout << "EE photon has z position = 0. This is probably a problem." << endl;
-            // }
+            if (pho_z < 0) pho_DOF3 = -1;
+            else if (pho_z > 0) pho_DOF3 = 1;
+            else{
+                cout << "EE photon has z position = 0. This is probably a problem." << endl;
+            }
 
             // cout << "pho ieta = " << pho_ieta << endl;
             // cout << "pho iphi = " << pho_iphi << endl;
@@ -188,6 +188,9 @@ namespace flashgg {
         spv.SetDOF2s(DOF2s);
         spv.SetDOF3s(DOF3s);
         spv.SetRecHits(recHits);
+        spv.SetDOF1((int)pho_DOF1);
+        spv.SetDOF2((int)pho_DOF2);
+        spv.SetDOF3((int)pho_DOF3);
 
         DOF1s.clear();
         DOF2s.clear();

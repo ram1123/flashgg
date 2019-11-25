@@ -81,6 +81,21 @@ namespace flashgg {
         recHits_ = recHits;
     }
 
+    void SinglePhotonView::SetDOF1(int DOF1)
+    {
+        DOF1_ = DOF1;
+    }
+
+    void SinglePhotonView::SetDOF2(int DOF2)
+    {
+        DOF2_ = DOF2;
+    }
+
+    void SinglePhotonView::SetDOF3(int DOF3)
+    {
+        DOF3_ = DOF3;
+    }
+
 }
 
 // Local Variables:

@@ -51,6 +51,12 @@ namespace flashgg {
         std::vector<float> DOF2s() const {return DOF2s_;};
         std::vector<float> DOF3s() const {return DOF3s_;};
         std::vector<float> recHits() const {return recHits_;};
+        void SetDOF1(int DOF1);
+        void SetDOF2(int DOF2);
+        void SetDOF3(int DOF3);
+        const int DOF1() const {return DOF1_;};
+        const int DOF2() const {return DOF2_;};
+        const int DOF3() const {return DOF3_;};
 
     private:
         mutable flashgg::Photon pho_;
@@ -61,11 +67,14 @@ namespace flashgg {
         bool MakePhoton() const;
         std::vector<flashgg::Photon> persistVec_;
 
-        // want to add nearby rechit info 
+        // want to add nearby rechit info for updated photonid study 
         std::vector<float> DOF1s_;
         std::vector<float> DOF2s_;
         std::vector<float> DOF3s_;
         std::vector<float> recHits_;
+        int DOF1_;
+        int DOF2_;
+        int DOF3_;
 
     };
 }
