@@ -34,16 +34,16 @@
 
     "flashggPhotons" :
     {
-        "photonIdMVAweightfile_EB" : "flashgg/MicroAOD/data/HggPhoId_94X_barrel_BDT_v2.weights.xml",
-        "photonIdMVAweightfile_EE" : "flashgg/MicroAOD/data/HggPhoId_94X_endcap_BDT_v2.weights.xml",
+        "photonIdMVAweightfile_EB" : "HggPhoId_94X_barrel_BDT_v2.weights.xml",
+        "photonIdMVAweightfile_EE" : "HggPhoId_94X_endcap_BDT_v2.weights.xml",
         "effAreasConfigFile" : "RecoEgamma/PhotonIdentification/data/Fall17/effAreaPhotons_cone03_pfPhotons_90percentBased_TrueVtx.txt",
         "is2017" : true
     },
 
     "flashggDiPhotons" :
     {
-        "vertexIdMVAweightfile" : "flashgg/MicroAOD/data/TMVAClassification_BDTVtxId_SL_2016.xml",
-        "vertexProbMVAweightfile" : "flashgg/MicroAOD/data/TMVAClassification_BDTVtxProb_SL_2016.xml"
+        "vertexIdMVAweightfile" : "TMVAClassification_BDTVtxId_SL_2016.xml",
+        "vertexProbMVAweightfile" : "TMVAClassification_BDTVtxProb_SL_2016.xml"
     },
 
     "TriggerPaths" :
