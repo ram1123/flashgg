@@ -81,8 +81,28 @@ The other change I made was in the metaconditions json for 2017, in which I chan
 Note: I'm actually not sure if this step is necessary after copying the MicroAOD/data files to CMSSW_10_5_0/external/slc7_amd64_gcc700/data, but this set of two changes
 makes things work for me. 
 
+** HHWWgg Specific Config 
+The see the differences between the standard prepareCrabJobs.py and HHWWgg_prepareCrabJobs.py you can run the commands:
+
+
+   #+BEGIN_EXAMPLE
+   cd $CMSSW_BASE/src/flashgg/MetaData/work
+   diff prepareCrabJobs.py HHWWgg_prepareCrabJobs.py 
+   diff crabConfig_TEMPLATE.py HHWWgg_crabConfig_TEMPLATE.py 
+   #+END_EXAMPLE
+
+The changes are as summarized:
+- The setting of a default fggversion with the -V flag, where it is set to 94X_mc2017-RunIIFall18 in the HHWWgg version. This ends up being part 
+of the secondary dataset name of the output, which is read by fggrunjobs when you run your analyzer in order to determine the PU distribution to use. 
+- The default metaconditions json file is also set in the HHWWgg version to the 2017 metaconditions, while prepareCrabJobs has no default. 
+- Filesplitting is changed from EventAwareLumiBased to FileBased 
+- Default units per job is changed from 25000 -> 1 in order to use one file per job
+- Default INPUTDBS changed from global to phys03 (needed to find privately produced MINIAODs)
+- The default CRAB configuration file template is changed to the HHWWgg version, required in order to implement crab config changes 
+- In the crab config, config.General.transferLogs set to True 
+
 ** Producing MicroAODs
-To run any MINIAOD's through the flashgg microaAOD step, begin by switching to the Metadata/Work directory:
+To microAODs from MINIAODs, begin by switching to the Metadata/Work directory:
 
    #+BEGIN_EXAMPLE
    cd $CMSSW_BASE/src/flashgg/MetaData/work
