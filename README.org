@@ -1,2 +1,201 @@
-* HHWWgg Crab
+* HHWWgg MicroAOD Production
+
+Contacts: 
+- Abraham Tishelman-Charny - abraham.tishelman.charny@cern.ch 
+- Badder Marzocchi - badder.marzocchi@cern.ch
+- Toyoko Orimoto - Toyoko.Orimoto@cern.ch 
+
+Presentations: 
+- [[https://indico.cern.ch/event/847927/contributions/3606888/attachments/1930081/3196452/HH_WWgg_Analysis_Status_21_October_2019.pdf][21 October 2019 Analysis Status]]
+- [[https://indico.cern.ch/event/847923/contributions/3632148/attachments/1942588/3221820/HH_WWgg_Analysis_Update_11_November_2019_2.pdf][11 November 2019 Analysis Update]]
+
+Repositories:
+- [[https://github.com/atishelmanch/flashgg/tree/HHWWgg_dev][HHWWgg Development]]
+- [[https://github.com/NEUAnalyses/HH_WWgg/tree/HHWWgg_PrivateMC][HHWWgg Private MC Production]]
+
 The purpose of this flashgg branch is to produce MicroAOD's with crab for the HH->WWgg analysis. 
+
+** Get HHWWgg MicroAOD Production Branch 
+The cloning steps for this repository are similar to those for [[https://github.com/cms-analysis/flashgg][flashgg dev_legacy_runII]] and [[https://github.com/atishelmanch/flashgg/tree/HHWWgg_dev][HHWWgg_dev]]:
+
+   #+BEGIN_EXAMPLE
+   export SCRAM_ARCH=slc7_amd64_gcc700
+   cmsrel CMSSW_10_5_0 
+   cd CMSSW_10_5_0/src
+   cmsenv
+   git cms-init
+   cd $CMSSW_BASE/src 
+   git clone -b HHWWgg_Crab https://github.com/atishelmanch/flashgg 
+   source flashgg/setup_flashgg.sh
+   #+END_EXAMPLE
+
+   If everything now looks reasonable, you can build:
+   #+BEGIN_EXAMPLE
+   cd $CMSSW_BASE/src
+   scram b -j 
+   #+END_EXAMPLE    
+
+*IMPORTANT NOTE:* I found that when cloning this edition of flashgg and trying to run crab jobs that there was an issue with accessing paths specified in the 
+metaconditions file, where I was receiving this error from my crab jobs:
+
+   #+BEGIN_EXAMPLE
+   Error Summary:
+
+   197 jobs failed with exit code 7002:
+
+         197 jobs failed with following error message: (for example, job 1)
+
+                  CmsRunFailure
+                  CMSSW error message follows.
+                  Fatal Exception
+                  An exception of category 'ConfigFileReadError' occurred while
+                     [0] Processing the python configuration file named PSet.py
+                  Exception Message:
+                  python encountered the error: <type 'exceptions.RuntimeError'>
+                  edm::FileInPath unable to find file flashgg/MicroAOD/data/TMVAClassification_BDTVtxId_SL_2016.xml anywhere in the search path.
+                  The search path is defined by: CMSSW_SEARCH_PATH
+                  ${CMSSW_SEARCH_PATH} is: /srv/CMSSW_10_5_0/poison:/srv/CMSSW_10_5_0/src:/srv/CMSSW_10_5_0/external/slc7_amd64_gcc700/data:/cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_5_0/src:/cvmfs/cms.cern.ch/slc7_amd64_gcc700/cms/cmssw/CMSSW_10_5_0/external/slc7_amd64_gcc700/data
+                  Current directory is: /srv
+
+   #+END_EXAMPLE
+
+I was able to solve this problem by copying all of the files in flashgg/MicroAOD/data (mainly .xml weight files such as BDT training outputs) into 
+CMSSW_10_5_0/external/slc7_amd64_gcc700/data:
+
+   #+BEGIN_EXAMPLE
+   cd CMSSW_10_5_0/src/flashgg
+   cp MicroAOD/data/* ../../external/slc7_amd64_gcc700/data/
+   #+END_EXAMPLE
+
+The reason for doing this is to make sure the relative paths specified in the metaconditions json are found in the CMSSW_SEARCH_PATH printed in the error message above.
+
+The other change I made was in the metaconditions json for 2017, in which I changed the four instances of the "flashgg/MicroAOD/data/" prefix:
+
+   #+BEGIN_EXAMPLE
+   "photonIdMVAweightfile_EB" : "flashgg/MicroAOD/data/HggPhoId_94X_barrel_BDT_v2.weights.xml", -> "photonIdMVAweightfile_EB" : "HggPhoId_94X_barrel_BDT_v2.weights.xml",
+   "photonIdMVAweightfile_EE" : "flashgg/MicroAOD/data/HggPhoId_94X_endcap_BDT_v2.weights.xml", -> "photonIdMVAweightfile_EE" : "HggPhoId_94X_endcap_BDT_v2.weights.xml",
+   "vertexIdMVAweightfile" : "flashgg/MicroAOD/data/TMVAClassification_BDTVtxId_SL_2016.xml", -> "vertexIdMVAweightfile" : "TMVAClassification_BDTVtxId_SL_2016.xml",
+   "vertexProbMVAweightfile" : "flashgg/MicroAOD/data/TMVAClassification_BDTVtxProb_SL_2016.xml" -> "vertexProbMVAweightfile" : "TMVAClassification_BDTVtxProb_SL_2016.xml"         
+   #+END_EXAMPLE
+
+Note: I'm actually not sure if this step is necessary after copying the MicroAOD/data files to CMSSW_10_5_0/external/slc7_amd64_gcc700/data, but this set of two changes
+makes things work for me. 
+
+** Producing MicroAODs
+To run any MINIAOD's through the flashgg microaAOD step, begin by switching to the Metadata/Work directory:
+
+   #+BEGIN_EXAMPLE
+   cd $CMSSW_BASE/src/flashgg/MetaData/work
+   #+END_EXAMPLE
+
+You next need to create a JSON configuration file that contains the sample names of the data, background and signal MINIAOD datasets you want to run on. 
+
+Note: For the HHWWgg signal samples, these can be defined as bkg rather than signal because we don't require the H->gg specific analysis sequence. For the moment, if you
+want to run on HHWWgg signal, you can put their dataset names in the bkg key of the JSON. 
+
+Your configuration file should be located in MetaData/work. You can look at HHWWgg_v2-2.json as an example:
+
+   #+BEGIN_EXAMPLE
+   {
+      "data" : [],
+      "sig" : [],
+      "bkg"  : ["/ggF_X250_WWgg_qqlnugg/atishelm-100000events_wPU_MINIAOD-5f646ecd4e1c7a39ab0ed099ff55ceb9/USER",
+               "/ggF_X250_WWgg_lnulnugg/atishelm-100000events_wPU_MINIAOD-5f646ecd4e1c7a39ab0ed099ff55ceb9/USER"
+         ]
+   }
+   #+END_EXAMPLE
+
+As mentioned in the note above, these are two HHWWgg signal samples, for the case of the 250 GeV Radion semileptonically decaying, and they are input as a list
+of strings in the bkg key. If you created MINIAOD's with the [[https://github.com/NEUAnalyses/HH_WWgg/tree/HHWWgg_PrivateMC][HHWWgg Private MC Production]] repository 
+and allowed publication in your crab config file, you can find the sample names with these commands.
+
+First you need to setup a grid proxy in order to search for files through DAS:
+
+    #+BEGIN_EXAMPLE
+    cmsenv
+    voms-proxy-init --voms cms --valid 168:00
+    #+END_EXAMPLE
+
+after this, you can run a das query command:
+
+    #+BEGIN_EXAMPLE
+    dasgoclient --query='/<config.Data.outputPrimaryDataset>*/<yourusername>*/USER instance=prod/phys03'
+    #+END_EXAMPLE
+
+replacing <yourusername> with your lxplus username, and <config.Data.outputPrimaryDataset> with the dataset you're looking for. Alternatively you can list 
+all datasets you've published with:
+
+    #+BEGIN_EXAMPLE
+    dasgoclient --query='/*/<yourusername>*/USER instance=prod/phys03'
+    #+END_EXAMPLE
+
+You then need to source crab 3:
+
+   #+BEGIN_EXAMPLE
+   source /cvmfs/cms.cern.ch/crab3/crab.sh
+   #+END_EXAMPLE
+
+And prepare crab jobs with HHWWgg specific conditions:
+
+   #+BEGIN_EXAMPLE
+   ./HHWWgg_prepareCrabJobs.py -p ../../MicroAOD/test/microAODstd.py -C <campaign_Name> -s <sample_JSON> --mkPilot
+   #+END_EXAMPLE
+
+For example, to prepare the crab jobs to produce the HHWWgg_v2-2 campaign, you would run:
+
+   #+BEGIN_EXAMPLE
+   ./HHWWgg_prepareCrabJobs.py -p ../../MicroAOD/test/microAODstd.py -C HHWWgg_v2-2_Test -s HHWWgg_v2-2.json --mkPilot 
+   #+END_EXAMPLE
+
+Note: The max number of events to run per file should be set in the microAODstd.py file. This is done for 1000 events with the following line:
+
+   #+BEGIN_EXAMPLE
+   process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32( 1000 ) )
+   #+END_EXAMPLE
+
+Or all events with: 
+
+   #+BEGIN_EXAMPLE
+   process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32( -1 ) )
+   #+END_EXAMPLE
+
+If this works properly, a directory will be created called HHWWgg_v2-2_Test containing two crab configuration files, one for each of the two samples in 
+HHWWgg_v2-2.json. The --mkPilot option will create an additional crab3 configuration that can be used to run on a single file, before submitting the whole list of tasks.
+
+You can submit all tasks in the directory, in this example, with:
+
+   #+BEGIN_EXAMPLE
+   cd HHWWgg_v2-2_Test
+   echo crabConfig_*.py | xargs -n 1 crab sub
+   #+END_EXAMPLE   
+
+If everything works properly, this will submit the non-mkpilot versions of your crab tasks. 
+
+*** Non-Default Crab Options
+For producing the HHWWgg signal privately, in which 200 MINIAOD files were created, when running with the default flashgg crab config options,
+I ran into the problem of a few jobs running for far too long. Killing these jobs was not useful as they could not be resubmitted without creating a new 
+crab submission. I found that a useful crab configuration for this production included the lines:
+
+   #+BEGIN_EXAMPLE
+   config.JobType.maxJobRuntimeMin = 60
+   config.JobType.maxMemoryMB = 1500
+   config.Data.splitting = "FileBased"
+   config.Data.unitsPerJob = 1
+   #+END_EXAMPLE 
+
+Setting the max run time to one hour for these jobs, which for 200 MINIAOD's with 500 events each should only take ~ 10 minutes, forces jobs that are running for too long
+to move to the failed state allowing you to resubmit them with: 
+
+   #+BEGIN_EXAMPLE
+   crab resubmit -d <directory_of_crab_project> 
+   #+END_EXAMPLE 
+
+*** fggProductionWatchdog
+In the flashgg MetaData README a watchdog is mentioned:
+
+It is very useful to run the fggProductionWatchdog script in a screen session, if the -l option is specified the script runs a continuos loop taking care of failed job resubmission and catalogue update (with the -s option one can control the delay between loop iterations). Importing and checking the MicroAOD files as soon as jobs end it's crucial to minimize the overhead time needed to check the produced files. Example:
+
+fggProductionWatchdog.fish -d MetaData/work/Era2017_RR-31Mar2018_v1/ -c Era2017_RR-31Mar2018_v1
+wher -d specify the crab working directory previously created with prepareCrabJobs.py and -c catalogue to be filled. Note that the scripts checks for name compatibility between the catalogue and the dataset.
+
+I have not tried this yet, but it could be useful for watching jobs. 
