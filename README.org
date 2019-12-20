@@ -92,8 +92,7 @@ The see the differences between the standard prepareCrabJobs.py and HHWWgg_prepa
    #+END_EXAMPLE
 
 The changes are as summarized:
-- The setting of a default fggversion with the -V flag, where it is set to 94X_mc2017-RunIIFall18 in the HHWWgg version. This ends up being part 
-of the secondary dataset name of the output, which is read by fggrunjobs when you run your analyzer in order to determine the PU distribution to use. 
+- The setting of a default fggversion with the -V flag, where it is set to 94X_mc2017-RunIIFall18 in the HHWWgg version. This ends up being part of the secondary dataset name of the output, which is read by fggrunjobs when you run your analyzer in order to determine the PU distribution to use. 
 - The default metaconditions json file is also set in the HHWWgg version to the 2017 metaconditions, while prepareCrabJobs has no default. 
 - Filesplitting is changed from EventAwareLumiBased to FileBased 
 - Default units per job is changed from 25000 -> 1 in order to use one file per job
