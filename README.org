@@ -64,6 +64,7 @@ CMSSW_10_5_0/external/slc7_amd64_gcc700/data:
 
    #+BEGIN_EXAMPLE
    cd CMSSW_10_5_0/src/flashgg
+   mkdir ../../external/slc7_amd64_gcc700/data/
    cp MicroAOD/data/* ../../external/slc7_amd64_gcc700/data/
    #+END_EXAMPLE
 
@@ -154,7 +155,12 @@ You then need to source crab 3:
    source /cvmfs/cms.cern.ch/crab3/crab.sh
    #+END_EXAMPLE
 
-And prepare crab jobs with HHWWgg specific conditions:
+And prepare crab jobs with HHWWgg specific conditions: 
+
+*NOTE 1:* The default metaconditions json file in HHWWgg_prepareCrabJobs.py is for 2017 conditions. In order 
+to change the meta conditions used, you can use the flag --meta-conditions ../data/MetaConditions/<desired_Metaconditions.json>:
+
+*NOTE 2:* The default flashggVersion in the HHWWgg config is 94X_mc2017-RunIIFall18. This can be changed with the flag --flashggVersion <desiredFlashggVersion> 
 
    #+BEGIN_EXAMPLE
    ./HHWWgg_prepareCrabJobs.py -p ../../MicroAOD/test/microAODstd.py -C <campaign_Name> -s <sample_JSON> --mkPilot

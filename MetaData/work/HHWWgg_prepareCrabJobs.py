@@ -33,7 +33,7 @@ parser = OptionParser(option_list=[
                     ),
         make_option("--meta-conditions",
                     action="store", dest="metaConditions", type="string",
-                    default="/afs/cern.ch/work/a/atishelm/14DecCrabFlashggAgain/CMSSW_10_5_0/src/flashgg/MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json", # FIXME should move it to production eventually
+                    default="../data/MetaConditions/Era2017_RR-31Mar2018_v1.json",
                     help="FLASHgg meta conditions file. default: %default", 
                     ),
         make_option("-t","--crabTemplate",
@@ -314,7 +314,8 @@ if options.createCrabConfig:
             ("RunIIFall18-4_0_0-75-g71c3c6e9","AbeFall18"),
             ("5f646ecd4e1c7a39ab0ed099ff55ceb9","a"),
             ("6da13d8da7acaa38134e2095306b577","a"),
-            ("GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_atishelm","b")
+            ("GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_atishelm","b"),
+            ("-100000events","")
         ]
 
         for orig, replacement in replacements:
