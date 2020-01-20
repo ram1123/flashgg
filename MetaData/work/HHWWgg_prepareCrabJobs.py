@@ -33,7 +33,7 @@ parser = OptionParser(option_list=[
                     ),
         make_option("--meta-conditions",
                     action="store", dest="metaConditions", type="string",
-                    default="../data/MetaConditions/Era2017_RR-31Mar2018_v1.json",
+                    default="../../data/MetaConditions/Era2017_RR-31Mar2018_v1.json",
                     help="FLASHgg meta conditions file. default: %default", 
                     ),
         make_option("-t","--crabTemplate",

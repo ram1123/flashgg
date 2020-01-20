@@ -38,6 +38,12 @@ config.Data.publishDBS = 'phys03'
 config.Data.outputDatasetTag = 'FLASHGG_VERSION-PROCESSED_DSET'
 config.Data.outLFNDirBase = "OUTLFN"
 
+# For 200 MINIAOD case 
+config.JobType.maxJobRuntimeMin = 60
+config.JobType.maxMemoryMB = 1500
+config.Data.splitting = "FileBased"
+config.Data.unitsPerJob = 1
+
 config.section_("Site")
 config.Site.storageSite = "OUTSITE"
 config.Site.blacklist = ["T2_US_Nebraska"]
