@@ -62,6 +62,7 @@ namespace flashgg {
         std::vector<float> DOF2s;
         std::vector<float> DOF3s;
         std::vector<float> recHits; 
+        std::vector<float> rawIds; 
         
         unsigned int maxnHits = 100;
         float dummyValue = -9999; 
@@ -70,6 +71,7 @@ namespace flashgg {
             DOF2s.push_back(dummyValue);
             DOF3s.push_back(dummyValue);
             recHits.push_back(dummyValue);
+            rawIds.push_back(dummyValue);
         }
 
         int pho_DOF1; // ieta (ix) for EB (EE) 
@@ -81,8 +83,9 @@ namespace flashgg {
         int rechitDOF1;
         int rechitDOF2;
         int rechitDOF3;
+        int rawId;
 
-        // want to save all rechits in 10x10 window (for now. later make bigger) around photon eta and phi 
+        // want to save all rechits in 10x10 window (for now. later maybe make bigger) around photon eta and phi 
 
         double pho_eta = spv.originalPhoton()->superCluster()->eta();
         // double pho_phi = spv.originalPhoton()->phi(); 
@@ -91,23 +94,13 @@ namespace flashgg {
         float pho_y = spv.originalPhoton()->superCluster()->position().y(); 
         float pho_z = spv.originalPhoton()->superCluster()->position().z(); 
 
-        // cout << "pho eta = " << pho_eta << endl;
-        // cout << "pho phi = " << pho_phi << endl;
-
-        // cout << "pho x = " << pho_x << endl;
-        // cout << "pho y = " << pho_y << endl;
-        // cout << "pho z = " << pho_z << endl;
-
         // EB photon 
-        if (abs(pho_eta) < 1.479){
+        if (abs(pho_eta) < 1.479){ 
 
             EBDetId pho_eb_id(_ebGeom->getClosestCell(GlobalPoint(pho_x,pho_y,pho_z)));
             pho_DOF1 = pho_eb_id.ieta();
             pho_DOF2 = pho_eb_id.iphi();
             pho_DOF3 = 0;
-
-            // cout << "pho ieta = " << pho_ieta << endl;
-            // cout << "pho iphi = " << pho_iphi << endl;
 
             hitNum = 0;
 
@@ -118,25 +111,21 @@ namespace flashgg {
                 rechitDOF1 = EBhitId.ieta();
                 rechitDOF2 = EBhitId.iphi();
                 rechitDOF3 = 0;
+                rawId = EBhitId.rawId();
 
                 // Only save the rec hit eta, phi, energy if its eta and phi are within 5 of the photon ieta iphi 
 
                 if ( (abs((double)rechitDOF1 - (double)pho_DOF1) < 5) && (abs((double)rechitDOF2 - (double)pho_DOF2) < 5) ){
-                    // cout << "rechitiEta = " << rechitiEta << endl;
-                    // cout << "rechitiPhi = " << rechitiPhi << endl;
-                    // cout << "rechitE = " << rechitE << endl;
 
                     DOF1s[hitNum] = (float)rechitDOF1;
                     DOF2s[hitNum] = (float)rechitDOF2;
                     DOF3s[hitNum] = (float)rechitDOF3;
                     recHits[hitNum] = (float)rechitE;
+                    rawIds[hitNum] = (float)rawId;
 
                     hitNum += 1;
                 }
-
-
             }
-
         }
 
         // EE photon 
@@ -152,9 +141,6 @@ namespace flashgg {
                 cout << "EE photon has z position = 0. This is probably a problem." << endl;
             }
 
-            // cout << "pho ieta = " << pho_ieta << endl;
-            // cout << "pho iphi = " << pho_iphi << endl;
-
             hitNum = 0;
 
             for (const auto & obj : *EEReducedRecHits) {
@@ -163,19 +149,18 @@ namespace flashgg {
                 const EEDetId& EEhitId = obj.detid(); 
                 rechitDOF1 = EEhitId.ix();
                 rechitDOF2 = EEhitId.iy(); 
-                rechitDOF3 = EEhitId.zside();
+                rechitDOF3 = EEhitId.zside(); 
+                rawId = EEhitId.rawId();
 
                 // Only save the rec hit eta, phi, energy if its eta and phi are within 5 of the photon ieta iphi 
 
                 if ( (abs((double)rechitDOF1 - (double)pho_DOF1) < 5) && (abs((double)rechitDOF2 - (double)pho_DOF2) < 5) ){
-                    // cout << "rechitiEta = " << rechitiEta << endl;
-                    // cout << "rechitiPhi = " << rechitiPhi << endl;
-                    // cout << "rechitE = " << rechitE << endl;
 
                     DOF1s[hitNum] = (float)rechitDOF1;
                     DOF2s[hitNum] = (float)rechitDOF2;
                     DOF3s[hitNum] = (float)rechitDOF3;
-                    recHits[hitNum] = (float)rechitE;
+                    recHits[hitNum] = (float)rechitE; 
+                    rawIds[hitNum] = (float)rawId;
 
                     hitNum += 1;
                 }
@@ -188,6 +173,7 @@ namespace flashgg {
         spv.SetDOF2s(DOF2s);
         spv.SetDOF3s(DOF3s);
         spv.SetRecHits(recHits);
+        spv.SetRawIds(rawIds);
         spv.SetDOF1((int)pho_DOF1);
         spv.SetDOF2((int)pho_DOF2);
         spv.SetDOF3((int)pho_DOF3);
@@ -196,6 +182,7 @@ namespace flashgg {
         DOF2s.clear();
         DOF3s.clear();
         recHits.clear();
+        rawIds.clear();
 
         return spv; 
     }    
@@ -206,8 +193,6 @@ namespace flashgg {
         //calo geometry
         edm::ESHandle<CaloGeometry> caloGeometry;
         iSetup.get<CaloGeometryRecord>().get(caloGeometry);
-        // const CaloGeometry *geometry = caloGeometry.product();
-        // _ebGeom = caloGeometry->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
         const CaloSubdetectorGeometry* _ebGeom; 
         const CaloSubdetectorGeometry* _eeGeom; 
         _ebGeom = caloGeometry->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
@@ -220,13 +205,11 @@ namespace flashgg {
 
         Handle<EcalRecHitCollection>   EBReducedRecHits;
         Handle<EcalRecHitCollection>   EEReducedRecHits;
-        // edm::Handle<edm::View<edm::SortedCollection<EcalRecHit,edm::StrictWeakOrdering<EcalRecHit> > > > EBReducedRecHits;
         evt.getByToken(EB_reducedEcalRecHitsToken_, EBReducedRecHits);
         evt.getByToken(EE_reducedEcalRecHitsToken_, EEReducedRecHits);
 
 
         int nCand = maxCandidates_;
-        //for(auto & dipho : diPhotons) {
         for( unsigned int i = 0 ; i < diPhotons->size(); i++ ) {
 
             // For updated PhotonID study
@@ -246,9 +229,6 @@ namespace flashgg {
             if( --nCand == 0 ) { break; }
         }
 
-        //// if( photonViews->size() != 0 ) {
-        //// 	cout << photonViews->size() << endl;
-        //// }
         evt.put( std::move( photonViews ) );
 
     }

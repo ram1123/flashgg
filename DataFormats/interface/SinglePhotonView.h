@@ -47,10 +47,12 @@ namespace flashgg {
         void SetDOF2s(std::vector<float> DOF2s);
         void SetDOF3s(std::vector<float> DOF3s);
         void SetRecHits(std::vector<float> recHits);
+        void SetRawIds(std::vector<float> rawIds);
         std::vector<float> DOF1s() const {return DOF1s_;};
         std::vector<float> DOF2s() const {return DOF2s_;};
         std::vector<float> DOF3s() const {return DOF3s_;};
         std::vector<float> recHits() const {return recHits_;};
+        std::vector<float> rawIds() const {return rawIds_;};
         void SetDOF1(int DOF1);
         void SetDOF2(int DOF2);
         void SetDOF3(int DOF3);
@@ -72,6 +74,7 @@ namespace flashgg {
         std::vector<float> DOF2s_;
         std::vector<float> DOF3s_;
         std::vector<float> recHits_;
+        std::vector<float> rawIds_;
         int DOF1_;
         int DOF2_;
         int DOF3_;

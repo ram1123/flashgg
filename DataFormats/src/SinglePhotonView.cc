@@ -81,6 +81,11 @@ namespace flashgg {
         recHits_ = recHits;
     }
 
+    void SinglePhotonView::SetRawIds(std::vector<float> rawIds)
+    {
+        rawIds_ = rawIds;
+    }
+
     void SinglePhotonView::SetDOF1(int DOF1)
     {
         DOF1_ = DOF1;

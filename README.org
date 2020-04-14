@@ -1,3 +1,23 @@
+* PhotonCNN 
+
+The purpose of the modules added to this flashgg repository is to create a new photonID based on a CNN 
+that takes ECAL images as input. The purpose is to distinguish between prompt and fake photons, training on GJet 
+samples. 
+
+** Setup
+
+After setting up flashgg, can try a local test with:
+
+   cmsRun Taggers/test/singlePhotonViewDumper_cfg.py
+
+With Condor:
+
+   fggRunJobs.py --load Taggers/test/PhotonCNN_Samples.json -D -P -n 500 -d PhotonCNN_LowEvents --stage-to=/eos/user/a/atishelm/ntuples/PhotonCNN -x cmsRun Taggers/test/PhotonCNN_cfg.py maxEvents=1000 -q microcentury --no-use-tarball --no-copy-proxy metaConditions=/afs/cern.ch/work/a/atishelm/private/2AprilPhotonCNN/CMSSW_10_5_0/src/flashgg/MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json
+
+all events of 20-40:
+
+   fggRunJobs.py --load Taggers/test/PhotonCNN_Samples_20-40.json -D -P -n 500 -d PhotonCNN_20-40 --stage-to=/eos/user/a/atishelm/ntuples/PhotonCNN/20-40 -x cmsRun Taggers/test/PhotonCNN_cfg.py maxEvents=-1 -q microcentury --no-use-tarball --no-copy-proxy metaConditions=/afs/cern.ch/work/a/atishelm/private/2AprilPhotonCNN/CMSSW_10_5_0/src/flashgg/MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json
+
 * flashgg
 ** Setup
    Before you start, **please take note** of these warnings and comments:
