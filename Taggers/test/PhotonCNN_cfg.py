@@ -86,7 +86,8 @@ variables=[
            "scPhi                  := photon.superCluster.phi", 
            "DOF1                   := DOF1",
            "DOF2                   := DOF2",
-           "DOF3                   := DOF3"
+           "DOF3                   := DOF3",
+        #    "mass                   := mass"
         #    "SCRawE                 := photon.superCluster.rawEnergy",
         #    "etaWidth               := photon.superCluster.etaWidth",
         #    "phiWidth               := photon.superCluster.phiWidth",
@@ -151,13 +152,14 @@ for i in range(num_rec_hits):
 # print'variables = ',variables 
 
 ## list of histograms to be plotted
-# histograms
-#             "r9>>r9(110,0,1.1)",
-#             "scEta>>scEta(100,-2.5,2.5)",
-#         #     "ietas>>ietas(170,-85,85)",
-#         #     "iphis>>iphis(720,-360,360)",
-#         #     "recHits>>recHits(1000,0,100)",
-#             ]
+histograms=[]
+
+        #     "r9>>r9(110,0,1.1)",
+        #     "scEta>>scEta(100,-2.5,2.5)",
+        # #     "ietas>>ietas(170,-85,85)",
+        # #     "iphis>>iphis(720,-360,360)",
+        # #     "recHits>>recHits(1000,0,100)",
+        #     ]
 
 ## define categories and associated objects to dump
 cfgTools.addCategory(process.photonViewDumper,

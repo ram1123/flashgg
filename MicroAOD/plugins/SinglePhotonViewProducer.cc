@@ -208,9 +208,14 @@ namespace flashgg {
         evt.getByToken(EB_reducedEcalRecHitsToken_, EBReducedRecHits);
         evt.getByToken(EE_reducedEcalRecHitsToken_, EEReducedRecHits);
 
-
         int nCand = maxCandidates_;
+
         for( unsigned int i = 0 ; i < diPhotons->size(); i++ ) {
+
+            // print pt 
+            // if(diPhotons->size() > 1) std::cout << "diphoton sum pt: " << diPhotons->ptrAt( i )->sumPt() << std::endl;
+            // Seems very unlikely that an event will have more than one diphoton candidate 
+            // passing kinematic preselections (1 in 10000)
 
             // For updated PhotonID study
             // Want to match leading and subleading photons with an array of rechits 
@@ -243,4 +248,3 @@ DEFINE_FWK_MODULE( FlashggSinglePhotonViewProducer );
 // c-basic-offset:4
 // End:
 // vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-

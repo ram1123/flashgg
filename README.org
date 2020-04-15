@@ -8,15 +8,21 @@ samples.
 
 After setting up flashgg, can try a local test with:
 
-   cmsRun Taggers/test/singlePhotonViewDumper_cfg.py
+   #+BEGIN_EXAMPLE
+   cmsRun Taggers/test/PhotonCNN_cfg.py
+   #+END_EXAMPLE
 
 With Condor:
 
-   fggRunJobs.py --load Taggers/test/PhotonCNN_Samples.json -D -P -n 500 -d PhotonCNN_LowEvents --stage-to=/eos/user/a/atishelm/ntuples/PhotonCNN -x cmsRun Taggers/test/PhotonCNN_cfg.py maxEvents=1000 -q microcentury --no-use-tarball --no-copy-proxy metaConditions=/afs/cern.ch/work/a/atishelm/private/2AprilPhotonCNN/CMSSW_10_5_0/src/flashgg/MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json
+   #+BEGIN_EXAMPLE
+   fggRunJobs.py --load Taggers/test/PhotonCNN_Samples.json -D -P -n 500 -d PhotonCNN_LowEvents --stage-to=/eos/user/a/atishelm/ntuples/PhotonCNN -x cmsRun Taggers/test/PhotonCNN_cfg.py maxEvents=1000 -q longlunch --no-use-tarball --no-copy-proxy metaConditions=/afs/cern.ch/work/a/atishelm/private/2AprilPhotonCNN/CMSSW_10_5_0/src/flashgg/MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json
+   #+END_EXAMPLE
 
 all events of 20-40:
 
-   fggRunJobs.py --load Taggers/test/PhotonCNN_Samples_20-40.json -D -P -n 500 -d PhotonCNN_20-40 --stage-to=/eos/user/a/atishelm/ntuples/PhotonCNN/20-40 -x cmsRun Taggers/test/PhotonCNN_cfg.py maxEvents=-1 -q microcentury --no-use-tarball --no-copy-proxy metaConditions=/afs/cern.ch/work/a/atishelm/private/2AprilPhotonCNN/CMSSW_10_5_0/src/flashgg/MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json
+   #+BEGIN_EXAMPLE
+   fggRunJobs.py --load Taggers/test/PhotonCNN_Samples_20-40.json -D -P -n 500 -d PhotonCNN_20-40 --stage-to=/eos/user/a/atishelm/ntuples/PhotonCNN/20-40 -x cmsRun Taggers/test/PhotonCNN_cfg.py maxEvents=-1 -q longlunch --no-use-tarball --no-copy-proxy metaConditions=/afs/cern.ch/work/a/atishelm/private/2AprilPhotonCNN/CMSSW_10_5_0/src/flashgg/MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json
+   #+END_EXAMPLE
 
 * flashgg
 ** Setup
