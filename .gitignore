@@ -1,0 +1,8 @@
+*.pyc
+*.so
+*.d
+*.out
+*.err
+*.log
+.__afs*
+*.root

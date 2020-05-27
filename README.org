@@ -1,0 +1,309 @@
+* HHWWgg Development 
+
+Contacts: 
+- Abraham Tishelman-Charny - abraham.tishelman.charny@cern.ch 
+- Badder Marzocchi - badder.marzocchi@cern.ch
+- Toyoko Orimoto - Toyoko.Orimoto@cern.ch 
+
+Presentations: 
+- [[https://indico.cern.ch/event/847927/contributions/3606888/attachments/1930081/3196452/HH_WWgg_Analysis_Status_21_October_2019.pdf][21 October 2019 Analysis Status]]
+- [[https://indico.cern.ch/event/847923/contributions/3632148/attachments/1942588/3221820/HH_WWgg_Analysis_Update_11_November_2019_2.pdf][11 November 2019 Analysis Update]]
+
+Repositories:
+- [[https://github.com/atishelmanch/flashggFinalFit/tree/HHWWgg_Dev][HHWWgg Flashgg Final Fit]]
+- [[https://github.com/atishelmanch/flashgg/tree/HHWWgg_Crab][HHWWgg MicroAOD Production]]
+- [[https://github.com/NEUAnalyses/HH_WWgg/tree/HHWWgg_PrivateMC][HHWWgg Private MC Production]]
+
+These instructions describe how to run flashgg modules specific to the HH->WWgg analysis. The current plugin designed to work with workspaceStd
+(as of 19 December 2019) is the HHWWgg Tagger. One can also run a non-standard flashgg sequence, specific to HHWWgg, with the HHWWgg Candidate Dumper. 
+
+** Cloning the HHWWgg_dev Repository 
+
+The HHWWgg development branch is obtained in a similar fasion to the dev_legacy_runII branch: 
+
+   #+BEGIN_EXAMPLE
+   export SCRAM_ARCH=slc7_amd64_gcc700
+   cmsrel CMSSW_10_5_0 
+   cd CMSSW_10_5_0/src
+   cmsenv
+   git cms-init
+   cd $CMSSW_BASE/src 
+   git clone -b HHWWgg_dev https://github.com/atishelmanch/flashgg 
+   source flashgg/setup_flashgg.sh
+   #+END_EXAMPLE
+
+   If everything now looks reasonable, you can build:
+   #+BEGIN_EXAMPLE
+   cd $CMSSW_BASE/src
+   scram b -j 4
+   #+END_EXAMPLE
+
+** Setting up a voms Proxy 
+
+For both the HHWWgg Candidate Dumper and Tagger, to run locally on an HHWWgg signal file, you must first run the following commands:
+
+    #+BEGIN_EXAMPLE
+    cmsenv
+    voms-proxy-init --voms cms --valid 168:00
+    #+END_EXAMPLE
+
+after the voms command, you should receive an output similar to:
+
+    #+BEGIN_EXAMPLE
+    Created proxy in /tmp/x509up_u95168
+    #+END_EXAMPLE
+
+to set this proxy to your X509_USER_PROXY environment variable for the example above, simply use the command:
+
+    #+BEGIN_EXAMPLE
+    . proxy.sh x509up_u95168
+    #+END_EXAMPLE
+
+where x590up_u95168 would be replaced by whatever your proxy name is. 
+
+** HHWWgg Candidate Dumper
+
+*** Running Locally 
+
+The HHWWgg Candidate Dumper is run with the config file Taggers/test/HHWWggTest_cfg.py. This is useful if you'd like to run a cmsRun sequence different 
+from that used in workspacestd.py. To run locally, after a scram b -j command to build everything, you can run the command:
+
+    #+BEGIN_EXAMPLE
+    cmsRun Taggers/test/HHWWggTest_cfg.py outputFile=HHWWggtest.root metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json maxEvents=1000
+    #+END_EXAMPLE
+
+Note: The metaConditions option in this examples specifies 2017 conditions. If you'd like to run with 2016 or 2018 or some other non-standard metaconditions, this option
+must be changed.
+
+Note: If the default file is not found, you can try running the same cmsRun command above but adding the options: useAAA=False useEOS=True 
+
+When running locally, the input files are specified in the cmssw config file (HHWWggTest_cfg.py), and by default is set to a single 250 GeV radion semileptonic decay
+signal microaod with 499 events: 
+
+    #+BEGIN_EXAMPLE
+    /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HHWWgg_v2-2/94X_mc2017-RunIIFall18/ggF_X250_WWgg_qqlnugg/HHWWgg_v2-2-94X_mc2017-RunIIFall18-v0-atishelm-100000events_wPU_MINIAOD-5f646ecd4e1c7a39ab0ed099ff55ceb9/191216_220038/0000/myMicroAODOutputFile_9.root
+    #+END_EXAMPLE
+
+In the config file, you can specify the variables to output with the cfgTools.addCategories 
+variable "variables". By default this is set to variables = Reco_Variables, which outputs the minimum variables in the trees and workspaces for fggfinalfit
+(CMS_hgg_mass, dZ, weight and intLumi), and in addition many supplementary variables such as four momentum of the leading and subleading photons, jets and leptons. The specific variables to be 
+plotted from these names (such as Reco_Variables) are found in the file Taggers/python/HHWWggTagVariables.py 
+
+Towards the end of the config file are the options zero_vtx and sands. Setting zero_vtx equal to 1 will perform the analysis dumper only considering diphotoncandidates
+constructed from the highest sum pt squared vertex, found to be slightly more efficient in the case of the 250 GeV HHWWgg semileptonic signal compared to the Hgg vertex.
+Setting sands equal to 1 will apply scaling corrections to data and smearing corrections to MC. 
+
+*** Running on Condor
+
+Running the Candidate Dumper has the advantage of allowing you to run over entire data sets and calculate weights for signal samples. Running the Candidate Dumper on
+condor can be done with the script HHWWgg_Run_Jobs.sh. This allows you to run with the Candidate Dumper or Tagger on signal or background. To run the HHWWgg Candidate Dumper on signal,
+you can run the command 
+
+Note: You must first follow the proxy steps above in order to have access to DAS datasets)
+
+Note: There are two user specific parameters in the script: fggDirec and ntupleDirec, which are be default set to:
+
+    #+BEGIN_EXAMPLE
+    fggDirec="/afs/cern.ch/work/a/atishelm/21JuneFlashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory 
+    ntupleDirec="/eos/user/a/atishelm/ntuples/HHWWgg/" # condor output directory 
+    #+END_EXAMPLE
+
+These should be set to the user's flashgg directory and ntuple directory where they would like the output of the condor jobs to go. An example command to run the script is as follows:
+
+    #+BEGIN_EXAMPLE
+    . HHWWgg_Run_Jobs.sh --labelName HHWWggTestSignal --nEvents 1000 -s
+    #+END_EXAMPLE
+
+This will create and exectue an fggrunjobs command to run the HHWWgg dumper on a maximum of 1000 events from the signal dataset specified in Taggers/test/HHWWgg_2017_Signal/HHWWgg_Signal_2017.json.
+By default this json specifies the 250 GeV Radion -> HH -> WWgg -> qqlnu, semileptonic final state. If you'd like to change the dataset run on, you can edit HHWWgg_Signal_2017.json or specify another 
+json file with the --json option like so:
+
+    #+BEGIN_EXAMPLE
+    . HHWWgg_Run_Jobs.sh --labelName HHWWggTestSignal --nEvents 1000 --json Taggers/test/HHWWgg_v2-2/HHWWgg_Signal_2017.json 
+    #+END_EXAMPLE
+
+Using the --json option will use the specified json file to obtain the fggrunjobs parameters to use, such as the dataset and campaign. In this example, a dataset from 
+the HHWWgg campaign HHWWgg_v2-2 is used. You can find the available datasets for the current, very very preliminary HHWWgg campaign with the command: 
+
+    #+BEGIN_EXAMPLE
+    fggManageSamples.py -C HHWWgg_v2-2 
+    #+END_EXAMPLE
+
+or
+
+    #+BEGIN_EXAMPLE
+    fggManageSamples.py -C HHWWgg_v2-2 list raw 
+    #+END_EXAMPLE`
+
+If you would like to run on data, you run the same HHWWgg_Run_Jobs command but with the data flag instead of the signal flag:
+
+    #+BEGIN_EXAMPLE
+    . HHWWgg_Run_Jobs.sh --labelName HHWWggTestData --nEvents 1000 -d
+    #+END_EXAMPLE
+
+By default, the json file used for specifying datasets for data is Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json. At the moment, this contains 
+the 2017 DoubleEG dataset. If you'd like to change this, you need to either edit this json file or specify a different json file with the --json flag: 
+
+    #+BEGIN_EXAMPLE
+    . HHWWgg_Run_Jobs.sh --labelName HHWWggTestData --nEvents 1000 --json <Local_Path_to_json>
+    #+END_EXAMPLE
+
+To run all all events, change --nEvents 1000 to --nEvents all 
+
+** HHWWgg Tagger
+
+The HHWWgg tagger performs the same task as the dumper, but was created in order to have a compatible plugin to run with workspaceStd in order to eventually add
+systematics to the analysis, and if desired to include tagging of other flashgg tags on the same events. 
+
+*** Running Locally 
+
+The HHWWgg Tagger can be run locally with:
+
+    #+BEGIN_EXAMPLE
+    cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=HHWWgg_v2-3 dataset=ggF_X250_WWgg_qqlnugg doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 doBJetRegression=0 useAAA=1
+    #+END_EXAMPLE
+
+If this worked properly, you should get an output file called: output_numEvent500.root.
+
+The first customization location for this tagger is Systematics/python/HHWWggCustomize.py. 
+In this you can specify variables to save, and the number of categories to save HHWWggTag objects in. The selections are located in 
+Taggers/plugins/HHWWggTagProducer.cc. For the moment, a tag object "tag_obj" is created if an event has a diphoton, exactly one good lepton, corresponding
+to the leptonically decaying W boson, and at least two 'good' jets, corresponding to the hadronically decaying W boson. For these objects, 'good' is defined by the selections specified in 
+Taggers/python/flashggHHWWggTag_cfi.py. By default this tag object is saved to category 0 (tag_obj.setCategoryNumber( catnum )). To add another category, the number of categories
+specified in Systematics/python/HHWWggCustomize.py should be changed like so: self.tagList = [ ["HHWWggTag",1] ] -> self.tagList = [ ["HHWWggTag",2] ]. Then, when saving a tag object
+of the second category, you would do so in Taggers/plugins/HHWWggTagProducer.cc with tag_obj.setCategoryNumber( 1 ) rather than tag_obj.setCategoryNumber( 0 ). 
+
+*** Running on Condor 
+
+To run the tagger on condor, the same instructions as running the dumper with condor are followed but with the addition of the "-w" flag. To run on signal:
+
+    #+BEGIN_EXAMPLE
+    . HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest --nEvents 1000 -s -w
+    #+END_EXAMPLE
+
+or to run on data:
+
+    #+BEGIN_EXAMPLE
+    . HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest --nEvents 1000 -d -w
+    #+END_EXAMPLE
+
+By default, this will run the tagger on the 250 GeV Radion, semileptonic final state dataset. To change this, one needs to edit the json file used in the same manner described in the dumper instructions. 
+As described in the Candidate Dumper condor instructions above, this can be specified with the --json flag:
+
+    #+BEGIN_EXAMPLE
+    . HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest --nEvents 1000 --json Taggers/test/HHWWgg_v2-2/HHWWgg_Signal_2017.json -w 
+    #+END_EXAMPLE
+
+HHWWgg_v2-3:
+
+    #+BEGIN_EXAMPLE
+    . HHWWgg_Run_Jobs.sh --labelName HHWWgg_v2-3_CutFlow_NoSyst_LowEvents --nEvents 1000 --json Taggers/test/HHWWgg_v2-3/HHWWgg_v2-3.json -g -c -t 
+    #+END_EXAMPLE
+
+** nTuple Processing
+
+After your condor jobs are complete, you should have a number of output files, for example 200. If you are running over signal,
+you need to hadd the workspaces in order to obtain a root file with a single combined root workspace to work with fggfinalfit. 
+To hadd workspaces, go to the output directory where your files are. In order to hadd you need a terminal whose present directory is the directory with 
+the output files. From here, you need to cmsenv in flashgg and then run the hadd python script:
+
+    cd <flashgg_location>
+    python <flashgg_location>Systematics/scripts/hadd_all.py
+
+If done properly, this should hadd the files into one, with one workspace. 
+
+Because the name of the RooAbsData object in the RooWorkspace needs to be named properly for fggfinalfit, you can make sure the name is correct for the HHWWgg fggfinalfit
+setup with RenameWorkspace_SignalTagger.cpp for a signal file and RenameWorkspace_DataTagger.cpp for an hadded data file. While in the directory of the hadded signal file, making 
+sure the name of the file is expected in RenameWorkspace_SignalTagger.cpp (copy_output_ggF_X250_WWgg_qqlnugg.root by default), and then simply run:
+
+    root -l <location of RenameWorkspace_SignalTagger.cpp>/RenameWorkspace_SignalTagger.cpp
+
+this will create a root file with the proper workspace RooAbsData object name for the current HHWWgg version of fggfinalfit.
+From here, you can follow the steps for creating the signal model at [[https://github.com/atishelmanch/flashggFinalFit/tree/HHWWgg_Dev#hhwwgg_v2-2][HHWWgg_v2-2 Final Fit]]
+
+* HHWWgg_v2-2 
+
+The HHWWgg_v2-2 tag is used to mark the point in the anlaysis where the 95% CL limit on the HH cross section was placed on the 250 GeV semileptonically decaying Radion using
+the HHWWgg tagger plugin with workspaceStd.py WITHOUT systematics. The purpose of the tag is to document everything used to obtain this *very* preliminary result.
+
+** Files  
+
+*** Signal MicroAODs: 
+
+dbs instance: phys03 
+Sample: 
+    #+BEGIN_EXAMPLE
+    /ggF_X250_WWgg_qqlnugg/atishelm-HHWWgg_v2-2-94X_mc2017-RunIIFall18-v0-atishelm-100000events_wPU_MINIAOD-5f646ecd4e1c7a39ab0ed099ff55ceb9-894aca5f1702fc00de4ca2fc3fbcfe4c/USER
+
+    campaign=HHWWgg_v2-2
+    #+END_EXAMPLE
+
+Json file for fggrunjobs:
+
+    #+BEGIN_EXAMPLE
+    {
+    "processes" : {
+                "ggF_X250_WWgg_qqlnugg" : [
+                        "/ggF_X250_WWgg_qqlnugg"
+                ]
+                       },
+     "cmdLine" : "campaign=HHWWgg_v2-2 targetLumi=1e+3 useAAA=False useEOS=True puTarget=6.245e-06,2.63e-05,4.92e-05,9.084e-05,9.854e-05,0.0001426,0.0001557,0.0001656,0.0002269,0.0005395,0.001076,0.002034,0.003219,0.004616,0.006528,0.009201,0.01283,0.01707,0.02125,0.0251,0.02847,0.03118,0.03325,0.03486,0.03626,0.03758,0.0387,0.03937,0.03946,0.03892,0.03782,0.03627,0.03435,0.03211,0.02967,0.02719,0.02482,0.02264,0.0207,0.01907,0.01784,0.01709,0.01685,0.0171,0.01771,0.01849,0.01916,0.01945,0.01911,0.01804,0.01627,0.01399,0.01147,0.008976,0.006728,0.004848,0.003375,0.002281,0.001504,0.0009715,0.0006178,0.0003882,0.0002419,0.0001501,9.294e-05,5.768e-05,3.598e-05,2.263e-05,1.437e-05,9.233e-06,5.996e-06,3.933e-06,2.601e-06,1.731e-06,1.157e-06,7.743e-07,5.184e-07,3.466e-07,2.311e-07,1.535e-07,1.015e-07,6.676e-08,4.365e-08,2.836e-08,1.829e-08,1.171e-08,7.437e-09,4.685e-09,2.926e-09,1.812e-09,1.111e-09,6.754e-10,4.066e-10,2.424e-10,1.431e-10,8.363e-11,4.839e-11,2.771e-11,1.571e-11,8.814e-12"
+    }
+    #+END_EXAMPLE
+
+*** Data MicroAODs
+
+Samples:
+
+    #+BEGIN_EXAMPLE    
+    /DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER
+    /DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017C-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER
+    /DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017D-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER
+    /DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017E-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER
+    /DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017F-31Mar2018-v1-6275f8d5048d2e0a580d591e02fde0b8/USER
+
+    campaign=Era2017_RR-31Mar2018_v2 targetLumi=41.5e+3 useAAA=True processId=Data processType=Data"
+    #+END_EXAMPLE
+
+Json file for fggrunjobs:
+
+    #+BEGIN_EXAMPLE
+    {
+            "processes": {
+                    "Data"   : [
+                                    "/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER",
+                                    "/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017C-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER",
+                                    "/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017D-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER",
+                                    "/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017E-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER",
+                                    "/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017F-31Mar2018-v1-6275f8d5048d2e0a580d591e02fde0b8/USER"
+                            ]
+                    },
+            "cmdLine" : "campaign=Era2017_RR-31Mar2018_v2 targetLumi=41.5e+3 useAAA=True processId=Data processType=Data"
+    }
+    #+END_EXAMPLE
+
+*** HHWWgg Condor Submission Commands
+
+After cmsenv and setting proxy variables:
+
+Signal:
+
+    #+BEGIN_EXAMPLE   
+    . HHWWgg_Run_Jobs.sh --labelName HHWWgg_v2-2_X250_qqlnu --nEvents all --json Taggers/test/HHWWgg_v2-2/HHWWgg_Signal_2017.json -w 
+    #+END_EXAMPLE
+
+Data:
+
+    #+BEGIN_EXAMPLE   
+    . HHWWgg_Run_Jobs.sh --labelName HHWWgg_v2-2_X250_qqlnu --nEvents all --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json -w 
+    #+END_EXAMPLE
+
+*** HHWWgg Tagger with workspaceStd.py Output 
+This contains the hadded data and signal files to input into flashgg finalfit:
+
+    #+BEGIN_EXAMPLE   
+    /eos/user/a/atishelm/ntuples/HHWWgg_v2-2
+    #+END_EXAMPLE
+
+** Limit Computation Instructions 
+Instructions for computing the limit can be found at [[https://github.com/atishelmanch/flashggFinalFit/tree/HHWWgg_Dev#hhwwgg_v2-2][HHWWgg_v2-2 Final Fit]]
