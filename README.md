@@ -39,11 +39,11 @@ filesOutPath = '/afs/cern.ch/user/c/chuw/work/HHWWgg/FullLep/CMSSW_10_5_0/src/fl
 Signal:
 -------
 
-sh HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest_Signal --nEvents all --json Taggers/test/HHWWgg_2017_Signal/HHWWgg_Signal_2017.json -g -w
+sh HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest_Signal --nEvents all --json Taggers/test/HHWWgg_Full/HHWWgg_Signal_2017.json -g -w
 
 Data:
 ------
-sh HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest_Signal --nEvents all --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json -g -w
+sh HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest_Data --nEvents all --json Taggers/test/HHWWgg_Full/HHWWgg_Data_All_2017.json -g -w
 `````
 
 
