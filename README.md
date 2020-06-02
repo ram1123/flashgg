@@ -45,7 +45,11 @@ Data:
 ------
 sh HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest_Data --nEvents all --json Taggers/test/HHWWgg_Full/HHWWgg_Data_All_2017.json -g -w
 `````
-
-
+Dump Variables
+-------------
+You can dump the variables you want to dump by edit:Systematics/python/HHWWggCustomize.py line:16
+Systematics/test/workspaceStd.py line:289
+DataFormats/src/HHWWggTag.cc
+DataFormats/interface/HHWWggTag.h
 
 
