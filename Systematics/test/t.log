@@ -1,0 +1,432 @@
+2c2
+< from importlib import import_module
+---
+> 
+10d9
+< # from flashgg.Systematics.flashggDiPhotonSystematics_cfi import flashggDiPhotonSystematics
+22,23c21,22
+< # process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 100 )
+< process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1 )
+---
+> process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1000 )
+> 
+44a44,61
+> customize.options.register('doubleHTagsUseMjj',
+>                            True,
+>                            VarParsing.VarParsing.multiplicity.singleton,
+>                            VarParsing.VarParsing.varType.bool,
+>                            'doubleHTagsUseMjj'
+>                            )
+> customize.options.register('doubleHTagDumpMinVariables',
+>                            False,
+>                            VarParsing.VarParsing.multiplicity.singleton,
+>                            VarParsing.VarParsing.varType.bool,
+>                            'doubleHTagDumpMinVariables'
+>                            )
+> customize.options.register('ForceGenDiphotonProduction',
+>                            True,
+>                            VarParsing.VarParsing.multiplicity.singleton,
+>                            VarParsing.VarParsing.varType.bool,
+>                            'ForceGenDiphotonProduction'
+>                            )
+75,92d91
+< customize.options.register('HHWWggTagsOnly',
+<                            False,
+<                            VarParsing.VarParsing.multiplicity.singleton,
+<                            VarParsing.VarParsing.varType.bool,
+<                            'HHWWggTagsOnly'
+<                            )
+< customize.options.register('doHHWWggTag',
+<                            False,
+<                            VarParsing.VarParsing.multiplicity.singleton,
+<                            VarParsing.VarParsing.varType.bool,
+<                            'doHHWWggTag'
+<                            )
+< customize.options.register('doHHWWggTagCutFlow', # This saves all events for cutflow analysis
+<                            False,
+<                            VarParsing.VarParsing.multiplicity.singleton,
+<                            VarParsing.VarParsing.varType.bool,
+<                            'doHHWWggTagCutFlow'
+<                            )
+104a104,109
+> customize.options.register('doStageOne',
+>                            False,
+>                            VarParsing.VarParsing.multiplicity.singleton,
+>                            VarParsing.VarParsing.varType.bool,
+>                            'doStageOne'
+>                            )
+158a164,175
+> customize.options.register('analysisType',
+>                            'mainAnalysis',
+>                            VarParsing.VarParsing.multiplicity.singleton,
+>                            VarParsing.VarParsing.varType.string,
+>                            'analysisType'
+>                            )
+> customize.options.register('applyNNLOPSweight',
+>                            True,
+>                            VarParsing.VarParsing.multiplicity.singleton,
+>                            VarParsing.VarParsing.varType.bool,
+>                            'applyNNLOPSweight'
+>                            )
+182,183d198
+< # print'jetSystematicsInputTags = ',jetSystematicsInputTags
+< # jetSystematicsInputTags = None 
+187,191c202
+< 
+< modifyTagSequenceForSystematics(process,jetSystematicsInputTags) # normally uncommented 
+< # HHWWgg testing: 
+< # process.systematicsTagSequences = cms.Sequence()
+< # process.flashggSystTagMerger = cms.EDProducer("TagMerger",src=cms.VInputTag("flashggTagSorter"))
+---
+> modifyTagSequenceForSystematics(process,jetSystematicsInputTags)
+227,228c238
+< # HHWWgg: Want zeroeth vertex 
+< if customize.tthTagsOnly or customize.HHWWggTagsOnly:
+---
+> if customize.tthTagsOnly:
+232,243c242,244
+<     if customize.HHWWggTagsOnly: # not sure if this is needed for tthTagsOnly, but it is needed for HHWWgg 
+<         process.flashggDiPhotons.vertexProbMVAweightfile = "flashgg/MicroAOD/data/TMVAClassification_BDTVtxProb_SL_2016.xml" # Prob or Id ? 
+<         process.flashggDiPhotons.vertexIdMVAweightfile = "flashgg/MicroAOD/data/TMVAClassification_BDTVtxId_SL_2016.xml"
+< 
+< # if customize.HHWWggTagsOnly:
+< #     print'customizing for HHWWgg'
+< #     process.load("flashgg/MicroAOD/flashggDiPhotons_cfi")
+< #     process.flashggDiPhotons.whichVertex = cms.uint32(0)
+< #     process.flashggDiPhotons.useZerothVertexFromMicro = cms.bool(True)
+< #     process.flashggDiPhotons.vertexProbMVAweightfile = "flashgg/MicroAOD/data/TMVAClassification_BDTVtxId_SL_2016.xml"
+< #     process.flashggDiPhotons.vertexIdMVAweightfile = "flashgg/MicroAOD/data/TMVAClassification_BDTVtxId_SL_2016.xml"
+<                                                         
+---
+>     process.flashggDiPhotons.vertexIdMVAweightfile = customize.metaConditions['flashggDiPhotons']['vertexIdMVAweightfile'].encode("ascii")
+>     process.flashggDiPhotons.vertexProbMVAweightfile = customize.metaConditions['flashggDiPhotons']['vertexProbMVAweightfile'].encode("ascii")
+> 
+260d260
+<     process.flashggTagSequence.remove(process.flashggVHLeptonicLooseTag)
+269d268
+<     process.flashggTagSequence.remove(process.flashggVHLeptonicLooseTag)
+289,293c288,293
+< if customize.doHHWWggTag:
+<     import flashgg.Systematics.HHWWggCustomize 
+<     hhwwggc = flashgg.Systematics.HHWWggCustomize.HHWWggCustomize(process, customize, customize.metaConditions)
+<     minimalVariables += hhwwggc.variablesToDump()
+<     systematicVariables = hhwwggc.systematicVariables()
+---
+> if customize.doStageOne:
+>     assert (not customize.doHTXS)
+>     from flashgg.Systematics.stageOneCustomize import StageOneCustomize
+>     soc = StageOneCustomize(process, customize, customize.metaConditions)
+>     minimalVariables = soc.variablesToDump()
+>     systematicVariables = soc.systematicVariables()
+304,306d303
+< # if customize.HHWWggTagsOnly:
+< #     process.flashggTagSorter.TagPriorityRanges = cms.VPSet(     cms.PSet(TagName = cms.InputTag('flashggHHWWggTag')) )
+< 
+326,339c323
+< 
+< 
+< # if customize.HHWWggTagsOnly:    
+< #     print "Removing FracRVNvtxWeight from syst and adding  PixelSeed"
+<     
+< #     newvpset = cms.VPSet()
+< #     for pset in process.flashggDiPhotonSystematics.SystMethods:
+< #         if not pset.Label.value().count("FracRVNvtxWeight") :
+< #             print  pset.Label.value()
+< #             newvpset += [pset]
+< #     #from flashgg.Systematics.flashggDiPhotonSystematics_cfi import PixelSeedWeight #FIXME: this does not currently work, so comment it out for now
+< #     #newvpset += [ PixelSeedWeight ]
+<     
+< #     process.flashggDiPhotonSystematics.SystMethods = newvpset  
+---
+>    
+342d325
+< 
+347,393d329
+< # Adding systematics without useEGMTools()
+< # sysmodule = importlib.import_module(
+< 
+< 
+< 
+< # sysmodule = import_module(
+< #     "flashgg.Systematics."+customize.metaConditions["flashggDiPhotonSystematics"])
+< # systModules2D = cms.VPSet()
+< # systModules = cms.VPSet()
+< 
+< # if customize.processId == "Data":
+< #     print'Data'
+< #     systModules.append(sysmodule.MCScaleHighR9EB_EGM)
+< #     systModules.append(sysmodule.MCScaleLowR9EB_EGM)
+< #     systModules.append(sysmodule.MCScaleHighR9EE_EGM)
+< #     systModules.append(sysmodule.MCScaleLowR9EE_EGM)
+< #     # systModules.append(sysmodule.MCScaleGain6EB_EGM)
+< #     # systModules.append(sysmodule.MCScaleGain1EB_EGM)
+< 
+< #     for module in systModules:
+< #         module.ApplyCentralValue = cms.bool(True)
+< 
+< # else:
+< #     print'Not Data'
+< #     # systModules.append(sysmodule.MCScaleHighR9EB_EGM)
+< #     # systModules.append(sysmodule.MCScaleLowR9EB_EGM)
+< #     # systModules.append(sysmodule.MCScaleHighR9EE_EGM)
+< #     # systModules.append(sysmodule.MCScaleLowR9EE_EGM)    
+< 
+< #     # systModules2D.append(sysmodule.MCSmearHighR9EE_EGM)
+< #     # systModules2D.append(sysmodule.MCSmearLowR9EE_EGM)
+< #     # systModules2D.append(sysmodule.MCSmearHighR9EB_EGM)
+< #     # systModules2D.append(sysmodule.MCSmearLowR9EB_EGM)
+< 
+< #     # for module in systModules:
+< #         # module.ApplyCentralValue = cms.bool(False)
+< 
+< #     systModules.append(sysmodule.TriggerWeight) # applycentralvalue = true 
+< 
+< 
+< 
+< 
+< # process.flashggDiPhotonSystematics = flashggDiPhotonSystematics
+< # process.flashggDiPhotonSystematics.src = "flashggPreselectedDiPhotons"
+< # process.flashggDiPhotonSystematics.SystMethods = systModules
+< # process.flashggDiPhotonSystematics.SystMethods2D = systModules2D
+< 
+399,406c335
+< signal_processes = ["ggh_","vbf_","wzh_","wh_","zh_","bbh_","thq_","thw_","tth_","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance","WWgg"]
+< # ^^ WWgg present in HHWWgg signal samples 
+< 
+< # print'customize'
+< # print'checking customize options'
+< # print'customize.processId.count("ggF_X250_WWgg_qqlnugg") = ',customize.processId.count("ggF_X250_WWgg_qqlnugg")
+< # for thing in customize.processId.count(0):
+<     # print'thing = ',thing 
+---
+> signal_processes = ["ggh_","vbf_","wzh_","wh_","zh_","bbh_","thq_","thw_","tth_","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance","hh","qqh","ggh","tth","vh"]
+407a337,339
+> 
+> applyL1Prefiring = customizeForL1Prefiring(process, customize.metaConditions, customize.processId)
+> 
+422c354
+<     
+---
+> 
+426d357
+< #            phosystlabels.append("MvaLinearSyst%s01sigma" % direction)
+437a369,371
+>             if customize.metaConditions['flashggJetSystematics']['doGranular']:
+>                 for sourceName in customize.metaConditions['flashggJetSystematics']['listOfSources']:
+>                     jetsystlabels.append("JEC%s%s01sigma" % (str(sourceName),direction))
+442,443d375
+<             variablesToUse.append("UnmatchedPUWeight%s01sigma[1,-999999.,999999.] := weight(\"UnmatchedPUWeight%s01sigma\")" % (direction,direction))
+<             variablesToUse.append("MvaLinearSyst%s01sigma[1,-999999.,999999.] := weight(\"MvaLinearSyst%s01sigma\")" % (direction,direction))
+449,467c381,398
+<             # variablesToUse.append("FracRVNvtxWeight%s01sigma[1,-999999.,999999.] := weight(\"FracRVNvtxWeight%s01sigma\")" % (direction,direction)) # removed because not working for HHWWgg for some reason
+<             variablesToUse.append("ElectronWeight%s01sigma[1,-999999.,999999.] := weight(\"ElectronWeight%s01sigma\")" % (direction,direction))
+<             
+<             # variablesToUse.append("MuonIDWeight%s01sigma[1,-999999.,999999.] := weight(\"Muon%sIDWeight%s01sigma\")" % (direction,str(customize.metaConditions["MUON_ID"]),direction))
+<             # variablesToUse.append("ElectronIDWeight%s01sigma[1,-999999.,999999.] := weight(\"ElectronIDWeight%s01sigma\")" % (direction,direction))
+<             # variablesToUse.append("ElectronRecoWeight%s01sigma[1,-999999.,999999.] := weight(\"ElectronRecoWeight%s01sigma\")" % (direction,direction))
+<             # variablesToUse.append("MuonIsoWeight%s01sigma[1,-999999.,999999.] := weight(\"Muon%sISOWeight%s01sigma\")" % (direction,str(customize.metaConditions['MUON_ISO']),direction))
+<             
+<             # if os.environ["CMSSW_VERSION"].count("CMSSW_8_0"):
+<             #     variablesToUse.append("MuonWeight%s01sigma[1,-999999.,999999.] := weight(\"MuonWeight%s01sigma\")" % (direction,direction))
+<             #     variablesToUse.append("MuonMiniIsoWeight%s01sigma[1,-999999.,999999.] := weight(\"MuonMiniIsoWeight%s01sigma\")" % (direction,direction))
+<             # elif os.environ["CMSSW_VERSION"].count("CMSSW_9_4"):
+<             #     variablesToUse.append("MuonIDWeight%s01sigma[1,-999999.,999999.] := weight(\"Muon%sIDWeight%s01sigma\")" % (direction,MUON_ID,direction))
+<             #     variablesToUse.append("MuonIsoWeight%s01sigma[1,-999999.,999999.] := weight(\"Muon%sISOWeight%s01sigma\")" % (direction,MUON_ISO,direction))
+<             
+<             
+<             
+<             # variablesToUse.append("JetBTagCutWeight%s01sigma[1,-999999.,999999.] := weight(\"JetBTagCutWeight%s01sigma\")" % (direction,direction))
+<             # variablesToUse.append("JetBTagReshapeWeight%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeight%s01sigma\")" % (direction,direction))
+---
+>             variablesToUse.append("FracRVNvtxWeight%s01sigma[1,-999999.,999999.] := weight(\"FracRVNvtxWeight%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("MuonIDWeight%s01sigma[1,-999999.,999999.] := weight(\"Muon%sIDWeight%s01sigma\")" % (direction,str(customize.metaConditions["MUON_ID"]),direction))
+>             variablesToUse.append("ElectronIDWeight%s01sigma[1,-999999.,999999.] := weight(\"ElectronIDWeight%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("ElectronRecoWeight%s01sigma[1,-999999.,999999.] := weight(\"ElectronRecoWeight%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("MuonIsoWeight%s01sigma[1,-999999.,999999.] := weight(\"Muon%sISOWeight%s01sigma\")" % (direction,str(customize.metaConditions['MUON_ISO']),direction))
+>             variablesToUse.append("JetBTagCutWeight%s01sigma[1,-999999.,999999.] := weight(\"JetBTagCutWeight%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("JetBTagReshapeWeight%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeight%s01sigma\")" % (direction,direction))
+>             if applyL1Prefiring:
+>                 variablesToUse.append("prefireProbability%s01sigma[1,-999999.,999999.] := weight(\"prefireProbability%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("THU_ggH_Mu%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mu%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("THU_ggH_Res%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Res%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("THU_ggH_Mig01%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mig01%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("THU_ggH_Mig12%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mig12%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("THU_ggH_VBF2j%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_VBF2j%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("THU_ggH_VBF3j%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_VBF3j%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("THU_ggH_PT60%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_PT60%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("THU_ggH_PT120%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_PT120%s01sigma\")" % (direction,direction))
+>             variablesToUse.append("THU_ggH_qmtop%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_qmtop%s01sigma\")" % (direction,direction))
+495,498c426,428
+< if customize.HHWWggTagsOnly:
+<     variablesToUse = minimalVariables
+<     if customize.processId == "Data":
+<         variablesToUse = minimalNonSignalVariables
+---
+> if customize.doDoubleHTag:
+>    systlabels,jetsystlabels,metsystlabels = hhc.customizeSystematics(systlabels,jetsystlabels,metsystlabels)
+>            
+510,512c440,441
+< # cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,jetsystlabels,jetSystematicsInputTags)
+< 
+< cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,metsystlabels,jetsystlabels,jetSystematicsInputTags) # used in workspacestd 
+---
+> #cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,jetsystlabels,jetSystematicsInputTags)
+> cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,metsystlabels,jetsystlabels,jetSystematicsInputTags)
+517c446,447
+< # process.flashggTagSorter.CreateNoTag = False # MUST be after tag sequence cloning
+---
+> process.flashggTagSorter.isGluonFusion = cms.bool(bool(customize.processId.count("ggh")))
+> process.flashggTagSorter.applyNNLOPSweight = cms.bool(customize.applyNNLOPSweight)
+526,527c456,459
+<                                  "/store/group/phys_higgs/cmshgg/atishelm/flashgg/450_SM/RunIIFall18-4_0_0-75-g71c3c6e9/ggF_X450_WWgg_qqlnugg/450_SM-RunIIFall18-4_0_0-75-g71c3c6e9-v0-atishelm-100000events_wPU_MINIAOD-5f646ecd4e1c7a39ab0ed099ff55ceb9/191129_122604/0000/myMicroAODOutputFile_4.root"
+<                                 #  "/store/user/spigazzi/flashgg/Era2016_RR-07Aug17_v1/legacyRun2TestV1/DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/Era2016_RR-07Aug17_v1-legacyRun2TestV1-v0-RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_ext2-v1/190228_142907/0000/myMicroAODOutputFile_610.root",
+---
+>                                  #"/store/user/spigazzi/flashgg/Era2016_RR-17Jul2018_v2/legacyRun2FullV1/GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8/Era2016_RR-17Jul2018_v2-legacyRun2FullV1-v0-RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_ext2-v2/190708_140500/0000/myMicroAODOutputFile_12.root"
+>                                  #"/store/user/spigazzi/flashgg/Era2017_RR-31Mar2018_v2/legacyRun2FullV1/GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8/Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/190703_101705/0000/myMicroAODOutputFile_45.root"
+>                                  #"/store/user/spigazzi/flashgg/Era2018_RR-17Sep2018_v2/legacyRun2FullV2/GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8/Era2018_RR-17Sep2018_v2-legacyRun2FullV2-v0-RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/190710_093150/0000/myMicroAODOutputFile_41.root"
+>                                  "/store/user/spigazzi/flashgg/Era2018_RR-17Sep2018_v2/legacyRun2FullV2/EGamma/Era2018_RR-17Sep2018_v2-legacyRun2FullV2-v0-Run2018A-17Sep2018-v2/190610_103420/0001/myMicroAODOutputFile_1125.root"
+534,554d465
+< process.load("flashgg.Taggers.diphotonTagDumper_cfi") ##  import diphotonTagDumper 
+< import flashgg.Taggers.dumperConfigTools as cfgTools
+< 
+< 
+< process.tagsDumper.className = "DiPhotonTagDumper"
+< process.tagsDumper.src = "flashggSystTagMerger"
+< #process.tagsDumper.src = "flashggTagSystematics"
+< process.tagsDumper.processId = "test"
+< process.tagsDumper.dumpTrees = customize.dumpTrees
+< process.tagsDumper.dumpWorkspace = customize.dumpWorkspace
+< process.tagsDumper.dumpHistos = False
+< process.tagsDumper.quietRooFit = True
+< process.tagsDumper.nameTemplate = cms.untracked.string("$PROCESS_$SQRTS_$CLASSNAME_$SUBCAT_$LABEL")
+< process.tagsDumper.splitPdfByStage0Cat = cms.untracked.bool(customize.doHTXS)
+< 
+< if customize.options.WeightName :
+<     lheProduct = customize.dataset[1]["LHESourceName"].split("_")
+<     #print lheProduct
+<     process.tagsDumper.LHEEventProduct = cms.untracked.InputTag( str(lheProduct[1]) , str(lheProduct[2]) , str(lheProduct[3]) )
+<     #print process.tagsDumper.LHEEventProduct
+<     process.tagsDumper.LHEWeightName = cms.untracked.string(customize.options.WeightName)
+555a467,468
+> from flashgg.Taggers.TagsDumperCustomize import customizeTagsDumper
+> customizeTagsDumper(process, customize) ## move all the default tags dumper configuration to this function
+590,593c503,504
+< elif customize.HHWWggTagsOnly:
+<     tagList = hhwwggc.tagList
+<     print "taglist is:"
+<     print tagList
+---
+> elif customize.doStageOne:
+>     tagList = soc.tagList
+599,601c510,511
+<         ["ZHLeptonicTag",0],
+<         ["WHLeptonicTag",0],
+<         ["VHLeptonicLooseTag",0],
+---
+>         ["ZHLeptonicTag",2],
+>         ["WHLeptonicTag",6],
+611,612d520
+< process.tagsDumper.NNLOPSWeightFile=cms.FileInPath("flashgg/Taggers/data/NNLOPS_reweight.root")
+< process.tagsDumper.reweighGGHforNNLOPS = cms.untracked.bool(bool(customize.processId.count("ggh")))
+613a522
+> import flashgg.Taggers.dumperConfigTools as cfgTools
+633c542
+<       if tagName == "NoTag":
+---
+>       if tagName.upper().count("NOTAG"):
+635c544,546
+<               currentVariables = ["stage0cat[72,9.5,81.5] := tagTruth().HTXSstage0cat"]
+---
+>               currentVariables = ["stage0bin[72,9.5,81.5] := tagTruth().HTXSstage0bin"]
+>           elif customize.doStageOne:
+>               currentVariables = soc.noTagVariables()
+639,640c550,552
+<       if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) or customize.processId.count("h_") or customize.processId.count("vbf_") ) and (systlabel ==  "") and not (customize.processId == "th_125" or customize.processId == "bbh_125"):
+<           print "Signal MC central value, so dumping PDF weights"
+---
+>       is_signal = reduce(lambda y,z: y or z, map(lambda x: customize.processId.count(x), signal_processes))
+>       if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) or customize.processId.count("h_") or customize.processId.count("vbf_") or is_signal ) and (systlabel ==  "") and not (customize.processId == "th_125" or customize.processId == "bbh_125"):
+>           #print "Signal MC central value, so dumping PDF weights"
+646c558
+<           print "Data, background MC, or non-central value, or no systematics: no PDF weights"
+---
+>           #print "Data, background MC, or non-central value, or no systematics: no PDF weights"
+663c575,576
+<                            splitPdfByStage0Cat=customize.doHTXS
+---
+>                            splitPdfByStage0Bin=customize.doHTXS,
+>                            splitPdfByStage1Bin=customize.doStageOne
+667,680c580
+< 
+< # debugging
+< 
+< # print'customize = ',customize 
+< # print'customize.datasetName() = ',customize.datasetName()
+< 
+< #
+< 
+< from HLTrigger.HLTfilters.hltHighLevel_cfi import hltHighLevel
+< hlt_paths = []
+< for dset in customize.metaConditions["TriggerPaths"]:
+<     if dset in customize.datasetName():
+<         hlt_paths.extend(customize.metaConditions["TriggerPaths"][dset])
+< process.hltHighLevel= hltHighLevel.clone(HLTPaths = cms.vstring(hlt_paths))
+---
+> filterHLTrigger(process, customize)
+726a627
+>     filtersInputTag = cms.InputTag("TriggerResults", "", "RECO")
+728a630
+>     filtersInputTag = cms.InputTag("TriggerResults", "", "PAT")
+730a633
+> process.flashggMetFilters.filtersInputTag = filtersInputTag
+732,735c635
+< # HHWWggTagsOnly requires zeroeth vertex, but not modifySystematicsWorkflowForttH
+< if customize.tthTagsOnly or customize.HHWWggTagsOnly:
+<     #debug
+<     process.content = cms.EDAnalyzer("EventContentAnalyzer")
+---
+> if customize.tthTagsOnly:
+745d644
+<                         #  process.content* 
+751d649
+< 
+753c651
+<     if customize.tthTagsOnly: modifySystematicsWorkflowForttH(process, systlabels, phosystlabels, metsystlabels, jetsystlabels)    
+---
+>     modifySystematicsWorkflowForttH(process, systlabels, phosystlabels, metsystlabels, jetsystlabels)
+759d656
+<                         #  process.flashggDiPhotons* # needed for 0th vertex from microAOD
+769a667,668
+>     if customize.doStageOne: 
+>         if soc.modifyForttH: soc.modifyWorkflowForttH(systlabels, phosystlabels, metsystlabels, jetsystlabels)
+778a678,680
+>     if customize.metaConditions['bRegression']['useBRegressionJERsf'] :
+>        bregJERJetsProducers,recoJetCollections = createJetSystematicsForBreg(process , customize)
+>        process.bregJERJetsProducers = cms.Sequence(reduce(lambda x,y: x+y, bregJERJetsProducers))
+796c698,700
+<     process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.flashggUnpackedJets+process.bregProducers)
+---
+>     if customize.metaConditions['bRegression']['useBRegressionJERsf'] :
+>        process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence*process.bregJERJetsProducers*process.bregProducers)
+>     else : process.p.replace(process.jetSystematicsSequence,process.jetSystematicsSequence+process.bregProducers)
+797a702
+> 
+801,802d705
+< # if customize.doHHWWggTag:
+< #     hhwwggc.HHWWggTagRunSequence(systlabels,jetsystlabels,phosystlabels)  
+825,830d727
+< print "--- Dumping all modules: ---"
+< mns = process.p.moduleNames()
+< for mn in mns:
+<     module = getattr(process,mn)
+<     print str(module)
+< 
+842,845d738
+< # Detailed tag interpretation information printout (blinded)
+< process.flashggTagSorter.StoreOtherTagInfo = True
+< process.flashggTagSorter.BlindedSelectionPrintout = True
+< 
+848c741
+<     runRivetSequence(process, customize.metaConditions)
+---
+>     runRivetSequence(process, customize.metaConditions, customize.processId)
