@@ -3,8 +3,8 @@
 - Setup Instructions
 - Setting up a voms Proxy
 - HHWWgg Candidate Dumper
-    - Running Locally
-    - Running on Condor
+  - Running Locally
+  - Running on Condor
 - Semi-Leptonic Instructions \(maybe older\)
 
 <!-- /MarkdownTOC -->
@@ -18,10 +18,12 @@ cd CMSSW_10_5_0/src
 cmsenv
 git cms-init
 cd $CMSSW_BASE/src 
-git clone -b HHWWgg_dev https://github.com/atishelmanch/flashgg 
+git clone -b master git@github.com:IHEP-CMS-HHWWgg/flashgg.git
 source flashgg/setup_flashgg.sh
 ```
+
 If everything now looks reasonable, you can build:
+
 ```bash
 cd $CMSSW_BASE/src
 scram b -j 4
@@ -31,18 +33,22 @@ scram b -j 4
 
 For both the HHWWgg Candidate Dumper and Tagger, to run locally on an HHWWgg signal file, you must first run the following commands:
 
-    cmsenv
-    voms-proxy-init --voms cms --valid 168:00
+```bash
+cmsenv
+voms-proxy-init --voms cms --valid 168:00
+```
 
 after the voms command, you should receive an output similar to:
 
     Created proxy in /tmp/x509up_u95168
 
-to set this proxy to your X509_USER_PROXY environment variable for the example above, simply use the command:
+to set this proxy to your `X509_USER_PROXY` environment variable for the example above, simply use the command:
 
-    . proxy.sh x509up_u95168
+```bash
+sh proxy.sh x509up_u95168
+```
 
-where x590up_u95168 would be replaced by whatever your proxy name is. 
+where `x590up_u95168` would be replaced by whatever your proxy name is. 
 
 # HHWWgg Candidate Dumper
 
@@ -50,41 +56,42 @@ where x590up_u95168 would be replaced by whatever your proxy name is.
 
 The HHWWgg Candidate Dumper is run with the config file `Taggers/test/HHWWggTest_cfg.py`. This is useful if you'd like to run a cmsRun sequence different from that used in `workspacestd.py`. To run locally, after a `scram b -j` command to build everything, you can run the command:
 
-    cmsRun Taggers/test/HHWWggTest_cfg.py outputFile=HHWWggtest.root metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json maxEvents=1000
+```bash
+cmsRun Taggers/test/HHWWggTest_cfg.py outputFile=HHWWggtest.root metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json maxEvents=1000
+```
 
-Note: The metaConditions option in this examples specifies 2017 conditions. If you'd like to run with 2016 or 2018 or some other non-standard metaconditions, this option must be changed.
+**Note**: The metaConditions option in this examples specifies 2017 conditions. If you'd like to run with 2016 or 2018 or some other non-standard metaconditions, this option must be changed.
 
-Note: If the default file is not found, you can try running the same cmsRun command above but adding the options: ```useAAA=False useEOS=True``` 
+**Note**: If the default file is not found, you can try running the same cmsRun command above but adding the options: ```useAAA=False useEOS=True``` 
 
 When running locally, the input files are specified in the cmssw config file (`HHWWggTest_cfg.py`), and by default is set to a single 250 GeV radion semileptonic decay signal microaod with 499 events: 
 
     /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HHWWgg_v2-2/94X_mc2017-RunIIFall18/ggF_X250_WWgg_qqlnugg/HHWWgg_v2-2-94X_mc2017-RunIIFall18-v0-atishelm-100000events_wPU_MINIAOD-5f646ecd4e1c7a39ab0ed099ff55ceb9/191216_220038/0000/myMicroAODOutputFile_9.root
 
-In the config file, you can specify the variables to output with the cfgTools.addCategories 
-variable "variables". By default this is set to `variables = Reco_Variables`, which outputs the minimum variables in the trees and workspaces for fggfinalfit
-(CMS_hgg_mass, dZ, weight and intLumi), and in addition many supplementary variables such as four momentum of the leading and subleading photons, jets and leptons. The specific variables to be 
-plotted from these names (such as Reco_Variables) are found in the file Taggers/python/HHWWggTagVariables.py 
+- In the config file, you can specify the variables to output with the `cfgTools.addCategories` variable "variables". By default this is set to `variables = Reco_Variables`, which outputs the minimum variables in the trees and workspaces for [flashggFinalFit](https://github.com/IHEP-CMS-HHWWgg/flashggFinalFit) (CMS_hgg_mass, dZ, weight and intLumi), and in addition many supplementary variables such as four momentum of the leading and subleading photons, jets and leptons.
+- The specific variables to be plotted from these names (such as Reco_Variables) are found in the file `Taggers/python/HHWWggTagVariables.py` 
 
-Towards the end of the config file are the options zero_vtx and sands. Setting zero_vtx equal to 1 will perform the analysis dumper only considering diphotoncandidates
-constructed from the highest sum pt squared vertex, found to be slightly more efficient in the case of the 250 GeV HHWWgg semileptonic signal compared to the Hgg vertex.
-Setting sands equal to 1 will apply scaling corrections to data and smearing corrections to MC. 
+- Towards the end of the config file are the options zero_vtx and sands. Setting zero_vtx equal to 1 will perform the analysis dumper only considering **diphotoncandidates** constructed from the highest sum pt squared vertex, found to be slightly more efficient in the case of the 250 GeV HHWWgg semileptonic signal compared to the Hgg vertex.
+- Setting sands equal to 1 will apply scaling corrections to data and smearing corrections to MC. 
 
 ## Running on Condor
 
-Running the Candidate Dumper has the advantage of allowing you to run over entire data sets and calculate weights for signal samples. Running the Candidate Dumper on
-condor can be done with the script HHWWgg_Run_Jobs.sh. This allows you to run with the Candidate Dumper or Tagger on signal or background. To run the HHWWgg Candidate Dumper on signal,
-you can run the command 
+Running the Candidate Dumper has the advantage of allowing you to run over entire data sets and calculate weights for signal samples. Running the Candidate Dumper on condor can be done with the script `HHWWgg_Run_Jobs.sh`.
 
-Note: You must first follow the proxy steps above in order to have access to DAS datasets)
+This allows you to run with the Candidate Dumper or Tagger on signal or background. To run the HHWWgg Candidate Dumper on signal, you can run the command 
 
-Note: There are two user specific parameters in the script: fggDirec and ntupleDirec, which are be default set to:
+**Note**: You must first follow the proxy steps above in order to have access to DAS datasets
+
+**Note**: There are two user specific parameters in the script: `fggDirec` and `ntupleDirec`, which are be default set to:
 
     fggDirec="/afs/cern.ch/work/a/atishelm/21JuneFlashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory 
     ntupleDirec="/eos/user/a/atishelm/ntuples/HHWWgg/" # condor output directory 
 
 These should be set to the user's flashgg directory and ntuple directory where they would like the output of the condor jobs to go. An example command to run the script is as follows:
 
-    . HHWWgg_Run_Jobs.sh --labelName HHWWggTestSignal --nEvents 1000 -s
+```bash
+    sh HHWWgg_Run_Jobs.sh --labelName HHWWggTestSignal --nEvents 1000 -s
+```
 
 This will create and exectue an fggrunjobs command to run the HHWWgg dumper on a maximum of 1000 events from the signal dataset specified in Taggers/test/HHWWgg_2017_Signal/HHWWgg_Signal_2017.json.
 By default this json specifies the 250 GeV Radion -> HH -> WWgg -> qqlnu, semileptonic final state. If you'd like to change the dataset run on, you can edit HHWWgg_Signal_2017.json or specify another 
@@ -116,6 +123,8 @@ To run all all events, change --nEvents 1000 to --nEvents all
 ---
 
 # Semi-Leptonic Instructions (maybe older)
+
+[https://github.com/atishelmanch/flashgg/blob/HHWWgg_dev/README.org](https://github.com/atishelmanch/flashgg/blob/HHWWgg_dev/README.org)
 
 * HHWWgg Development 
 

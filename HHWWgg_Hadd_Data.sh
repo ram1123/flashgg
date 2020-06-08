@@ -1,16 +1,16 @@
 #!/bin/sh
 
-# The purpose of this script is to hadd output files from HHWWgg condor jobs on data 
+# The purpose of this script is to hadd output files from HHWWgg condor jobs on data
 
-# Run from one directory outside directory with data output files 
+# Run from one directory outside directory with data output files
 
 fgg_direc=/afs/cern.ch/work/a/atishelm/21JuneFlashgg/CMSSW_10_5_0/src/flashgg
 
-cd /eos/user/a/atishelm/ntuples/HHWWgg
+cd /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/Event_Dumper/HHWWgg_2017_Data
 
 
-input=$1 # path of directory with condor output files 
-output=$2 # path of directory to put hadded files into 
+input=$1 # path of directory with condor output files
+output=$2 # path of directory to put hadded files into
 
 if [ -z "$input" ]
 then
@@ -34,9 +34,9 @@ hadded_combined+="_Combined"
 
 for Era in B C D E F;
 do
-   
+
    echo "Number of output files for era $Era:"
-   ls -1 $input/*Run2017$Era*.root | wc -l 
+   ls -1 $input/*Run2017$Era*.root | wc -l
    echo "Hadding..."
    hadded_file="Run2017_Era"
    hadded_file+=$Era
@@ -44,11 +44,11 @@ do
    mkdir -p $output
    hadd $output/$hadded_file $input/*Run2017$Era*.root
 
-done 
+done
 
 echo "Hadding eras..."
 mkdir -p $hadded_combined
-hadd $hadded_combined/Run2017_AllErasCombined_Hadded.root $output/*.root 
+hadd $hadded_combined/Run2017_AllErasCombined_Hadded.root $output/*.root
 echo "Finished hadding data!"
 
 cd $fgg_direc

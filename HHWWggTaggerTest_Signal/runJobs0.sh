@@ -23,7 +23,7 @@ fi
 if [[ $retval == 0 ]]; then
     errors=""
     for file in $(find -name '*.root' -or -name '*.xml'); do
-        cp -pv $file /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/Event_Dumper/HHWWgg_2017/
+        cp -pv $file /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/Event_Dumper/HHWWgg_2017_Signal/
         if [[ $? != 0 ]]; then
             errors="$errors $file($?)"
         fi

@@ -250,7 +250,7 @@ class WorkNodeJob(object):
         script += '    errors=""\n'
         script += '    for file in $(find -name %s); do\n' % " -or -name ".join(self.stage_patterns)
         # script += '        %s $file %s\n' % ( self.stage_cmd, self.stage_dest )
-        filesOutPath = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/Event_Dumper/HHWWgg_2017/'
+        filesOutPath = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/Event_Dumper/HHWWgg_2017_Data/'
         script += '        %s $file %s\n' % ( self.stage_cmd, filesOutPath )
         script += '        if [[ $? != 0 ]]; then\n'
         script += '            errors="$errors $file($?)"\n'

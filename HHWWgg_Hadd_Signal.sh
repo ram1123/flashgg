@@ -1,15 +1,15 @@
 #!/bin/sh
 
-# The purpose of this script is to hadd output files from HHWWgg condor jobs on data 
+# The purpose of this script is to hadd output files from HHWWgg condor jobs on data
 
-# Run from one directory outside directory with data output files 
+# Run from one directory outside directory with data output files
 
-fgg_direc=/afs/cern.ch/work/c/chuw/HHWWgg/CMSSW_10_5_0/src/flashgg
-cd /afs/cern.ch/work/c/chuw/HHWWgg/CMSSW_10_5_0/src/HHWWgg_2017_Signal
+fgg_direc=/afs/cern.ch/user/r/rasharma/work/doubleHiggs/CMSSW_10_5_0/src/flashgg
+cd /afs/cern.ch/user/r/rasharma/work/doubleHiggs/CMSSW_10_5_0/src/flashgg/
 
 
-input=$1 # path of directory with condor output files 
-output=$2 # path of directory to put hadded files into 
+input=$1 # path of directory with condor output files
+output=$2 # path of directory to put hadded files into
 
 if [ -z "$input" ]
 then
@@ -34,7 +34,7 @@ hadded_combined+="_Combined"
 for mass in X250 X260 X270 X280 X300 X320 X350 X400 X500 X550 X600 X650 X700 X750 X800 X850 X900 X1000 X1250 SM;
 do
    echo "Number of output files for mass $mass:"
-   ls -1 $input/output_ggF_${mass}_WWgg_qqlnugg_*.root | wc -l 
+   ls -1 $input/output_ggF_${mass}_WWgg_qqlnugg_*.root | wc -l
    echo "Hadding..."
    hadded_file="ggF_"
    hadded_file+=$mass
@@ -43,13 +43,13 @@ do
    mkdir -p $output
    hadd $output/$hadded_file $input/output_ggF_${mass}_WWgg_qqlnugg_*.root
 
-done 
+done
 
 echo "Finished hadding signal ntuples!"
 
 #echo "Hadding eras..."
 #mkdir -p $hadded_combined
-#hadd $hadded_combined/Run2017_AllErasCombined_Hadded.root $output/*.root 
+#hadd $hadded_combined/Run2017_AllErasCombined_Hadded.root $output/*.root
 #echo "Finished hadding data!"
 
 cd $fgg_direc
