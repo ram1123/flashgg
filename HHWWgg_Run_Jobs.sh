@@ -5,7 +5,7 @@
 # Abe Tishelman-Charny
 # 12 December 2019
 #
-# The purpose of this script is the run fggrunjobs with ether the HHWWgg candidate dumper or tagger, on data, signal, or background. 
+# The purpose of this script is the run fggrunjobs with ether the HHWWgg candidate dumper or tagger, on data, signal, or background.
 
 #------------------------------------------------------------------------------------------------------------------------------
 
@@ -18,31 +18,33 @@
 # Example:
 # . HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest_Testagain --nEvents 1000 --json Taggers/test/HHWWgg_v2-2/HHWWgg_Signal_2017.json -g -c -s -t
 
-# . HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest --nEvents 1000 --json Taggers/test/HHWWgg_v2-2/HHWWgg_Signal_2017.json -w 
-# . HHWWgg_Run_Jobs.sh --labelName HHWWgg_v2-3_Systematics --nEvents all --json Taggers/test/HHWWgg_v2-3/HHWWgg_v2-3.json -w -x 
+# . HHWWgg_Run_Jobs.sh --labelName HHWWggTaggerTest --nEvents 1000 --json Taggers/test/HHWWgg_v2-2/HHWWgg_Signal_2017.json -w
+# . HHWWgg_Run_Jobs.sh --labelName HHWWgg_v2-3_Systematics --nEvents all --json Taggers/test/HHWWgg_v2-3/HHWWgg_v2-3.json -w -x
 
 ## User specific variables. Customize to your own working area(s)
 
-fggDirec="/afs/cern.ch/work/c/chuw/HHWWgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory 
-ntupleDirec="/afs/cern.ch/work/c/chuw/HHWWgg/CMSSW_10_5_0/src/flashgg/HHWWgg_test/" # condor output directory 
+# fggDirec="/afs/cern.ch/user/r/rasharma/work/doubleHiggs/flashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory
 
-## Other script parameters 
+fggDirec="${PWD}/"
+ntupleDirec="/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/Event_Dumper//new_9June2020/HHWWgg_2017_Data/" # condor output directory
 
-label="" # name for condor output directory in ntupleDirec 
-numEvents="" # integer, or 'all' to run on all events 
-runWorkspaceStd="false" # use Systematics/test/workspaceStd.py as config 
-doCutFlow="false" # perform HHWWgg cutflow within workspaceStd.py workflow 
-runttH="false" # run on ttH background sample only 
-runData="false" # get datasets from data json file 
-runSignal="false" # get dataset(s) from signal json file 
-calcSystematics="false" # run workspaceStd.py systematics 
-dumpTrees="false" # dump trees in fggrunjobs output 
-dumpWorkspaces="false" # dump workspaces in fggrunjobs output 
-jsonpath="" # optional local json file to use for fggrunjobs arguments such as dataset and campaign 
+## Other script parameters
 
-## Get user specified argumenets 
+label="" # name for condor output directory in ntupleDirec
+numEvents="" # integer, or 'all' to run on all events
+runWorkspaceStd="false" # use Systematics/test/workspaceStd.py as config
+doCutFlow="false" # perform HHWWgg cutflow within workspaceStd.py workflow
+runttH="false" # run on ttH background sample only
+runData="false" # get datasets from data json file
+runSignal="false" # get dataset(s) from signal json file
+calcSystematics="false" # run workspaceStd.py systematics
+dumpTrees="false" # dump trees in fggrunjobs output
+dumpWorkspaces="false" # dump workspaces in fggrunjobs output
+jsonpath="" # optional local json file to use for fggrunjobs arguments such as dataset and campaign
 
-options=$(getopt -o dgcstw --long nEvents: --long labelName: --long json: -- "$@") # end name with colon ':' to specify argument string 
+## Get user specified argumenets
+
+options=$(getopt -o dgcstw --long nEvents: --long labelName: --long json: -- "$@") # end name with colon ':' to specify argument string
 [ $? -eq 0 ] || {
       echo "Incorrect option provided"
       exit 1
@@ -56,31 +58,31 @@ while true; do
       -d)
             runData="true"
             ;;
-      -g) 
+      -g)
             runWorkspaceStd="true"
             ;;
       -c)
             doCutFlow="true"
             ;;
-      -s)   
+      -s)
             calcSystematics="true"
             ;;
-      -t)   
+      -t)
             dumpTrees="true"
             ;;
-      -w)   
+      -w)
             dumpWorkspaces="true"
             ;;
       --nEvents)
-            shift; 
+            shift;
             numEvents=$1
             ;;
       --labelName)
-            shift; 
+            shift;
             label=$1
             ;;
       --json)
-            shift; 
+            shift;
             jsonpath=$1
             ;;
       --)
@@ -89,12 +91,12 @@ while true; do
             ;;
       esac
       shift
-done 
+done
 
-## Output read arguments to user 
+## Output read arguments to user
 
-echo "label = $label" 
-echo "numEvents = $numEvents" 
+echo "label = $label"
+echo "numEvents = $numEvents"
 echo "runWorkspaceStd = $runWorkspaceStd"
 echo "rundata = $runData"
 echo "runsignal = $runSignal"
@@ -126,7 +128,7 @@ then
       return
 fi
 
-## Make sure a json file is specified 
+## Make sure a json file is specified
 
 if [ $runData == 'false' ] && [ $runSignal == 'false' ] && [ $jsonpath == '' ]
 then
@@ -134,7 +136,7 @@ then
       echo "Or specify a json path with --jsonpath <json_path>"
       echo "exiting"
       return
-fi   
+fi
 
 if [ $runData == 'true' ] && [ $runSignal == 'true' ] && [ $jsonpath == '' ]
 then
@@ -142,12 +144,12 @@ then
       echo "Or specify a json path with --jsonpath <json_path>"
       echo "exiting"
       return
-fi  
+fi
 
-## Set variables to user inputs 
+## Set variables to user inputs
 
 output_direc=$label
-# Make output directories if they don't exist 
+# Make output directories if they don't exist
 mkdir -p $output_direc;
 mkdir -p $ntupleDirec$output_direc;
 root_file_output=$ntupleDirec
@@ -166,20 +168,20 @@ then
 
       if [ $runSignal == 'true' ]
       then
-            jsonpath='Taggers/test/HHWWgg_2017_Signal/HHWWgg_Signal_2017.json'  
-      fi        
+            jsonpath='Taggers/test/HHWWgg_2017_Signal/HHWWgg_Signal_2017.json'
+      fi
 
       if [ $runttH == 'true' ]
-      then 
-            echo "Running ttH only" 
+      then
+            echo "Running ttH only"
             jsonpath='Taggers/test/ttH/HHWWgg_Bkg_1.json'
-      fi 
+      fi
 
       #command="fggRunJobs.py --load ${jsonpath} -D -P -n 500 -d ${output_direc}"
 
       command='fggRunJobs.py --load '
       command+=$jsonpath
-      command+=' -D -P -n 500 -d ' # May need to be careful not to have too many output files. EOS has a limit. 
+      command+=' -D -P -n 500 -d ' # May need to be careful not to have too many output files. EOS has a limit.
       command+=$output_direc
       command+=" --stage-to="$root_file_output
       command+=' -x cmsRun Taggers/test/HHWWggTest_cfg.py maxEvents='
@@ -189,7 +191,7 @@ then
       command+='MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json'
 fi
 
-## Run HHWWgg Tagger with Systematics/test/workspaceStd.py 
+## Run HHWWgg Tagger with Systematics/test/workspaceStd.py
 
 if [ $runWorkspaceStd == 'true' ]
 then
@@ -202,17 +204,17 @@ then
 
       if [ $runSignal == 'true' ]
       then
-      jsonpath='Taggers/test/HHWWgg_2017_Signal/HHWWgg_Signal_2017.json'  
-      fi        
+      jsonpath='Taggers/test/HHWWgg_2017_Signal/HHWWgg_Signal_2017.json'
+      fi
 
       command='fggRunJobs.py --load '
       command+=$jsonpath
-      command+=' -D -P -n 500 -d ' # May need to be careful not to have too many output files. EOS has a limit. 
+      command+=' -D -P -n 500 -d ' # May need to be careful not to have too many output files. EOS has a limit.
       command+=$output_direc
       command+=" --stage-to="$root_file_output
-      command+=' -x cmsRun Systematics/test/workspaceStd.py maxEvents=' # workspaceStd.py 
+      command+=' -x cmsRun Systematics/test/workspaceStd.py maxEvents=' # workspaceStd.py
       command+=$numEvents
-      command+=' -q workday --no-use-tarball --no-copy-proxy metaConditions='   
+      command+=' -q workday --no-use-tarball --no-copy-proxy metaConditions='
       command+=$fggDirec
       command+='MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json '
       command+=' doHHWWggTag=True HHWWggTagsOnly=True '
@@ -220,33 +222,33 @@ then
       if [ $calcSystematics == 'true' ]
       then
            command+=' doSystematics=True '
-      else 
+      else
            command+='doSystematics=False '
       fi
 
       if [ $dumpTrees == 'true' ]
-      then 
+      then
            command+=' dumpTrees=True '
-      else 
+      else
            command+=' dumpTrees=False '
-      fi  
+      fi
 
       if [ $dumpWorkspaces == 'true' ]
-      then 
+      then
            command+=' dumpWorkspace=True '
 
-      else 
+      else
            command+=' dumpWorkspace=False '
-      fi       
+      fi
 
-      
+
       if [ $doCutFlow == 'true' ]
       then
            command+=' doHHWWggTagCutFlow=True '
-      fi       
+      fi
       #     command+=' doHHWWggTag=True HHWWggTagsOnly=True doSystematics=False doBJetRegression=True dumpWorkspace=False dumpTrees=True'
 fi
 
 echo "Evaluating command: $command"
-eval "$command" 
+eval "$command"
 echo "Finished job for file: $jsonpath"
