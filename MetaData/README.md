@@ -1,18 +1,15 @@
-<!-- MarkdownTOC -->
-
-- flashgg/MetaData README
-  - Producing microAODs
-  - Generate the pileup target
-  - Running on microAODs
-    - Importing datasets from DBS
-- import flashgg customization
-- set default options if needed
-- call the customization
-    - Resuming jobs monitoring
-
-<!-- /MarkdownTOC -->
-
 # flashgg/MetaData README
+
+- [flashgg/MetaData README](flashgg/metadata-readme)
+  - [Producing microAODs](producing-microaods)
+  - [Generate the pileup target](generate-the-pileup-target)
+  - [Running on microAODs](running-on-microaods)
+    - [Importing datasets from DBS](importing-datasets-from-dbs)
+- [import flashgg customization](import-flashgg-customization)
+- [set default options if needed](set-default-options-if-needed)
+- [call the customization](call-the-customization)
+    - [Resuming jobs monitoring](resuming-jobs-monitoring)
+
 
 ## Producing microAODs
 
