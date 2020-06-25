@@ -49,7 +49,7 @@ class HHWWggCustomize():
         ]
 
         vars = ["E","pt","px","py","pz","eta","phi"]
-        objects = ["Leading_Photon","Subleading_Photon","Electron","Muon","MET","Leading_Jet","Subleading_Jet"]
+        objects = ["Leading_Photon","Subleading_Photon", "MET","Leading_Jet","Subleading_Jet", "Sub2leading_Jet", "Sub3leading_Jet"]
         finalStateVars = []
         finalStateVars.append("Leading_Photon_MVA:=lp_Hgg_MVA")
         finalStateVars.append("Subleading_Photon_MVA:=slp_Hgg_MVA")
@@ -67,7 +67,7 @@ class HHWWggCustomize():
         # allCheck = 7
         # goodCheck = 3
         objectVectors = []
-        objs = ["Electrons","Muons","Jets"]
+        objs = ["Jets"]
         vecTypes = ["all","good"]
         for t in vecTypes:
             for o in objs:

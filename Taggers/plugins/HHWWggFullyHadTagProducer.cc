@@ -90,11 +90,11 @@ namespace flashgg {
     EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
     Handle<View<reco::GenParticle> > genParticle;
 
-    EDGetTokenT<View<Electron> > electronToken_;
-    Handle<View<flashgg::Electron> > electrons;
+    // EDGetTokenT<View<Electron> > electronToken_;
+    // Handle<View<flashgg::Electron> > electrons;
 
-    EDGetTokenT<View<Muon> > muonToken_;
-    Handle<View<flashgg::Muon> > muons;
+    // EDGetTokenT<View<Muon> > muonToken_;
+    // Handle<View<flashgg::Muon> > muons;
 
     EDGetTokenT<View<flashgg::Met> > METToken_;
     Handle<View<flashgg::Met> > METs;
@@ -125,20 +125,20 @@ namespace flashgg {
     // auto_ptr<vector<HHWWggCandidate> > HHWWggColl_;
 
     // variables from WHLeptonicTagProducer
-    double leptonPtThreshold_;
-    double muonEtaThreshold_;
+    // double leptonPtThreshold_;
+    // double muonEtaThreshold_;
     double leadPhoOverMassThreshold_;
     double subleadPhoOverMassThreshold_;
     double MVAThreshold_;
-    double deltaRMuonPhoThreshold_;
+    // double deltaRMuonPhoThreshold_;
     double jetsNumberThreshold_;
     double jetPtThreshold_;
     double jetEtaThreshold_;
-    double muPFIsoSumRelThreshold_;
+    // double muPFIsoSumRelThreshold_;
     double PhoMVAThreshold_;
     double METThreshold_;
     bool useVertex0only_;
-    double deltaRJetMuonThreshold_;
+    // double deltaRJetMuonThreshold_;
     double deltaRPhoLeadJet_;
     double deltaRPhoSubLeadJet_;
 
@@ -146,20 +146,20 @@ namespace flashgg {
     double TransverseImpactParam_;
     double LongitudinalImpactParam_;
 
-    double deltaRPhoElectronThreshold_;
-    double deltaMassElectronZThreshold_;
+    // double deltaRPhoElectronThreshold_;
+    // double deltaMassElectronZThreshold_;
 
-    bool hasGoodElec = false;
-    bool hasGoodMuons = false;
+    // bool hasGoodElec = false;
+    // bool hasGoodMuons = false;
 
     vector<double> nonTrigMVAThresholds_;
     vector<double> nonTrigMVAEtaCuts_;
 
-    double electronIsoThreshold_;
-    double electronNumOfHitsThreshold_;
-    vector<double> electronEtaThresholds_;
-    bool useElectronMVARecipe_;
-    bool useElectronLooseID_;
+    // double electronIsoThreshold_;
+    // double electronNumOfHitsThreshold_;
+    // vector<double> electronEtaThresholds_;
+    // bool useElectronMVARecipe_;
+    // bool useElectronLooseID_;
     // string bTag_;
     double btagThresh_;
     bool doHHWWggTagCutFlowAnalysis_;
@@ -188,8 +188,8 @@ namespace flashgg {
     diphotonToken_( consumes<View<flashgg::DiPhotonCandidate> >( pSet.getParameter<InputTag> ( "DiPhotonTag" ) ) ),
     vertexToken_( consumes<View<reco::Vertex> >( pSet.getParameter<InputTag> ( "VertexTag" ) ) ),
     genParticleToken_( consumes<View<reco::GenParticle> >( pSet.getParameter<InputTag> ( "GenParticleTag" ) ) ),
-    electronToken_( consumes<View<Electron> >( pSet.getParameter<InputTag> ( "ElectronTag" ) ) ),
-    muonToken_( consumes<View<Muon> >( pSet.getParameter<InputTag> ( "MuonTag" ) ) ),
+    // electronToken_( consumes<View<Electron> >( pSet.getParameter<InputTag> ( "ElectronTag" ) ) ),
+    // muonToken_( consumes<View<Muon> >( pSet.getParameter<InputTag> ( "MuonTag" ) ) ),
     METToken_( consumes<View<Met> >( pSet.getParameter<InputTag> ( "METTag" ) ) ),
     mvaResultToken_( consumes<View<flashgg::DiPhotonMVAResult> >( pSet.getParameter<InputTag> ( "MVAResultTag" ) ) ),
     rhoTag_( consumes<double>( pSet.getParameter<InputTag>( "rhoTag" ) ) ),
@@ -258,20 +258,20 @@ namespace flashgg {
       // cutFlow = fs->make<TH1F> ("cutFlow","Cut Flow",10,0,10);
       // WTags = fs->make<TH1F> ("WTags","W Tags",3,0,3);
 
-      leptonPtThreshold_ = pSet.getParameter<double>( "leptonPtThreshold");
-      muonEtaThreshold_ = pSet.getParameter<double>( "muonEtaThreshold");
+      // leptonPtThreshold_ = pSet.getParameter<double>( "leptonPtThreshold");
+      // muonEtaThreshold_ = pSet.getParameter<double>( "muonEtaThreshold");
       leadPhoOverMassThreshold_ = pSet.getParameter<double>( "leadPhoOverMassThreshold");
       subleadPhoOverMassThreshold_ = pSet.getParameter<double>( "subleadPhoOverMassThreshold");
       MVAThreshold_ = pSet.getParameter<double>( "MVAThreshold");
-      deltaRMuonPhoThreshold_ = pSet.getParameter<double>( "deltaRMuonPhoThreshold");
+      // deltaRMuonPhoThreshold_ = pSet.getParameter<double>( "deltaRMuonPhoThreshold");
       jetsNumberThreshold_ = pSet.getParameter<double>( "jetsNumberThreshold");
       jetPtThreshold_ = pSet.getParameter<double>( "jetPtThreshold");
       jetEtaThreshold_ = pSet.getParameter<double>( "jetEtaThreshold");
-      muPFIsoSumRelThreshold_ = pSet.getParameter<double>( "muPFIsoSumRelThreshold");
+      // muPFIsoSumRelThreshold_ = pSet.getParameter<double>( "muPFIsoSumRelThreshold");
       PhoMVAThreshold_ = pSet.getParameter<double>( "PhoMVAThreshold");
       METThreshold_ = pSet.getParameter<double>( "METThreshold");
       useVertex0only_              = pSet.getParameter<bool>("useVertex0only");
-      deltaRJetMuonThreshold_ = pSet.getParameter<double>( "deltaRJetMuonThreshold");
+      // deltaRJetMuonThreshold_ = pSet.getParameter<double>( "deltaRJetMuonThreshold");
       deltaRPhoLeadJet_ = pSet.getParameter<double>( "deltaRPhoLeadJet");
       deltaRPhoSubLeadJet_ = pSet.getParameter<double>( "deltaRPhoSubLeadJet");
 
@@ -279,16 +279,16 @@ namespace flashgg {
       TransverseImpactParam_ = pSet.getParameter<double>( "TransverseImpactParam");
       LongitudinalImpactParam_ = pSet.getParameter<double>( "LongitudinalImpactParam");
 
-      deltaRPhoElectronThreshold_ = pSet.getParameter<double>( "deltaRPhoElectronThreshold");
-      deltaMassElectronZThreshold_ = pSet.getParameter<double>( "deltaMassElectronZThreshold");
+      // deltaRPhoElectronThreshold_ = pSet.getParameter<double>( "deltaRPhoElectronThreshold");
+      // deltaMassElectronZThreshold_ = pSet.getParameter<double>( "deltaMassElectronZThreshold");
 
       nonTrigMVAThresholds_ =  pSet.getParameter<vector<double > >( "nonTrigMVAThresholds");
       nonTrigMVAEtaCuts_ =  pSet.getParameter<vector<double > >( "nonTrigMVAEtaCuts");
-      electronIsoThreshold_ = pSet.getParameter<double>( "electronIsoThreshold");
-      electronNumOfHitsThreshold_ = pSet.getParameter<double>( "electronNumOfHitsThreshold");
-      electronEtaThresholds_ = pSet.getParameter<vector<double > >( "electronEtaThresholds");
+      // electronIsoThreshold_ = pSet.getParameter<double>( "electronIsoThreshold");
+      // electronNumOfHitsThreshold_ = pSet.getParameter<double>( "electronNumOfHitsThreshold");
+      // electronEtaThresholds_ = pSet.getParameter<vector<double > >( "electronEtaThresholds");
       useElectronMVARecipe_=pSet.getParameter<bool>("useElectronMVARecipe");
-      useElectronLooseID_=pSet.getParameter<bool>("useElectronLooseID");
+      // useElectronLooseID_=pSet.getParameter<bool>("useElectronLooseID");
       // bTag_ = pSet.getParameter<string> ( "bTag");
       btagThresh_ = pSet.getParameter<double>( "btagThresh");
       doHHWWggTagCutFlowAnalysis_ = pSet.getParameter<bool>( "doHHWWggTagCutFlowAnalysis");
@@ -375,8 +375,8 @@ namespace flashgg {
       event.getByToken( photonToken_, photons );
       event.getByToken( diphotonToken_, diphotons );
       // event.getByToken( genParticleToken_, genParticle );
-      event.getByToken( electronToken_, electrons );
-      event.getByToken( muonToken_, muons );
+      // event.getByToken( electronToken_, electrons );
+      // event.getByToken( muonToken_, muons );
       event.getByToken( METToken_, METs );
       event.getByToken( mvaResultToken_, mvaResults );
       event.getByToken( vertexToken_, vertices );
@@ -469,17 +469,17 @@ namespace flashgg {
           }
           for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ) {
               edm::Ptr<reco::GenParticle> genPar = genParticles->ptrAt(genLoop);
-              if (selHiggses.size()>1) break;
+              if (selHiggses.size()>2) break;
             if (genPar->pdgId()==25 && genPar->isHardProcess()){
                 selHiggses.push_back(genPar);
             }
           }
-          // if (selHiggses.size()==2){
-          //     TLorentzVector H1,H2;
-          //     H1.SetPtEtaPhiE(selHiggses[0]->p4().pt(),selHiggses[0]->p4().eta(),selHiggses[0]->p4().phi(),selHiggses[0]->p4().energy());
-          //     H2.SetPtEtaPhiE(selHiggses[1]->p4().pt(),selHiggses[1]->p4().eta(),selHiggses[1]->p4().phi(),selHiggses[1]->p4().energy());
-          //     genMhh  = (H1+H2).M();
-          // }
+          if (selHiggses.size()==2){
+              TLorentzVector H1,H2;
+              H1.SetPtEtaPhiE(selHiggses[0]->p4().pt(),selHiggses[0]->p4().eta(),selHiggses[0]->p4().phi(),selHiggses[0]->p4().energy());
+              H2.SetPtEtaPhiE(selHiggses[1]->p4().pt(),selHiggses[1]->p4().eta(),selHiggses[1]->p4().phi(),selHiggses[1]->p4().energy());
+              genMhh  = (H1+H2).M();
+          }
           truth_obj.setGenPV( higgsVtx );
           truths->push_back( truth_obj );
       }
@@ -847,7 +847,7 @@ namespace flashgg {
           else if(hasHighbTag) continue; // Skip event if it has at least one jet with a btag above threshold, and you're not doing a cut flow analysis
 
           n_good_jets = tagJets.size();
-          std::cout << "n_good_jets = " << n_good_jets << std::endl;
+          // std::cout << "n_good_jets = " << n_good_jets << std::endl;
 
           // MET
           if( METs->size() != 1 ) { std::cout << "WARNING - #MET is not 1" << std::endl;}
@@ -892,19 +892,19 @@ namespace flashgg {
                 Ptr<flashgg::Jet> jet4 = tagJets[3];
                 HHWWggTag tag_obj;
                 // HHWWggTag tag_obj_0;
-                if (doHHWWggTagCutFlowAnalysis_){
-                  // Save electrons, muons, goodElectrons, goodMuons, jets, goodjets
+                // if (doHHWWggTagCutFlowAnalysis_){
+                  Save electrons, muons, goodElectrons, goodMuons, jets, goodjets
                   // HHWWggTag tag_obj_(dipho, tag_electron, theMET, jet1, jet2, Cut_Variables); // electron, MET, jet1, jet2
                   // HHWWggTag tag_obj_(dipho, tag_electron, allElectrons, goodElectrons, allMuons, theMET, jet1, jet2, allJets, tagJets, Cut_Variables);
                   HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4, allJets, tagJets, Cut_Variables);
                   // HHWWggTag tag_obj_(dipho, tag_electron, theMET, jet1, jet2, Cut_Variables);
                   tag_obj = tag_obj_;
                 }
-                else{
-                  // HHWWggTag tag_obj_(dipho, tag_electron, theMET, jet1, jet2); // diphoton, electron, MET, jet1, jet2
-                  HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4); // diphoton, electron, MET, jet1, jet2
-                  tag_obj = tag_obj_;
-                }
+                // else{
+                //   // HHWWggTag tag_obj_(dipho, tag_electron, theMET, jet1, jet2); // diphoton, electron, MET, jet1, jet2
+                //   HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4); // diphoton, electron, MET, jet1, jet2
+                //   tag_obj = tag_obj_;
+                // }
                 // HHWWggTag tag_obj(dipho, tag_electron, theMET, jet1, jet2, tagJets_, Cut_Variables); // electron, MET, jet1, jet2
                 // HHWWggTag tag_obj(dipho, tag_electron, theMET, jet1, jet2); // electron, MET, jet1, jet2
                 // if (loopOverJets == 1) tag_obj.setSystLabel( inputDiPhotonSuffixes_[diphoton_idx] );
