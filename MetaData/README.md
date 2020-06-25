@@ -1,15 +1,21 @@
-# flashgg/MetaData README
+Table of Contents
+=================
 
-- [flashgg/MetaData README](flashgg/metadata-readme)
-  - [Producing microAODs](producing-microaods)
-  - [Generate the pileup target](generate-the-pileup-target)
-  - [Running on microAODs](running-on-microaods)
-    - [Importing datasets from DBS](importing-datasets-from-dbs)
-- [import flashgg customization](import-flashgg-customization)
-- [set default options if needed](set-default-options-if-needed)
-- [call the customization](call-the-customization)
-    - [Resuming jobs monitoring](resuming-jobs-monitoring)
++ [Producing microAODs](#producing-microaods)
++ [Generate the pileup target](#generate-the-pileup-target)
++ [Running on microAODs](#running-on-microaods)
+   + [Importing datasets from DBS](#importing-datasets-from-dbs)
+   + [Job preparation](#job-preparation)
+      + [Cross section database](#cross-section-database)
+      + [Customization statements](#customization-statements)
+      + [Jobs driver configuration](#jobs-driver-configuration)
+         + [Per-dataset specific options](#per-dataset-specific-options)
+   + [Running jobs](#running-jobs)
+   + [Resuming jobs monitoring](#resuming-jobs-monitoring)
 
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
+
+---
 
 ## Producing microAODs
 
