@@ -491,8 +491,8 @@ namespace flashgg {
       event.getByToken( photonToken_, photons );
       event.getByToken( diphotonToken_, diphotons );
       // event.getByToken( genParticleToken_, genParticle );
-      event.getByToken( electronToken_, electrons );
-      event.getByToken( muonToken_, muons );
+      // event.getByToken( electronToken_, electrons );
+      // event.getByToken( muonToken_, muons );
       event.getByToken( METToken_, METs );
       event.getByToken( mvaResultToken_, mvaResults );
       event.getByToken( vertexToken_, vertices );
@@ -520,9 +520,9 @@ namespace flashgg {
       // std::unique_ptr<vector<HHWWggCandidate> > HHWWggColl_( new vector<HHWWggCandidate> );
       // std::unique_ptr<vector<HHWWggTag> > tags( new vector<HHWWggTag> );
       // int n_METs = METs->size(); // Should be 1, but using as a way to obtain met four vector
-      int n_good_electrons = 0;
-      int n_good_muons = 0;
-      int n_good_leptons = 0;
+      // int n_good_electrons = 0;
+      // int n_good_muons = 0;
+      // int n_good_leptons = 0;
       int n_good_jets = 0;
       bool hasHighbTag = 0;
       float btagVal = 0;
@@ -536,8 +536,8 @@ namespace flashgg {
       // Saved Objects after selections
       // std::vector<flashgg::Jet> tagJets_;
       std::vector<edm::Ptr<flashgg::Jet> > allJets;
-      std::vector<edm::Ptr<flashgg::Electron> > allElectrons;
-      std::vector<edm::Ptr<flashgg::Muon> > allMuons;
+      // std::vector<edm::Ptr<flashgg::Electron> > allElectrons;
+      // std::vector<edm::Ptr<flashgg::Muon> > allMuons;
       // std::vector<flashgg::Jet> allJets;
       // std::vector<flashgg::Muon> goodMuons_;
       // std::vector<flashgg::Electron> goodElectrons_;
@@ -741,8 +741,8 @@ namespace flashgg {
           }
           if(!passMVAs && !doHHWWggTagCutFlowAnalysis_) cout << "[HHWWggFullyHadTagProducer.cc] - *********************************************problem" << endl;
 
-          hasGoodElec = false;
-          hasGoodMuons = false;
+          // hasGoodElec = false;
+          // hasGoodMuons = false;
 
           // Check MET Filters
           // if(passMETfilters){
@@ -750,34 +750,34 @@ namespace flashgg {
           // }
 
           // Electrons
-          std::vector<edm::Ptr<Electron> > goodElectrons = selectStdElectrons( electrons->ptrs(), dipho, vertices->ptrs(), leptonPtThreshold_, electronEtaThresholds_,
-                                                                            useElectronMVARecipe_,useElectronLooseID_,
-                                                                            deltaRPhoElectronThreshold_,DeltaRTrkElec_,deltaMassElectronZThreshold_,
-                                                                            rho_, event.isRealData() );
+          // std::vector<edm::Ptr<Electron> > goodElectrons = selectStdElectrons( electrons->ptrs(), dipho, vertices->ptrs(), leptonPtThreshold_, electronEtaThresholds_,
+          //                                                                   useElectronMVARecipe_,useElectronLooseID_,
+          //                                                                   deltaRPhoElectronThreshold_,DeltaRTrkElec_,deltaMassElectronZThreshold_,
+          //                                                                   rho_, event.isRealData() );
 
-          if(doHHWWggTagCutFlowAnalysis_){
-            for( unsigned int ei = 0; ei <  electrons->size() ; ei++ ){
-              edm::Ptr<flashgg::Electron> theElectron = electrons->ptrAt( ei );
-              allElectrons.push_back(theElectron);
-            }
-            for( unsigned int mi = 0; mi <  muons->size() ; mi++ ){
-              edm::Ptr<flashgg::Muon> theMuon = muons->ptrAt( mi );
-              allMuons.push_back(theMuon);
-            }
-          }
+          // if(doHHWWggTagCutFlowAnalysis_){
+          //   for( unsigned int ei = 0; ei <  electrons->size() ; ei++ ){
+          //     edm::Ptr<flashgg::Electron> theElectron = electrons->ptrAt( ei );
+          //     allElectrons.push_back(theElectron);
+          //   }
+          //   for( unsigned int mi = 0; mi <  muons->size() ; mi++ ){
+          //     edm::Ptr<flashgg::Muon> theMuon = muons->ptrAt( mi );
+          //     allMuons.push_back(theMuon);
+          //   }
+          // }
 
           // Muons
-          std::vector<edm::Ptr<flashgg::Muon> > goodMuons = selectMuons( muons->ptrs(), dipho, vertices->ptrs(), muonEtaThreshold_, leptonPtThreshold_,
-          muPFIsoSumRelThreshold_, deltaRMuonPhoThreshold_, deltaRMuonPhoThreshold_ );
+          // std::vector<edm::Ptr<flashgg::Muon> > goodMuons = selectMuons( muons->ptrs(), dipho, vertices->ptrs(), muonEtaThreshold_, leptonPtThreshold_,
+          // muPFIsoSumRelThreshold_, deltaRMuonPhoThreshold_, deltaRMuonPhoThreshold_ );
 
-          // If doing cut flow analysis, save Muon IDs
-          if(doHHWWggTagCutFlowAnalysis_) MuonVars = GetMuonVars(muons->ptrs(), vertices->ptrs());
+          // // If doing cut flow analysis, save Muon IDs
+          // if(doHHWWggTagCutFlowAnalysis_) MuonVars = GetMuonVars(muons->ptrs(), vertices->ptrs());
 
-          n_good_electrons = goodElectrons.size();
-          n_good_muons = goodMuons.size();
-          n_good_leptons = n_good_electrons + n_good_muons;
-          hasGoodElec = ( goodElectrons.size() > 0 );
-          hasGoodMuons = ( goodMuons.size() > 0 );
+          // n_good_electrons = goodElectrons.size();
+          // n_good_muons = goodMuons.size();
+          // n_good_leptons = n_good_electrons + n_good_muons;
+          // hasGoodElec = ( goodElectrons.size() > 0 );
+          // hasGoodMuons = ( goodMuons.size() > 0 );
 
           // FL: Require at dr(l,l) > 0.4
           // For which pairs of the >=2 good leptons should dr be greater than 4?
@@ -937,13 +937,14 @@ namespace flashgg {
 
 
           //-- Tag object
-          if ( (n_good_leptons >= 0) && (n_good_jets >= 4)){
+          if ((n_good_jets >= 4)){
 
             int catnum = 0;
             Ptr<flashgg::Jet> jet1 = tagJets[0];
             Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
 
-            if (n_good_electrons >= 0){
+            // if (n_good_electrons >= 0)
+            {
               // Ptr<flashgg::Electron> tag_electron = goodElectrons[0];
               catnum = 0;
 
@@ -952,7 +953,7 @@ namespace flashgg {
                 Ptr<flashgg::Jet> jet3 = tagJets[2];
                 Ptr<flashgg::Jet> jet4 = tagJets[3];
                 HHWWggTag tag_obj;
-                std::cout << "DEBUG:goodLeptons:  allJets.size() = " << allJets.size() << ",\ttagJets.size() = " << tagJets.size()  << ",\t Cut_Variables.size() = " << Cut_Variables.size() << ",\t JetVars.size() = " << JetVars.size()  << ",\t n_good_electrons = " << n_good_electrons << std::endl;
+                // std::cout << "DEBUG:goodLeptons:  allJets.size() = " << allJets.size() << ",\ttagJets.size() = " << tagJets.size()  << ",\t Cut_Variables.size() = " << Cut_Variables.size() << ",\t JetVars.size() = " << JetVars.size()  << ",\t n_good_electrons = " << n_good_electrons << std::endl;
                 // HHWWggTag tag_obj_0;
                 if (doHHWWggTagCutFlowAnalysis_){
                   HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4, allJets, tagJets, Cut_Variables, JetVars);
@@ -1037,8 +1038,8 @@ namespace flashgg {
               // HHWWggTag tag_obj(dipho, tagJets_, theMET, Cut_Variables);
 
               // FIXME: Remove info of electrons and muons.
-              HHWWggTag tag_obj(dipho, allElectrons, goodElectrons, allMuons, goodMuons, theMET, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
-              //HHWWggTag tag_obj(dipho, theMET, allJets, tagJets, Cut_Variables, JetVars);
+              // HHWWggTag tag_obj(dipho, allElectrons, goodElectrons, allMuons, goodMuons, theMET, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
+              HHWWggTag tag_obj(dipho, theMET, allJets, tagJets, Cut_Variables, JetVars);
               //
               // HHWWggTag tag_obj(dipho, theMET, Cut_Variables);
                   // if (loopOverJets == 1) tag_obj.setSystLabel( inputDiPhotonSuffixes_[diphoton_idx] );
