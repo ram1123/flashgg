@@ -943,8 +943,8 @@ namespace flashgg {
             Ptr<flashgg::Jet> jet1 = tagJets[0];
             Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
 
-            if (n_good_electrons == 1){
-              Ptr<flashgg::Electron> tag_electron = goodElectrons[0];
+            if (n_good_electrons >= 0){
+              // Ptr<flashgg::Electron> tag_electron = goodElectrons[0];
               catnum = 0;
 
               // if (n_good_jets == 2){
@@ -952,6 +952,7 @@ namespace flashgg {
                 Ptr<flashgg::Jet> jet3 = tagJets[2];
                 Ptr<flashgg::Jet> jet4 = tagJets[3];
                 HHWWggTag tag_obj;
+                std::cout << "DEBUG:goodLeptons:  allJets.size() = " << allJets.size() << ",\ttagJets.size() = " << tagJets.size()  << ",\t Cut_Variables.size() = " << Cut_Variables.size() << ",\t JetVars.size() = " << JetVars.size()  << ",\t n_good_electrons = " << n_good_electrons << std::endl;
                 // HHWWggTag tag_obj_0;
                 if (doHHWWggTagCutFlowAnalysis_){
                   HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4, allJets, tagJets, Cut_Variables, JetVars);
