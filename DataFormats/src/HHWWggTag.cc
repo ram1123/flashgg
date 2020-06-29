@@ -143,7 +143,7 @@ HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::Met> M
                       edm::Ptr<flashgg::Jet> jet1, edm::Ptr<flashgg::Jet> jet2,
                       edm::Ptr<flashgg::Jet> jet3, edm::Ptr<flashgg::Jet> jet4)
 {
-  std::cout << "DEBUG: Inside HHWWggtags class constructor for 4 jets only" << std::endl;
+  //std::cout << "DEBUG: Inside HHWWggtags class constructor for 4 jets only" << std::endl;
   dipho_ = dipho;
   GetObjects(dipho);
 }
@@ -188,7 +188,7 @@ HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho,
               edm::Ptr<flashgg::Jet> jet3, edm::Ptr<flashgg::Jet> jet4,
               std::vector<edm::Ptr<flashgg::Jet>> allJets, std::vector<edm::Ptr<flashgg::Jet>> goodJets, std::vector<double> Cut_Variables, std::vector<double> JetVars) : Cut_Variables_(Cut_Variables), JetVars_(JetVars)
 {
-  std::cout << "DEBUG: Inside HHWWggtags class constructor for 4 jets only and other vars" << std::endl;
+  //std::cout << "DEBUG: Inside HHWWggtags class constructor for 4 jets only and other vars" << std::endl;
   dipho_ = dipho;
   GetObjects(dipho, MET, jet1, jet2, jet3, jet4);
   // allElectrons_ = GetElectrons(allElectrons);
@@ -235,12 +235,12 @@ HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho,
                      std::vector<edm::Ptr<flashgg::Jet>> allJets, std::vector<edm::Ptr<flashgg::Jet>> goodJets,
                      std::vector<double> Cut_Variables, std::vector<double> JetVars) : Cut_Variables_(Cut_Variables),  JetVars_(JetVars)
 {
-  std::cout << "DEBUG: Inside HHWWggtags class constructor for all jets only-1" << std::endl;
+  //std::cout << "DEBUG: Inside HHWWggtags class constructor for all jets only-1" << std::endl;
   dipho_ = dipho;
   GetObjects(dipho, MET);
   allJets_ = GetJets(allJets);
   goodJets_ = GetJets(goodJets);
-  std::cout << "DEBUG: Inside HHWWggtags class constructor for all jets only-2" << std::endl;
+  //std::cout << "DEBUG: Inside HHWWggtags class constructor for all jets only-2" << std::endl;
 }
 
 // You need this because HHWWggTag is derived from another class
