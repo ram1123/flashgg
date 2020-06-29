@@ -49,7 +49,7 @@ class HHWWggCustomize():
         ]
 
         vars = ["E","pt","px","py","pz","eta","phi"]
-        objects = ["Leading_Photon","Subleading_Photon", "MET","Leading_Jet","Subleading_Jet", "Sub2leading_Jet", "Sub3leading_Jet"]
+        objects = ["Leading_Photon","Subleading_Photon","Electron","Muon","MET","Leading_Jet","Subleading_Jet"]
         finalStateVars = []
         finalStateVars.append("Leading_Photon_MVA:=lp_Hgg_MVA")
         finalStateVars.append("Subleading_Photon_MVA:=slp_Hgg_MVA")
@@ -67,7 +67,7 @@ class HHWWggCustomize():
         # allCheck = 7
         # goodCheck = 3
         objectVectors = []
-        objs = ["Jets"]
+        objs = ["Electrons","Muons","Jets"]
         vecTypes = ["all","good"]
         for t in vecTypes:
             for o in objs:
@@ -94,6 +94,7 @@ class HHWWggCustomize():
                         vname = "? %s.size() >= %s ? %s[%s].%s() : -999"%(objV,i+1,objV,i,eV)
                         entry = "%s:=%s"%(vtitle,vname)
                         finalStateVars.append(entry)
+
             # if("Muons" in objV):
             #     mVars = ["pfIsolationR04().sumChargedHadronPt","pfIsolationR04().sumNeutralHadronEt","pfIsolationR04().sumPhotonEt",
             #              "pfIsolationR04().sumPUPt"]
@@ -104,7 +105,7 @@ class HHWWggCustomize():
             #             vtitle = "%s_%s_%s"%(objV,i,mVarTitle)
             #             vname = "? %s.size() >= %s ? %s[%s].%s() : -999"%(objV,i+1,objV,i,mV)
             #             entry = "%s:=%s"%(vtitle,vname)
-            #             finalStateVars.append(entry)  
+            #             finalStateVars.append(entry)
 
             # var1 = "jet" + str(jeti) + "_DeepFlavourScore[2,0,2] := ? JetVector.size() >= " + str(jeti + 1) + " ? JetVector[" + str(jeti) + "].bDiscriminator('mini_pfDeepFlavourJetTags:probb') : -99 "
             if("Jets" in objV):
@@ -122,7 +123,7 @@ class HHWWggCustomize():
                         entry = "%s:=%s"%(vtitle,vname)
                         finalStateVars.append(entry)
 
-        # Save extra Muon variables 
+        # Save extra Muon variables
         nMuons = 5 # highest 5 pT muons (no selections applied)
         nVars = 6 # 5 IDs and Isolation
         extraMuonVars = ["isLooseMuon","isMediumMuon","isTightMuon","isSoftMuon","isHighPtMuon","muonIso"]
@@ -138,12 +139,12 @@ class HHWWggCustomize():
                 i = m*nVars + n
                 vname = "MuonVars[%s]"%(i)
                 vtitle = "allMuons_%s_%s"%(m,muonVarTitle)
-                entry = "%s:=%s"%(vtitle,vname)                
-                finalStateVars.append(entry) 
+                entry = "%s:=%s"%(vtitle,vname)
+                finalStateVars.append(entry)
 
-        # Save extra Jet variables 
+        # Save extra Jet variables
         nJets = 5 # highest 5 pT muons (no selections applied)
-        nVars = 4 # 4 IDs 
+        nVars = 4 # 4 IDs
         # nVars = 5 # 4 IDs + 1 PU ID
         # nVars = 12 # 4 IDs + 8 PU ID's
         extraJetVars = ["passLoose","passTight","passTight2017","passTight2018"]
@@ -158,7 +159,7 @@ class HHWWggCustomize():
                 #   JetVars_[jetIndex*numVars + 1] = passTight;
                 #   JetVars_[jetIndex*numVars + 2] = passTight2017;
                 #   JetVars_[jetIndex*numVars + 3] = passTight2018;
-                
+
                 #   JetVars_[jetIndex*numVars + 4] = passesJetPuIdnone;
                 #   JetVars_[jetIndex*numVars + 5] = passesJetPuIdloose;
                 #   JetVars_[jetIndex*numVars + 6] = passesJetPuIdmedium;
@@ -166,14 +167,14 @@ class HHWWggCustomize():
                 #   JetVars_[jetIndex*numVars + 8] = passesJetPuIdmixed;
                 #   JetVars_[jetIndex*numVars + 9] = passesJetPuIdforward_loose;
                 #   JetVars_[jetIndex*numVars + 10] = passesJetPuIdforward_medium;
-                #   JetVars_[jetIndex*numVars + 11] = passesJetPuIdforward_tight;                
+                #   JetVars_[jetIndex*numVars + 11] = passesJetPuIdforward_tight;
                 i = j*nVars + n
                 vname = "JetVars[%s]"%(i)
                 vtitle = "allJets_%s_%s"%(j,jetVarTitle)
-                entry = "%s:=%s"%(vtitle,vname)                
-                finalStateVars.append(entry)                                            
+                entry = "%s:=%s"%(vtitle,vname)
+                finalStateVars.append(entry)
 
-        # for removal of prompt-prompt events from QCD and GJet samples 
+        # for removal of prompt-prompt events from QCD and GJet samples
         finalStateVars.append("Leading_Photon_genMatchType:=Leading_Photon.genMatchType()")
         finalStateVars.append("Subleading_Photon_genMatchType:=Subleading_Photon.genMatchType()")
 
