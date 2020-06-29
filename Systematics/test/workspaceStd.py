@@ -19,8 +19,7 @@ process.load("Configuration.StandardSequences.GeometryDB_cff")
 process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1000000 )
-# process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1 )
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 100 )
 # process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1 ) # I think this kills / slows down jobs!
 
 systlabels = [""]
@@ -85,6 +84,12 @@ customize.options.register('doHHWWggTag',
                            VarParsing.VarParsing.varType.bool,
                            'doHHWWggTag'
                            )
+customize.options.register('doHHWWggFullyHadTag',
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'doHHWWggFullyHadTag'
+                           )
 customize.options.register('doHHWWggTagCutFlow', # This saves all events for cutflow analysis
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
@@ -140,7 +145,7 @@ customize.options.register('doSystematics',
                            'doSystematics'
                            )
 customize.options.register('doPdfWeights',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doPdfWeights'
@@ -171,12 +176,12 @@ customize.options.register('verboseSystDump',
                            )
 
 
-print "Printing defaults"
-print 'doFiducial '+str(customize.doFiducial)
-print 'acceptance '+str(customize.acceptance)
-print 'tthTagsOnly '+str(customize.tthTagsOnly)
+print "\n==> Printing defaults"
+print '\t doFiducial '+str(customize.doFiducial)
+print '\t acceptance '+str(customize.acceptance)
+print '\t tthTagsOnly '+str(customize.tthTagsOnly)
 # import flashgg customization to check if we have signal or background
-from flashgg.MetaData.JobConfig import customize
+# from flashgg.MetaData.JobConfig import customize # Already imported before
 # set default options if needed
 customize.setDefault("maxEvents",-1)
 customize.setDefault("targetLumi",1.00e+3)
@@ -203,11 +208,11 @@ modifyTagSequenceForSystematics(process,jetSystematicsInputTags) # normally unco
 # process.systematicsTagSequences = cms.Sequence()
 # process.flashggSystTagMerger = cms.EDProducer("TagMerger",src=cms.VInputTag("flashggTagSorter"))
 
-print "Printing options"
-print 'doFiducial '+str(customize.doFiducial)
-print 'acceptance '+str(customize.acceptance)
-print 'tthTagsOnly '+str(customize.tthTagsOnly)
-print 'doMuFilter '+str(customize.doMuFilter)
+print "\n==> Printing options"
+print '\t doFiducial '+str(customize.doFiducial)
+print '\t acceptance '+str(customize.acceptance)
+print '\t tthTagsOnly '+str(customize.tthTagsOnly)
+print '\t doMuFilter '+str(customize.doMuFilter)
 
 if customize.doFiducial:
     import flashgg.Systematics.fiducialCrossSectionsCustomize as fc
@@ -254,7 +259,7 @@ if customize.tthTagsOnly or customize.HHWWggTagsOnly:
 #     process.flashggDiPhotons.vertexProbMVAweightfile = "flashgg/MicroAOD/data/TMVAClassification_BDTVtxId_SL_2016.xml"
 #     process.flashggDiPhotons.vertexIdMVAweightfile = "flashgg/MicroAOD/data/TMVAClassification_BDTVtxId_SL_2016.xml"
 
-print 'here we print the tag sequence before'
+print '\n==> here we print the tag sequence before'
 print process.flashggTagSequence
 if customize.doFiducial:
     from PhysicsTools.PatAlgos.tools.helpers import cloneProcessingSnippet,massSearchReplaceAnyInputTag
@@ -305,13 +310,20 @@ if customize.doHHWWggTag:
     minimalVariables += hhwwggc.variablesToDump()
     systematicVariables = hhwwggc.systematicVariables()
 
+if customize.doHHWWggFullyHadTag:
+    import flashgg.Systematics.HHWWggFullyHadCustomize
+    hhwwggc = flashgg.Systematics.HHWWggFullyHadCustomize.HHWWggFullyHadCustomize(process, customize, customize.metaConditions)
+    minimalVariables += hhwwggc.variablesToDump()
+    systematicVariables = hhwwggc.systematicVariables()
+
+print "\n==> DEBUG-1: customization done..."
 process.flashggTHQLeptonicTag.processId = cms.string(str(customize.processId))
 
-print 'here we print the tag sequence after'
+print '\n==> here we print the tag sequence after'
 print process.flashggTagSequence
 
 if customize.doFiducial:
-    print 'we do fiducial and we change tagsorter'
+    print '==> we do fiducial and we change tagsorter'
     process.flashggTagSorter.TagPriorityRanges = cms.VPSet(     cms.PSet(TagName = cms.InputTag('flashggSigmaMoMpToMTag')) )
 
 # if customize.HHWWggTagsOnly:
@@ -351,7 +363,7 @@ if customize.tthTagsOnly:
 
 #     process.flashggDiPhotonSystematics.SystMethods = newvpset
 
-print "customize.processId:",customize.processId
+print "\n==> customize.processId:",customize.processId
 
 # load appropriate scale and smearing bins here
 # systematics customization scripts will take care of adjusting flashggDiPhotonSystematics
@@ -420,7 +432,7 @@ signal_processes = ["ggh_","vbf_","wzh_","wh_","zh_","bbh_","thq_","thw_","tth_"
 is_signal = reduce(lambda y,z: y or z, map(lambda x: customize.processId.count(x), signal_processes))
 #if customize.processId.count("h_") or customize.processId.count("vbf_") or customize.processId.count("Acceptance") or customize.processId.count("hh_"):
 if is_signal:
-    print "Signal MC, so adding systematics and dZ"
+    print "\n==>Signal MC, so adding systematics and dZ"
     if customize.doHTXS:
         variablesToUse = minimalVariablesHTXS
     else:
@@ -642,6 +654,7 @@ definedSysts=set()
 process.tagsDumper.NNLOPSWeightFile=cms.FileInPath("flashgg/Taggers/data/NNLOPS_reweight.root")
 process.tagsDumper.reweighGGHforNNLOPS = cms.untracked.bool(bool(customize.processId.count("ggh")))
 process.tagsDumper.classifierCfg.remap=cms.untracked.VPSet()
+print "\n==>DEBUG:-2: TagList forloop"
 for tag in tagList:
   tagName=tag[0]
   tagCats=tag[1]
@@ -693,6 +706,7 @@ for tag in tagList:
                            nScaleWeights=nScaleWeights,
                            splitPdfByStage0Cat=customize.doHTXS
                            )
+print "\n==>DEBUG:-3: TagList forloop END..."
 
 # Require standard diphoton trigger
 

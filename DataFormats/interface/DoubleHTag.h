@@ -34,9 +34,9 @@ namespace flashgg {
         double diphotonPtOverM() const {return diPhoton()->pt()/mass(); }
         double dijetPtOverM() const {return dijet().pt()/mass(); }
 
-        const flashgg::Jet & leadJet() const { return *leadJet_; } 
-        const flashgg::Jet & subleadJet() const { return *subleadJet_; } 
-        
+        const flashgg::Jet & leadJet() const { return *leadJet_; }
+        const flashgg::Jet & subleadJet() const { return *subleadJet_; }
+
         const LorentzVector & dijet() const { return dijet_; }
 
         float getCosThetaStar_CS() const;
@@ -54,7 +54,7 @@ namespace flashgg {
         double eventNumber() const { return eventNumber_; }
 
         float ttHScore_;
-        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_; 
+        float sumET_, MET_, phiMET_, dPhi1_, dPhi2_, PhoJetMinDr_, njets_, Xtt0_, Xtt1_, pte1_, pte2_, ptmu1_, ptmu2_, ptdipho_, etae1_, etae2_, etamu1_, etamu2_, etadipho_, phie1_, phie2_, phimu1_, phimu2_, phidipho_, fabs_CosThetaStar_CS_, fabs_CosTheta_bb_, mjj_, ptjet1_, ptjet2_, etajet1_, etajet2_, phijet1_, phijet2_;
         float sumET() const {return sumET_;}
         float MET() const {return MET_;}
         float phiMET() const {return phiMET_;}
@@ -99,7 +99,7 @@ namespace flashgg {
         LorentzVector dijet_;
         DecorrTransform* transfEBEB_;
         DecorrTransform* transfNotEBEB_;
-        
+
     };
 }
 

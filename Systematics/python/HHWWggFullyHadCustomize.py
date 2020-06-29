@@ -1,15 +1,16 @@
 import FWCore.ParameterSet.Config as cms
 
-class HHWWggCustomize():
+class HHWWggFullyHadCustomize():
     """
     HH->WWgg process customizaton class
     """
 
     def __init__(self, process, customize, metaConditions):
+        print "DEBUG: Inside HHWWggFullyHadCustomize Class constructors"
         self.process = process
         self.customize = customize
         self.metaConditions = metaConditions
-        self.tagList = [ ["HHWWggTag",3] ] # 2 cats: 0: SL electron channel. 1: SL muon channel. 2: Untagged --> Meets no criteria but want to save event to output
+        self.tagList = [ ["HHWWggTag",3] ] # 2 cats: 0: pT ordered Jets. 1: min Mass ordered. 2: Untagged --> Meets no criteria but want to save event to output
         self.customizeTagSequence()
 
     def variablesToDump(self):
@@ -22,8 +23,7 @@ class HHWWggCustomize():
             "passPS[2,0,2] := Cut_Variables[0]",
             "passPhotonSels[2,0,2] := Cut_Variables[1]",
             "passbVeto[2,0,2] := Cut_Variables[2]",
-            "ExOneLep[2,0,2] := Cut_Variables[3]",
-            "goodJets[2,0,2] := Cut_Variables[4]"
+            "goodJets[2,0,2] := Cut_Variables[3]"
         ]
 
         #-- b scores
@@ -49,7 +49,7 @@ class HHWWggCustomize():
         ]
 
         vars = ["E","pt","px","py","pz","eta","phi"]
-        objects = ["Leading_Photon","Subleading_Photon","Electron","Muon","MET","Leading_Jet","Subleading_Jet"]
+        objects = ["Leading_Photon","Subleading_Photon", "MET","Leading_Jet","Subleading_Jet", "Sub2leading_Jet", "Sub3leading_Jet"]
         finalStateVars = []
         finalStateVars.append("Leading_Photon_MVA:=lp_Hgg_MVA")
         finalStateVars.append("Subleading_Photon_MVA:=slp_Hgg_MVA")
@@ -67,7 +67,7 @@ class HHWWggCustomize():
         # allCheck = 7
         # goodCheck = 3
         objectVectors = []
-        objs = ["Electrons","Muons","Jets"]
+        objs = ["Jets"]
         vecTypes = ["all","good"]
         for t in vecTypes:
             for o in objs:
@@ -94,7 +94,6 @@ class HHWWggCustomize():
                         vname = "? %s.size() >= %s ? %s[%s].%s() : -999"%(objV,i+1,objV,i,eV)
                         entry = "%s:=%s"%(vtitle,vname)
                         finalStateVars.append(entry)
-
             # if("Muons" in objV):
             #     mVars = ["pfIsolationR04().sumChargedHadronPt","pfIsolationR04().sumNeutralHadronEt","pfIsolationR04().sumPhotonEt",
             #              "pfIsolationR04().sumPUPt"]
@@ -123,25 +122,24 @@ class HHWWggCustomize():
                         entry = "%s:=%s"%(vtitle,vname)
                         finalStateVars.append(entry)
 
-        # for removal of prompt-prompt events from QCD and GJet samples
         # Save extra Muon variables
-        nMuons = 5 # highest 5 pT muons (no selections applied)
-        nVars = 6 # 5 IDs and Isolation
-        extraMuonVars = ["isLooseMuon","isMediumMuon","isTightMuon","isSoftMuon","isHighPtMuon","muonIso"]
-        for m in range(0,nMuons):
-            for n in range(0,nVars):
-                muonVarTitle = extraMuonVars[n]
-                # MuonVars_[muonIndex*numVars + 0] = isLooseMuon;
-                # MuonVars_[muonIndex*numVars + 1] = isMediumMuon;
-                # MuonVars_[muonIndex*numVars + 2] = isTightMuon;
-                # MuonVars_[muonIndex*numVars + 3] = isSoftMuon;
-                # MuonVars_[muonIndex*numVars + 4] = isHighPtMuon;
-                # MuonVars_[muonIndex*numVars + 5] = muonIso;
-                i = m*nVars + n
-                vname = "MuonVars[%s]"%(i)
-                vtitle = "allMuons_%s_%s"%(m,muonVarTitle)
-                entry = "%s:=%s"%(vtitle,vname)
-                finalStateVars.append(entry)
+        # nMuons = 5 # highest 5 pT muons (no selections applied)
+        # nVars = 6 # 5 IDs and Isolation
+        # extraMuonVars = ["isLooseMuon","isMediumMuon","isTightMuon","isSoftMuon","isHighPtMuon","muonIso"]
+        # for m in range(0,nMuons):
+        #     for n in range(0,nVars):
+        #         muonVarTitle = extraMuonVars[n]
+        #         # MuonVars_[muonIndex*numVars + 0] = isLooseMuon;
+        #         # MuonVars_[muonIndex*numVars + 1] = isMediumMuon;
+        #         # MuonVars_[muonIndex*numVars + 2] = isTightMuon;
+        #         # MuonVars_[muonIndex*numVars + 3] = isSoftMuon;
+        #         # MuonVars_[muonIndex*numVars + 4] = isHighPtMuon;
+        #         # MuonVars_[muonIndex*numVars + 5] = muonIso;
+        #         i = m*nVars + n
+        #         vname = "MuonVars[%s]"%(i)
+        #         vtitle = "allMuons_%s_%s"%(m,muonVarTitle)
+        #         entry = "%s:=%s"%(vtitle,vname)
+        #         finalStateVars.append(entry)
 
         # Save extra Jet variables
         nJets = 5 # highest 5 pT muons (no selections applied)
@@ -193,6 +191,9 @@ class HHWWggCustomize():
         if self.customize.doHHWWggDebug:
             variables += debugVars
 
+        print "\n==> DEBUG: Print variables before returning"
+        print "\n\t",variables
+        print 'Ram\t','='*51
         return variables
 
         # if self.customize.dumpWorkspace == False :
