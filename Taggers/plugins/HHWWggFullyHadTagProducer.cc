@@ -871,20 +871,20 @@ namespace flashgg {
                                                   dipho->subLeadingPhoton()->superCluster()->phi() );
 
                   if( dRPhoLeadJet < deltaRPhoLeadJet_ || dRPhoSubLeadJet < deltaRPhoSubLeadJet_ ) { keepJet=false; }
-                  if( hasGoodElec )
-                      for( unsigned int electronIndex = 0; electronIndex < goodElectrons.size(); electronIndex++ )
-                          {
-                              Ptr<flashgg::Electron> electron = goodElectrons[electronIndex];
-                              float dRJetElectron = deltaR( thejet->eta(), thejet->phi(), electron->eta(), electron->phi() ) ;
-                              if( dRJetElectron < deltaRJetMuonThreshold_ ) { keepJet=false; }
-                          }
-                  if( hasGoodMuons )
-                      for( unsigned int muonIndex = 0; muonIndex < goodMuons.size(); muonIndex++ )
-                          {
-                              Ptr<flashgg::Muon> muon = goodMuons[muonIndex];
-                              float dRJetMuon = deltaR( thejet->eta(), thejet->phi(), muon->eta(), muon->phi() ) ;
-                              if( dRJetMuon < deltaRJetMuonThreshold_ ) { keepJet=false; }
-                          }
+                  // if( hasGoodElec )
+                  //     for( unsigned int electronIndex = 0; electronIndex < goodElectrons.size(); electronIndex++ )
+                  //         {
+                  //             Ptr<flashgg::Electron> electron = goodElectrons[electronIndex];
+                  //             float dRJetElectron = deltaR( thejet->eta(), thejet->phi(), electron->eta(), electron->phi() ) ;
+                  //             if( dRJetElectron < deltaRJetMuonThreshold_ ) { keepJet=false; }
+                  //         }
+                  // if( hasGoodMuons )
+                  //     for( unsigned int muonIndex = 0; muonIndex < goodMuons.size(); muonIndex++ )
+                  //         {
+                  //             Ptr<flashgg::Muon> muon = goodMuons[muonIndex];
+                  //             float dRJetMuon = deltaR( thejet->eta(), thejet->phi(), muon->eta(), muon->phi() ) ;
+                  //             if( dRJetMuon < deltaRJetMuonThreshold_ ) { keepJet=false; }
+                  //         }
 
                   if(keepJet)
                       tagJets.push_back( thejet );
@@ -925,18 +925,19 @@ namespace flashgg {
           // }
 
           if (doHHWWggTagCutFlowAnalysis_){
-            if (n_good_leptons == 1) Cut_Variables[3] = 1.0; // exactly one good lepton
+            // if (n_good_leptons == 1) Cut_Variables[3] = 1.0; // exactly one good lepton
+            // else Cut_Variables[3] = 0.0;
+            if (n_good_jets >= 4) Cut_Variables[3] = 1.0; // at least 2 good jets
             else Cut_Variables[3] = 0.0;
-            if (n_good_jets >= 2) Cut_Variables[4] = 1.0; // at least 2 good jets
-            else Cut_Variables[4] = 0.0;
           }
           else
-            if ((n_good_leptons != 1) || (n_good_jets <= 1)) continue;
+            if ((n_good_jets <= 3)) continue;
+            // if ((n_good_leptons != 1) || (n_good_jets <= 1)) continue;
 
 
 
           //-- Tag object
-          if ( (n_good_leptons == 1) && (n_good_jets >= 2)){
+          if ( (n_good_leptons >= 0) && (n_good_jets >= 4)){
 
             int catnum = 0;
             Ptr<flashgg::Jet> jet1 = tagJets[0];
@@ -948,14 +949,16 @@ namespace flashgg {
 
               // if (n_good_jets == 2){
                 Ptr<flashgg::Jet> jet2 = tagJets[1];
+                Ptr<flashgg::Jet> jet3 = tagJets[2];
+                Ptr<flashgg::Jet> jet4 = tagJets[3];
                 HHWWggTag tag_obj;
                 // HHWWggTag tag_obj_0;
                 if (doHHWWggTagCutFlowAnalysis_){
-                  HHWWggTag tag_obj_(dipho, tag_electron, allElectrons, goodElectrons, allMuons, theMET, jet1, jet2, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
+                  HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4, allJets, tagJets, Cut_Variables, JetVars);
                   tag_obj = tag_obj_;
                 }
                 else{
-                  HHWWggTag tag_obj_(dipho, tag_electron, theMET, jet1, jet2); // diphoton, electron, MET, jet1, jet2
+                  HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4 ); // diphoton, electron, MET, jet1, jet2
                   tag_obj = tag_obj_;
                 }
                 // if (loopOverJets == 1) tag_obj.setSystLabel( inputDiPhotonSuffixes_[diphoton_idx] );
@@ -974,52 +977,52 @@ namespace flashgg {
 
             }
 
-            if (n_good_muons == 1){
-              Ptr<flashgg::Muon> tag_muon = goodMuons[0];
-              catnum = 1;
-              // catnum = 0;
-                Ptr<flashgg::Jet> jet2 = tagJets[1];
-                HHWWggTag tag_obj;
-                // HHWWggTag tag_obj_0;
-                if (doHHWWggTagCutFlowAnalysis_){
-                  // HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2, tagJets_, Cut_Variables); // muon, MET, jet1, jet2
-                  // HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2, tagJets_); // muon, MET, jet1, jet2
-                  HHWWggTag tag_obj_(dipho, allElectrons, tag_muon, allMuons, goodMuons, theMET, jet1, jet2, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
+            // if (n_good_muons == 1){
+            //   Ptr<flashgg::Muon> tag_muon = goodMuons[0];
+            //   catnum = 1;
+            //   // catnum = 0;
+            //     Ptr<flashgg::Jet> jet2 = tagJets[1];
+            //     HHWWggTag tag_obj;
+            //     // HHWWggTag tag_obj_0;
+            //     if (doHHWWggTagCutFlowAnalysis_){
+            //       // HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2, tagJets_, Cut_Variables); // muon, MET, jet1, jet2
+            //       // HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2, tagJets_); // muon, MET, jet1, jet2
+            //       HHWWggTag tag_obj_(dipho, allElectrons, tag_muon, allMuons, goodMuons, theMET, jet1, jet2, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
 
-                  // HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2); // diphoton, muon, MET, jet1, jet2
-                  tag_obj = tag_obj_;
-                }
-                else{
-                  HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2); // diphoton, muon, MET, jet1, jet2
-                  tag_obj = tag_obj_;
-                }
+            //       // HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2); // diphoton, muon, MET, jet1, jet2
+            //       tag_obj = tag_obj_;
+            //     }
+            //     else{
+            //       HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2); // diphoton, muon, MET, jet1, jet2
+            //       tag_obj = tag_obj_;
+            //     }
 
 
-                // HHWWggTag tag_obj(dipho, tag_muon, theMET, jet1, jet2, tagJets_, Cut_Variables); // electron, MET, jet1, jet2
-                // if (loopOverJets == 1) tag_obj.setSystLabel( inputDiPhotonSuffixes_[diphoton_idx] );
-                // else tag_obj.setSystLabel( inputJetsSuffixes_[jet_col_idx]);
+            //     // HHWWggTag tag_obj(dipho, tag_muon, theMET, jet1, jet2, tagJets_, Cut_Variables); // electron, MET, jet1, jet2
+            //     // if (loopOverJets == 1) tag_obj.setSystLabel( inputDiPhotonSuffixes_[diphoton_idx] );
+            //     // else tag_obj.setSystLabel( inputJetsSuffixes_[jet_col_idx]);
 
-                tag_obj.setSystLabel(systLabel_);
+            //     tag_obj.setSystLabel(systLabel_);
 
-                tag_obj.setDiPhotonIndex( diphoIndex );
-                // tag_obj.setMVA( -0.9 );
-                tag_obj.setCategoryNumber( catnum ); // 1 for muon events
-                tag_obj.includeWeights( *dipho );
+            //     tag_obj.setDiPhotonIndex( diphoIndex );
+            //     // tag_obj.setMVA( -0.9 );
+            //     tag_obj.setCategoryNumber( catnum ); // 1 for muon events
+            //     tag_obj.includeWeights( *dipho );
 
-                // tag_obj.setEventNumber(event.id().event() );
-                // cout << "Pushing back tag object w/ muon" << endl;
-                HHWWggtags->push_back( tag_obj );
+            //     // tag_obj.setEventNumber(event.id().event() );
+            //     // cout << "Pushing back tag object w/ muon" << endl;
+            //     HHWWggtags->push_back( tag_obj );
 
-                // Also push back to zeroeth category containing all tags
-                // tag_obj_0 = tag_obj;
-                // tag_obj_0.setCategoryNumber(0);
-                // HHWWggtags->push_back( tag_obj_0 );
+            //     // Also push back to zeroeth category containing all tags
+            //     // tag_obj_0 = tag_obj;
+            //     // tag_obj_0.setCategoryNumber(0);
+            //     // HHWWggtags->push_back( tag_obj_0 );
 
-                if( ! event.isRealData() ) {
-                  HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
-                }
+            //     if( ! event.isRealData() ) {
+            //       HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
+            //     }
 
-            }
+            // }
 
           } // if ( (n_good_leptons == 1) && (n_good_jets >= 2) )
 
@@ -1032,26 +1035,39 @@ namespace flashgg {
               // HHWWggTag tag_obj(dipho, tagJets_, theMET, Cut_Variables);
               // HHWWggTag tag_obj(dipho, tagJets_, theMET, Cut_Variables);
 
+              // FIXME: Remove info of electrons and muons.
               HHWWggTag tag_obj(dipho, allElectrons, goodElectrons, allMuons, goodMuons, theMET, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
+              //HHWWggTag tag_obj(dipho, theMET, allJets, tagJets, Cut_Variables, JetVars);
+              //
               // HHWWggTag tag_obj(dipho, theMET, Cut_Variables);
                   // if (loopOverJets == 1) tag_obj.setSystLabel( inputDiPhotonSuffixes_[diphoton_idx] );
                   // else tag_obj.setSystLabel( inputJetsSuffixes_[jet_col_idx]);
+              // std::cout << "DEBUG: -1" << std::endl;
                   tag_obj.setSystLabel(systLabel_);
+              // std::cout << "DEBUG:-2" << std::endl;
 
                   tag_obj.setDiPhotonIndex( diphoIndex );
+              // std::cout << "DEBUG:-3" << std::endl;
                   // tag_obj.setMVA( -0.9 );
-                  tag_obj.setCategoryNumber( 2 ); // 2: Untagged category. Does not meet any selection criteria but want to save event
+                  tag_obj.setCategoryNumber( 1 ); // 2: Untagged category. Does not meet any selection criteria but want to save event
+              // std::cout << "DEBUG:-4" << std::endl;
                   tag_obj.includeWeights( *dipho );
+              // std::cout << "DEBUG:-5" << std::endl;
                   HHWWggtags->push_back( tag_obj );
+              // std::cout << "DEBUG:-6" << std::endl;
 
                   if( ! event.isRealData() ) {
                     HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
                   }
+              // std::cout << "DEBUG:-7" << std::endl;
             }
+              // std::cout << "DEBUG:-8" << std::endl;
           }
+              // std::cout << "DEBUG:-9" << std::endl;
 
         } // only look at highest pt dipho
 
+              // std::cout << "DEBUG:-10" << std::endl;
       } // if at least 1 PS diphoton
 
       event.put( std::move( HHWWggtags ) );
