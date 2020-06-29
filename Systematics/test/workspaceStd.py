@@ -19,7 +19,7 @@ process.load("Configuration.StandardSequences.GeometryDB_cff")
 process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1 )
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 50 )
 # process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1 ) # I think this kills / slows down jobs!
 
 systlabels = [""]
@@ -181,7 +181,7 @@ print '\t doFiducial '+str(customize.doFiducial)
 print '\t acceptance '+str(customize.acceptance)
 print '\t tthTagsOnly '+str(customize.tthTagsOnly)
 # import flashgg customization to check if we have signal or background
-from flashgg.MetaData.JobConfig import customize
+# from flashgg.MetaData.JobConfig import customize # Already imported before
 # set default options if needed
 customize.setDefault("maxEvents",-1)
 customize.setDefault("targetLumi",1.00e+3)
