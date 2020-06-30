@@ -29,8 +29,10 @@
 
 ## User specific variables. Customize to your own working area(s)
 
-fggDirec="/afs/cern.ch/work/a/atishelm/21JuneFlashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory 
-ntupleDirec="/eos/user/a/atishelm/ntuples/HHWWgg/" # condor output directory 
+#fggDirec="/afs/cern.ch/work/a/atishelm/21JuneFlashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory 
+#ntupleDirec="/eos/user/a/atishelm/ntuples/HHWWgg/" # condor output directory 
+fggDirec="/afs/cern.ch/user/r/rasharma/work/doubleHiggs/flashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory
+ntupleDirec="/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_30June/" # condor output directory
 
 ## Other script parameters 
 
@@ -171,7 +173,8 @@ then
 
       command+=${metaConditions}
 
-      command+=' doHHWWggTag=True HHWWggTagsOnly=True '
+      command+=' doHHWWggFullyHadTag=True HHWWggTagsOnly=True '
+      #command+=' doHHWWggTag=True HHWWggTagsOnly=True '
 
       if [ $calcSystematics == 'true' ]
       then
