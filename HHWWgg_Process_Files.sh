@@ -14,8 +14,8 @@
 ##############################################################################################################################################
 
 ## User specific variables. Customize to your own working area(s)
-nTupleDirec="/eos/user/a/atishelm/ntuples/HHWWgg/"
-fggDirec="/afs/cern.ch/work/a/atishelm/21JuneFlashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory 
+nTupleDirec="/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_30June/"
+fggDirec="/afs/cern.ch/user/r/rasharma/work/doubleHiggs/flashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory 
 
 ## Other script parameters 
 inputFolder="" 

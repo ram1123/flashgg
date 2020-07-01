@@ -30,17 +30,17 @@
 ## User specific variables. Customize to your own working area(s)
 
 fggDirec="/afs/cern.ch/user/r/rasharma/work/doubleHiggs/flashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory
-ntupleDirec="/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_30June/" # condor output directory
+ntupleDirec="/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_1July/" # condor output directory
 
 ## Other script parameters
 
 label="" # name for condor output directory in ntupleDirec
 numEvents="" # integer, or 'all' to run on all events
 runWorkspaceStd="true" # use Systematics/test/workspaceStd.py as config
-doCutFlow="false" # perform HHWWgg cutflow within workspaceStd.py workflow
-saveHHWWggFinalStateVars="false" # save extra variables
+doCutFlow="true" # perform HHWWgg cutflow within workspaceStd.py workflow
+saveHHWWggFinalStateVars="true" # save extra variables
 runttH="false" # run on ttH background sample only
-calcSystematics="false" # run workspaceStd.py systematics
+calcSystematics="true" # run workspaceStd.py systematics
 dumpTrees="true" # dump trees in fggrunjobs output
 dumpWorkspaces="true" # dump workspaces in fggrunjobs output
 dryRun="false" # do not submit jobs
