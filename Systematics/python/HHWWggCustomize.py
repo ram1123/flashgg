@@ -9,7 +9,7 @@ class HHWWggCustomize():
         self.process = process
         self.customize = customize
         self.metaConditions = metaConditions
-        self.tagList = [ ["HHWWggTag",2] ] # 2 cats: 0: SL electron channel. 1: SL muon channel. 2: Untagged --> Meets no criteria but want to save event to output
+        self.tagList = [ ["HHWWggTag",3] ] # 2 cats: 0: SL electron channel. 1: SL muon channel. 2: Untagged --> Meets no criteria but want to save event to output
         self.customizeTagSequence()
 
     def variablesToDump(self):
