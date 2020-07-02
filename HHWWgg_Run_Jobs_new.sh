@@ -92,9 +92,9 @@ done
 echo "Ram2"
 ## Output read arguments to user
 
-label="GluGluToHHTo2B2G_node_11_13TeV_Test"
+label="GluGluToHHTo_WWgg_qqqq_node11"
 numEvents="all"
-jsonpath="Taggers/test/HHWWgg_v2-6/HHWWggFullyHad_v2-6_x600.json"
+jsonpath="Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json"
 condorQueue="longlunch"
 year="2017"
 
