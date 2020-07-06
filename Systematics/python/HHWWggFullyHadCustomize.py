@@ -10,7 +10,7 @@ class HHWWggFullyHadCustomize():
         self.process = process
         self.customize = customize
         self.metaConditions = metaConditions
-        self.tagList = [ ["HHWWggTag",2] ] # 2 cats: 0: pT ordered Jets. 1: min Mass ordered. 2: Untagged --> Meets no criteria but want to save event to output
+        self.tagList = [ ["HHWWggTag",3] ] # 2 cats: 0: pT ordered Jets. 1: min Mass ordered. 2: Untagged --> Meets no criteria but want to save event to output
         self.customizeTagSequence()
 
     def variablesToDump(self):
