@@ -48,6 +48,12 @@ The HHWWgg Tagger is developed to tag events as coming from the `HH->WWgg` proce
 
 The HHWWgg Tagger can be run locally on signal (with 2017 metaConditions) with:
 
+#### On Data
+
+```bash
+cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=Era2017_RR-31Mar2018_v2 dataset=/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER doHHWWggFullyHadTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1
+```
+
 1. With default conditions:
    ```bash
    cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=HHWWgg_v2-6 dataset=ggF_X600_HHWWgg_qqlnu doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1
@@ -67,10 +73,33 @@ The HHWWgg Tagger can be run locally on signal (with 2017 metaConditions) with:
       cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 dataset=ggF_X250_WWgg_qqlnugg doHHWWggFullyHadTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1
       ```
 
+      1. **Signal**: 
       ```bash
-      cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 dataset=ggF_node11_HHWWgg_qqqq doHHWWggFullyHadTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1
+        cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 dataset=ggF_HHWWgg_qqqq_node11 doHHWWggFullyHadTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=1 dumpWorkspace=1 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1
       ```
 
+
+## Condor Job
+
+### On Data
+
+```bash
+. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -v -t
+```
+
+### On Signal
+```bash
+. HHWWgg_Run_Jobs_new.sh --labelName GluGluToHHTo2B2G_node_11_13TeV_Test -nEvents all --json Taggers/test/HHWWgg_v2-6/HHWWggFullyHad_v2-6_x600.json  --condorQueue longlunch --year 2017 -g -c -v -t
+```
+
+### Hadd script
+```bash
+. HHWWgg_Process_Files.sh --inFolder  GluGluToHHTo_WWgg_qqqq_node11 --outFolder GluGluToHHTo_WWgg_qqqq_node11_Hadded -s --signalType EFT
+```
+
+```bash
+. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -v -t
+```
 
 ### Important point
 
