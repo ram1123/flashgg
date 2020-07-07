@@ -84,12 +84,12 @@ cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditi
 ### On Data
 
 ```bash
-. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -v -t
+. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_5July_v3/ --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -t -w -s
 ```
 
 ### On Signal
 ```bash
-. HHWWgg_Run_Jobs_new.sh --labelName GluGluToHHTo2B2G_node_11_13TeV_Test -nEvents all --json Taggers/test/HHWWgg_v2-6/HHWWggFullyHad_v2-6_x600.json  --condorQueue longlunch --year 2017 -g -c -v -t
+. HHWWgg_Run_Jobs.sh --labelName GluGluToHHTo_WWgg_qqqq_node11 --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_5July_v3/ --json Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json  --condorQueue longlunch --year 2017 -g -c -t -w -s
 ```
 
 ### Hadd script
@@ -97,9 +97,20 @@ cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditi
 . HHWWgg_Process_Files.sh --inFolder  GluGluToHHTo_WWgg_qqqq_node11 --outFolder GluGluToHHTo_WWgg_qqqq_node11_Hadded -s --signalType EFT
 ```
 
-```bash
-. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -v -t
-```
+#### On data
+
+Need to run both commands one by one:
+- Hadd-ed different RunEra
+
+   ```bash
+   . HHWWgg_Process_Files.sh --inFolder HHWWgg_2017_Data_Trees --outFolder HHWWgg_2017_Data_Trees_Hadded -d
+   ```
+
+- Hadd-ed everything
+
+   ```bash
+   . HHWWgg_Process_Files.sh --inFolder HHWWgg_2017_Data_Trees_Hadded --outFolder HHWWgg_2017_Data_Trees_Hadded_Combined -d -c
+   ```
 
 ### Important point
 
