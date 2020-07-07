@@ -14,8 +14,10 @@
 ##############################################################################################################################################
 
 ## User specific variables. Customize to your own working area(s)
-nTupleDirec="/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_5July/"
-fggDirec="/afs/cern.ch/user/r/rasharma/work/doubleHiggs/flashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory
+# nTupleDirec="/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_5July_v3/"
+nTupleDirec="$PWD/" # condor output directory
+echo "nTupleDirec = ${nTupleDirec}"
+fggDirec="$PWD/" # flashgg directory (It should be ${PWD}, if now please change this)
 
 ## Other script parameters
 inputFolder=""
@@ -25,7 +27,7 @@ runData=""
 allData=""
 
 ## Get user specified argumenets
-options=$(getopt -o sdc --long inFolder: --long outFolder: --long signalType: -- "$@") # end name with colon ':' to specify argument string
+options=$(getopt -o sdc --long nTupleDir: --long inFolder: --long outFolder: --long signalType: -- "$@") # end name with colon ':' to specify argument string
 [ $? -eq 0 ] || {
       echo "Incorrect option provided"
       exit 1
@@ -36,6 +38,7 @@ while true; do
       -s) runSignal="true";;
       -d) runData="true";;
 	  -c) allData="true";;
+      --nTupleDir) shift; nTupleDirec=$1 ;;
       --inFolder) shift; inputFolder=$1 ;;
       --outFolder) shift; outputFolder=$1 ;;
       --signalType) shift; signalType=$1 ;;
@@ -78,6 +81,7 @@ then
 fi
 
 ## Output read arguments to user
+echo "nTupleDirec = ${nTupleDirec}"
 echo "inputFolder = $inputFolder"
 echo "outputFolder = $outputFolder"
 echo "runSignal = $runSignal"
@@ -127,13 +131,17 @@ do
 			outfilePath="${nTupleDirec}/${outputFolder}/${mass}_HHWWgg_qqlnu.root"
 
 		elif [[ $signalType == "EFT" ]]; then
+            # Input root file should be named such that its fourth '_' delimited
+            # element should be "qqqq" or "lnuqq" or "lnulnu" (channel name) and
+            # fifth '_' delimited element should be like "nodeX".
 			node="$(cut -d'_' -f5 <<<$file_i)" # get fifth '_' delimited element. nodeX.root
 			node=${node%?????} # remove ".root"
             node2="$(cut -d'_' -f4 <<<$file_i)" # get fourth '_' delimited element. qqqq_nodeX.root
             node2=${node2%?????} # remove ".root"
 			infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
             outfilePath="${nTupleDirec}/${outputFolder}/${node}_HHWWgg_${node2}.root"
-			# EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/node11_HHWWgg_qqqq.root"
+            # EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/node11_HHWWgg_qqqq.root"
+			# EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/node11_HHWWgg_lnuqq.root"
 
 		elif [[ $signalType == "NMSSM" ]]; then
 			#ex: output_NMSSM_XYHWWggqqlnu_MX2000_MY1800_15.root

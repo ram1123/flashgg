@@ -1306,11 +1306,44 @@
  "GluGluToHHTo_WWgg_qqlnu_node9": {
   "xs": 0.001
  },
-  "GluGluToHHTo_WWgg_qqqq_node11": {
-  "xs": 0.001
+  "GluGluToHHTo_WWgg_qqqq_node01": {
+  "xs": 88.46
  },
-   "ggF_HHWWgg_qqqq_node11": {
-  "xs": 0.001
+   "GluGluToHHTo_WWgg_qqqq_node02": {
+  "xs": 0.01
+ },
+   "GluGluToHHTo_WWgg_qqqq_node03": {
+  "xs": 0.55
+ },
+   "GluGluToHHTo_WWgg_qqqq_node04": {
+  "xs": 12.11
+ },
+   "GluGluToHHTo_WWgg_qqqq_node05": {
+  "xs": 0.04
+ },
+   "GluGluToHHTo_WWgg_qqqq_node06": {
+  "xs": 0.82
+ },
+   "GluGluToHHTo_WWgg_qqqq_node07": {
+  "xs": 15.76
+ },
+   "GluGluToHHTo_WWgg_qqqq_node08": {
+  "xs": 1363.0
+ },
+   "GluGluToHHTo_WWgg_qqqq_node09": {
+  "xs": 0.03
+ },
+   "GluGluToHHTo_WWgg_qqqq_node10": {
+  "xs": 265.6
+ },
+   "GluGluToHHTo_WWgg_qqqq_node11": {
+  "xs": 0.78
+ },
+   "GluGluToHHTo_WWgg_qqqq_node12": {
+  "xs": 1331.0
+ },
+   "GluGluToHHTo_WWgg_qqqq_nodeSM": {
+  "xs": 0.04
  },
  "VHToGG_M130_13TeV_amcatnloFXFX_madspin_pythia8": {
   "xs": 1.9989,

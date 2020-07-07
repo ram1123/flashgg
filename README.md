@@ -1,5 +1,9 @@
 # General Introduction
 
+# To-Do
+
+1. Update the cross-section values for fully hadronic benchmark points and SM with high statistics.
+
 # Code setup
 
 ```bash
@@ -51,7 +55,7 @@ The HHWWgg Tagger can be run locally on signal (with 2017 metaConditions) with:
 #### On Data
 
 ```bash
-cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=Era2017_RR-31Mar2018_v2 dataset=/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER doHHWWggFullyHadTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1
+cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=Era2017_RR-31Mar2018_v2 dataset=/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=1 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=0 saveHHWWggFinalStateVars=0
 ```
 
 1. With default conditions:
@@ -75,7 +79,11 @@ cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditi
 
       1. **Signal**: 
       ```bash
-        cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 dataset=ggF_HHWWgg_qqqq_node11 doHHWWggFullyHadTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=1 dumpWorkspace=1 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1
+        cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 dataset=ggF_HHWWgg_qqqq_node11 doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=1 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=0 saveHHWWggFinalStateVars=0
+      ```
+      Updated command (With new signal samples):
+      ```bash
+      cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-94X_mc2017 dataset=GluGluToHHTo_WWgg_qqqq_node01 doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=1 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=0 saveHHWWggFinalStateVars=0
       ```
 
 
@@ -84,41 +92,67 @@ cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditi
 ### On Data
 
 ```bash
-. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -v -t
+. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -t -w -s
 ```
 
 ### On Signal
 ```bash
-. HHWWgg_Run_Jobs_new.sh --labelName GluGluToHHTo2B2G_node_11_13TeV_Test -nEvents all --json Taggers/test/HHWWgg_v2-6/HHWWggFullyHad_v2-6_x600.json  --condorQueue longlunch --year 2017 -g -c -v -t
+. HHWWgg_Run_Jobs.sh --labelName GluGluToHHTo_WWgg_qqqq_node01 --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --json Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json  --condorQueue longlunch --year 2017 -g -c -t -w -s
 ```
 
 ### Hadd script
+
+Input root file should be named such that its fourth '\_' delimited element should be "qqqq" or "lnuqq" or "lnulnu" (channel name) and fifth '\_' delimited element should be like "nodeX".
+
 ```bash
 . HHWWgg_Process_Files.sh --inFolder  GluGluToHHTo_WWgg_qqqq_node11 --outFolder GluGluToHHTo_WWgg_qqqq_node11_Hadded -s --signalType EFT
 ```
 
+#### Updated command for signal hadd
 ```bash
-. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -v -t
+. HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/  --inFolder GluGluToHHTo_WWgg_qqqq_node01 --outFolder GluGluToHHTo_WWgg_qqqq_EFT_Workspaces_Hadded -s --signalType EFT
 ```
+
+#### On data
+
+Need to run both commands one by one:
+
+- Hadd-ed different RunEra
+
+  ```bash
+  . HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --inFolder HHWWgg_2017_Data_Trees --outFolder HHWWgg_2017_Data_Trees_Hadded -d
+  ```
+
+  ```bash
+  . HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --inFolder HHWWgg_2017_Data_Trees_Hadded --outFolder HHWWgg_2017_Data_Trees_Hadded_Combined -d -c
+  ```
 
 ### Important point
 
 1. First point
 
-```bash
-$cat Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json 
-{
-   "processes" : {
-        "GluGluToHHTo_WWgg_qqqq_node11" : [ "/ggF_node11_HHWWgg_qqqq"  ]
+  ```bash
+  $cat Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json 
+  {
+     "processes" : {
+          "GluGluToHHTo_WWgg_qqqq_node11" : [ "/ggF_node11_HHWWgg_qqqq"  ]
 
-},
-    "cmdLine" : "campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 targetLumi=1e+3 useAAA=1 useEOS=0 puTarget=6.245e-06,...,8.814e-12"
-```
+  },
+      "cmdLine" : "campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 targetLumi=1e+3 useAAA=1 useEOS=0 puTarget=6.245e-06,...,8.814e-12"
+  ```
 
 The name `ggF_node11_HHWWgg_qqqq` should be defined in `MetaData/data/cross_sections.json`. Something like:
 
-```json
-   "ggF_node11_HHWWgg_qqqq": {
-  "xs": 0.001
- },
+  ```json
+     "ggF_node11_HHWWgg_qqqq": {
+    "xs": 0.001
+   },
+  ```
+
+## Check the json file status
+
+```bash
+fggManageSamples.py -C rasharma-HHWWgg_v2-2_Test_94X_mc2017 
 ```
+This command will give the summary status of the DAS sample present with campaign name `rasharma-HHWWgg_v2-2_Test_94X_mc2017`.
+
