@@ -190,18 +190,17 @@ namespace flashgg {
     globalVariablesComputer_(pSet.getParameter<edm::ParameterSet>("globalVariables"), cc_) // need absence of comma on last entry
 
     {
-
       inputDiPhotonName_= pSet.getParameter<std::string > ( "DiPhotonName" );
       inputDiPhotonSuffixes_= pSet.getParameter<std::vector<std::string> > ( "DiPhotonSuffixes" );
       std::vector<edm::InputTag>  diPhotonTags;
-      for (auto & suffix : inputDiPhotonSuffixes_){
+      for (auto & suffix : inputDiPhotonSuffixes_) {
           systematicsLabels.push_back(suffix);
           std::string inputName = inputDiPhotonName_;
           inputName.append(suffix);
           if (!suffix.empty()) diPhotonTags.push_back(edm::InputTag(inputName));
           else  diPhotonTags.push_back(edm::InputTag(inputDiPhotonName_));
       }
-      for( auto & tag : diPhotonTags ) { diPhotonTokens_.push_back( consumes<edm::View<flashgg::DiPhotonCandidate> >( tag ) ); }
+      for ( auto & tag : diPhotonTags ) { diPhotonTokens_.push_back( consumes<edm::View<flashgg::DiPhotonCandidate> >( tag ) ); }
 
       bool breg = 0;
 
@@ -481,8 +480,9 @@ namespace flashgg {
 
     void HHWWggTagProducer::produce( Event &event, const EventSetup & )
     {
+      bool DEBUG = false;
 
-      // cout << "[HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce" << endl;
+      if (DEBUG) cout << "[INFO] [HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce" << endl;
 
       // update global variables
       // globalVariablesComputer_.update(event);
@@ -576,7 +576,7 @@ namespace flashgg {
           std::vector<edm::Ptr<reco::GenParticle> > selHiggses;
           event.getByToken( genParticleToken_, genParticles );
           reco::GenParticle::Point higgsVtx(0.,0.,0.);
-          for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ) {
+          for (unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ) {
               int pdgid = genParticles->ptrAt( genLoop )->pdgId();
               // if( pdgid == 25 || pdgid == 22 ) { // not so sure if this is correct for HHWWgg because of potential photons from hadronization
               if( pdgid == 25 ) {
@@ -602,22 +602,6 @@ namespace flashgg {
           truths->push_back( truth_obj );
       }
 
-      // // Get Gen vertex
-      // bool got_gen_vertex = 0;
-      // if (! event.isRealData()){
-      //   for( auto &part : *genParticle ) {
-      //     if( ( part.pdgId() != 2212 || part.vertex().z() != 0.) && (!got_gen_vertex) ){
-      //       genVertex = part.vertex();
-      //       gen_vertex_z = genVertex.z();
-      //       got_gen_vertex = 1;
-      //       // cout << "Gen vertex z: " << genVertex.z() << endl;
-      //     }
-      //   }
-      //   if (!got_gen_vertex){
-      //     cout << "**********WARNING: Did not obtain non-zero GEN vertex from GEN particles" << endl;
-      //   }
-      // }
-
       // METfilters
       // bool passMETfilters=1;
       //Get trigger results relevant to MET filters
@@ -634,71 +618,71 @@ namespace flashgg {
 
       //check if passMETfilters
       std::vector<std::string> flagList {"Flag_HBHENoiseFilter","Flag_HBHENoiseIsoFilter","Flag_EcalDeadCellTriggerPrimitiveFilter","Flag_goodVertices","Flag_eeBadScFilter"};
-      for( unsigned int i = 0; i < triggerNames.triggerNames().size(); i++ )
+      for (unsigned int i = 0; i < triggerNames.triggerNames().size(); i++ )
+      {
+        if (!triggerBits->accept(i))
+        for (size_t j=0;j<flagList.size();j++)
+        {
+          if (flagList[j]==triggerNames.triggerName(i))
           {
-              if(!triggerBits->accept(i))
-                  for(size_t j=0;j<flagList.size();j++)
-                      {
-                          if(flagList[j]==triggerNames.triggerName(i))
-                              {
-                                  // passMETfilters=0;
-                                  break;
-                              }
-                      }
+            // passMETfilters=0;
+            break;
           }
+        }
+      }
 
       std::vector<std::string> flashggFlagList {"flag_BadChargedCandidateFilter","flag_BadPFMuonFilter","flag_globalTightHalo2016Filter"};
       const edm::TriggerNames &flashggtriggerNames = event.triggerNames( *triggerFLASHggMicroAOD );
       for( unsigned int i = 0; i < flashggtriggerNames.triggerNames().size(); i++ )
+      {
+        if(!triggerFLASHggMicroAOD->accept(i))
+        for(size_t j=0;j<flagList.size();j++)
+        {
+          if(flagList[j]==flashggtriggerNames.triggerName(i))
           {
-              if(!triggerFLASHggMicroAOD->accept(i))
-                  for(size_t j=0;j<flagList.size();j++)
-                      {
-                          if(flagList[j]==flashggtriggerNames.triggerName(i))
-                              {
-                                  // passMETfilters=0;
-                                  break;
-                              }
-                      }
+            // passMETfilters=0;
+            break;
           }
+        }
+      }
 
       if(doHHWWggTagCutFlowAnalysis_) Cut_Variables[0] = 1.0; // passed diphoton preselection
 
       // read diphotons
       // for (unsigned int diphoton_idx = 0; diphoton_idx < diPhotonTokens_.size(); diphoton_idx++) { //looping over all diphoton systematics
-        // cout << "diphoton_idx = " << diphoton_idx << endl;
-        // diphoton_idx_h->Fill(diphoton_idx);
-        // Handle<View<flashgg::DiPhotonCandidate> > diPhotons;
+      // cout << "diphoton_idx = " << diphoton_idx << endl;
+      // diphoton_idx_h->Fill(diphoton_idx);
+      // Handle<View<flashgg::DiPhotonCandidate> > diPhotons;
 
-        //---
-        // event.getByToken( diPhotonTokens_[diphoton_idx], diPhotons ); // for each diphoton systematic
-        // event.getByToken( diphotonToken_, diphotons ); // without looping over diphoton systematics
-        //---
+      //---
+      // event.getByToken( diPhotonTokens_[diphoton_idx], diPhotons ); // for each diphoton systematic
+      // event.getByToken( diphotonToken_, diphotons ); // without looping over diphoton systematics
+      //---
 
-        // unsigned int loopOverJets = 1;
-        // if (inputDiPhotonSuffixes_[diphoton_idx].empty()) loopOverJets = inputJetsSuffixes_.size();
+      // unsigned int loopOverJets = 1;
+      // if (inputDiPhotonSuffixes_[diphoton_idx].empty()) loopOverJets = inputJetsSuffixes_.size();
 
-        // for (unsigned int jet_col_idx = 0; jet_col_idx < loopOverJets; jet_col_idx++) {//looping over all jet systematics, only for nominal diphotons
-          // cout << "jet_col_idx = " << jet_col_idx << endl;
-        std::unique_ptr<vector<HHWWggTag> > HHWWggtags( new vector<HHWWggTag> );
+      // for (unsigned int jet_col_idx = 0; jet_col_idx < loopOverJets; jet_col_idx++) {//looping over all jet systematics, only for nominal diphotons
+      // cout << "jet_col_idx = " << jet_col_idx << endl;
+      std::unique_ptr<vector<HHWWggTag> > HHWWggtags( new vector<HHWWggTag> );
 
-        // if (diPhotons->size() > 0){ // for each systematic
+      // if (diPhotons->size() > 0){ // for each systematic
 
-        // if(diphotons->size() > 1){
-        //   cout << "diphotons->size(): " << diphotons->size() << endl;
-        //   for (unsigned int diphoIndex = 0; diphoIndex < diphotons->size(); diphoIndex++){
-        //     edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( diphoIndex );
-        //     // cout << "dipho pt = " << dipho->genP4().pt() << endl;
-        //     // cout << "diphoton->genP4().pt(): " << dipho->genP4().pt() << endl;
-        //     // cout << "dipho->genP4().pt(): " << dipho->genP4().pt() << endl;
-        //     cout << "dipho->pt(): " << dipho->pt() << endl;
-        //     cout << "diphoton->sumPt(): " << dipho->sumPt() << endl;
-        //     // cout << "dipho->leadingPhoton()->pt(): " << dipho->leadingPhoton()->pt() << endl;
-        //     // cout << "dipho->subleadingPhoton()->pt(): " << dipho->subLeadingPhoton()->pt() << endl;
-        //   }
-        // }
+      // if(diphotons->size() > 1){
+      //   cout << "diphotons->size(): " << diphotons->size() << endl;
+      //   for (unsigned int diphoIndex = 0; diphoIndex < diphotons->size(); diphoIndex++){
+      //     edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( diphoIndex );
+      //     // cout << "dipho pt = " << dipho->genP4().pt() << endl;
+      //     // cout << "diphoton->genP4().pt(): " << dipho->genP4().pt() << endl;
+      //     // cout << "dipho->genP4().pt(): " << dipho->genP4().pt() << endl;
+      //     cout << "dipho->pt(): " << dipho->pt() << endl;
+      //     cout << "diphoton->sumPt(): " << dipho->sumPt() << endl;
+      //     // cout << "dipho->leadingPhoton()->pt(): " << dipho->leadingPhoton()->pt() << endl;
+      //     // cout << "dipho->subleadingPhoton()->pt(): " << dipho->subLeadingPhoton()->pt() << endl;
+      //   }
+      // }
 
-        if (diphotons->size() > 0){ // without systematics (?)
+      if (diphotons->size() > 0){ // without systematics (?)
         for( unsigned int diphoIndex = 0; diphoIndex < 1; diphoIndex++ ) { // only look at highest sumpt dipho
           // cout << "****In diphoton loop***" << endl;
           // std::unique_ptr<vector<HHWWggTag> > tags( new vector<HHWWggTag> );
@@ -844,7 +828,8 @@ namespace flashgg {
           // event.getByToken( jetTokens_[jet_col_idx*inputJetsCollSize_+vtx], Jets_);  //take the corresponding vertex of current systematic //WORKS
           // cout << "right after getbytoken jettokens jets" << endl;
 
-          std::vector<edm::Ptr<Jet> > tagJets;
+          std::vector<edm::Ptr<Jet> > tagPhoCleanedJets;
+          std::vector<edm::Ptr<Jet> > tagPhoLepCleanedJets;
 
 
           // If doing cut flow analysis, save Jet IDs
@@ -871,6 +856,10 @@ namespace flashgg {
                                                   dipho->subLeadingPhoton()->superCluster()->phi() );
 
                   if( dRPhoLeadJet < deltaRPhoLeadJet_ || dRPhoSubLeadJet < deltaRPhoSubLeadJet_ ) { keepJet=false; }
+
+                  if(keepJet)
+                      tagPhoCleanedJets.push_back( thejet );
+
                   if( hasGoodElec )
                       for( unsigned int electronIndex = 0; electronIndex < goodElectrons.size(); electronIndex++ )
                           {
@@ -887,14 +876,14 @@ namespace flashgg {
                           }
 
                   if(keepJet)
-                      tagJets.push_back( thejet );
+                      tagPhoLepCleanedJets.push_back( thejet );
 
               }
 
           // If jet collection has a jet suspected to be a bjet, don't save the event
           hasHighbTag = 0;
-          for (unsigned int j = 0; j < tagJets.size(); j++){
-            Ptr<flashgg::Jet> jet_ = tagJets[j];
+          for (unsigned int j = 0; j < tagPhoLepCleanedJets.size(); j++){
+            Ptr<flashgg::Jet> jet_ = tagPhoLepCleanedJets[j];
             btagVal = jet_->bDiscriminator("mini_pfDeepFlavourJetTags:probb");
             if (btagVal > btagThresh_) hasHighbTag = 1;
           }
@@ -908,7 +897,7 @@ namespace flashgg {
           }
           else if(hasHighbTag) continue; // Skip event if it has at least one jet with a btag above threshold, and you're not doing a cut flow analysis
 
-          n_good_jets = tagJets.size();
+          n_good_jets = tagPhoLepCleanedJets.size();
 
           // MET
           if( METs->size() != 1 ) { std::cout << "WARNING - #MET is not 1" << std::endl;}
@@ -931,27 +920,28 @@ namespace flashgg {
             else Cut_Variables[4] = 0.0;
           }
           else
-            if ((n_good_leptons != 1) || (n_good_jets <= 1)) continue;
+            if ((n_good_leptons > 1) || (n_good_jets <= 1)) continue;
 
 
 
+          int catnum = 0;
+          if (DEBUG) std::cout << "[INFO] n_good_leptons = " << n_good_leptons << ",\t n_good_jets = " << n_good_jets << std::endl;
+          if ((n_good_leptons==1 && n_good_jets >=2) or (n_good_jets>=4 && n_good_leptons==0))
+          {
           //-- Tag object
-          if ( (n_good_leptons == 1) && (n_good_jets >= 2)){
-
-            int catnum = 0;
-            Ptr<flashgg::Jet> jet1 = tagJets[0];
+          if ( (n_good_leptons == 1) && (n_good_jets >= 2)) {
+            Ptr<flashgg::Jet> jet1 = tagPhoLepCleanedJets[0];
             Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
 
             if (n_good_electrons == 1){
               Ptr<flashgg::Electron> tag_electron = goodElectrons[0];
               catnum = 0;
-
               // if (n_good_jets == 2){
-                Ptr<flashgg::Jet> jet2 = tagJets[1];
+                Ptr<flashgg::Jet> jet2 = tagPhoLepCleanedJets[1];
                 HHWWggTag tag_obj;
                 // HHWWggTag tag_obj_0;
                 if (doHHWWggTagCutFlowAnalysis_){
-                  HHWWggTag tag_obj_(dipho, tag_electron, allElectrons, goodElectrons, allMuons, theMET, jet1, jet2, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
+                  HHWWggTag tag_obj_(dipho, tag_electron, allElectrons, goodElectrons, allMuons, theMET, jet1, jet2, allJets, tagPhoLepCleanedJets, Cut_Variables, MuonVars, JetVars);
                   tag_obj = tag_obj_;
                 }
                 else{
@@ -978,13 +968,13 @@ namespace flashgg {
               Ptr<flashgg::Muon> tag_muon = goodMuons[0];
               catnum = 1;
               // catnum = 0;
-                Ptr<flashgg::Jet> jet2 = tagJets[1];
+                Ptr<flashgg::Jet> jet2 = tagPhoLepCleanedJets[1];
                 HHWWggTag tag_obj;
                 // HHWWggTag tag_obj_0;
                 if (doHHWWggTagCutFlowAnalysis_){
                   // HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2, tagJets_, Cut_Variables); // muon, MET, jet1, jet2
                   // HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2, tagJets_); // muon, MET, jet1, jet2
-                  HHWWggTag tag_obj_(dipho, allElectrons, tag_muon, allMuons, goodMuons, theMET, jet1, jet2, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
+                  HHWWggTag tag_obj_(dipho, allElectrons, tag_muon, allMuons, goodMuons, theMET, jet1, jet2, allJets, tagPhoLepCleanedJets, Cut_Variables, MuonVars, JetVars);
 
                   // HHWWggTag tag_obj_(dipho, tag_muon, theMET, jet1, jet2); // diphoton, muon, MET, jet1, jet2
                   tag_obj = tag_obj_;
@@ -1018,10 +1008,136 @@ namespace flashgg {
                 if( ! event.isRealData() ) {
                   HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
                 }
-
             }
-
           } // if ( (n_good_leptons == 1) && (n_good_jets >= 2) )
+
+          if (n_good_leptons==0 && n_good_jets>=4)
+          {
+            Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
+            { // pT ordered selection
+              catnum = 2;
+
+              Ptr<flashgg::Jet> jet1 = tagPhoCleanedJets[0];
+              Ptr<flashgg::Jet> jet2 = tagPhoCleanedJets[1];
+              Ptr<flashgg::Jet> jet3 = tagPhoCleanedJets[2];
+              Ptr<flashgg::Jet> jet4 = tagPhoCleanedJets[3];
+              HHWWggTag tag_obj;
+
+              if (doHHWWggTagCutFlowAnalysis_){
+                HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4, allJets, tagPhoCleanedJets, Cut_Variables, JetVars);
+                tag_obj = tag_obj_;
+              }
+              else{
+                HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4 ); // diphoton, electron, MET, jet1, jet2
+                tag_obj = tag_obj_;
+              }
+              tag_obj.setSystLabel( systLabel_);
+              tag_obj.setDiPhotonIndex( diphoIndex );
+              // tag_obj.setMVA( -0.9 );
+              tag_obj.setCategoryNumber( catnum );
+              tag_obj.includeWeights( *dipho );
+              // tag_obj.setEventNumber(event.id().event() );
+              HHWWggtags->push_back( tag_obj );
+              if( ! event.isRealData() ) {
+                HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
+              }
+            } // END: // pT ordered selection
+
+            { // minMass ordered selection
+              // Ptr<flashgg::Electron> tag_electron = goodElectrons[0];
+              catnum = 3;
+
+              double TempMinWMass = 999999.0;
+              double TempMinHMass = 999999.0;
+
+              int OnShellW_LeadingJetIndex = -1;
+              int OnShellW_SubLeadingJetIndex = -1;
+              int OffShellW_LeadingJetIndex = -1;
+              int OffShellW_SubLeadingJetIndex = -1;
+
+              for (int CountJet1 = 0; CountJet1 < (int)tagPhoCleanedJets.size()-1; CountJet1++) {
+              for (int CountJet2 = 1; CountJet2 < (int)tagPhoCleanedJets.size(); CountJet2++) {
+                Ptr<flashgg::Jet> jet11 = tagPhoCleanedJets[CountJet1];
+                Ptr<flashgg::Jet> jet12 = tagPhoCleanedJets[CountJet2];
+
+                double deltaMass =  abs((jet11->p4() + jet12->p4()).M() - 80.0);
+                if (DEBUG) std::cout << "deltaMass = " << deltaMass << "\t TempMinWMass = " << TempMinWMass << std::endl;
+                if ( deltaMass < TempMinWMass)
+                {
+                  if  (jet11->p4().pt() > jet12->p4().pt()) {
+                    OnShellW_LeadingJetIndex = CountJet1;
+                    OnShellW_SubLeadingJetIndex = CountJet2;
+                  } else {
+                    OnShellW_LeadingJetIndex = CountJet2;
+                    OnShellW_SubLeadingJetIndex = CountJet1;
+                  }
+                  TempMinWMass = deltaMass;
+                }
+              }
+              }
+
+              for (int CountJet1 = 0; CountJet1 < (int)tagPhoCleanedJets.size()-1; CountJet1++) {
+              for (int CountJet2 = 1; CountJet2 < (int)tagPhoCleanedJets.size(); CountJet2++) {
+                if (CountJet1 == OnShellW_LeadingJetIndex || CountJet1 == OnShellW_SubLeadingJetIndex || CountJet2 == OnShellW_LeadingJetIndex || CountJet2 == OnShellW_SubLeadingJetIndex)
+                {
+                  continue;
+                }
+                Ptr<flashgg::Jet> jet11 = tagPhoCleanedJets[CountJet1];
+                Ptr<flashgg::Jet> jet12 = tagPhoCleanedJets[CountJet2];
+
+                double deltaMass =  abs((jet11->p4() + jet12->p4()).M() - 125.0);
+                if (DEBUG) std::cout << "deltaMass = " << deltaMass << "\t TempMinHMass = " << TempMinHMass << std::endl;
+                if ( deltaMass < TempMinHMass)
+                {
+                  if  (jet11->p4().pt() > jet12->p4().pt()) {
+                    OffShellW_LeadingJetIndex = CountJet1;
+                    OffShellW_SubLeadingJetIndex = CountJet2;
+                  } else {
+                    OffShellW_LeadingJetIndex = CountJet2;
+                    OffShellW_SubLeadingJetIndex = CountJet1;
+                  }
+                  TempMinHMass = deltaMass;
+                }
+              }
+              }
+              Ptr<flashgg::Jet> jet1 = tagPhoCleanedJets[OnShellW_LeadingJetIndex];
+              Ptr<flashgg::Jet> jet2 = tagPhoCleanedJets[OnShellW_SubLeadingJetIndex];
+              Ptr<flashgg::Jet> jet3 = tagPhoCleanedJets[OffShellW_LeadingJetIndex];
+              Ptr<flashgg::Jet> jet4 = tagPhoCleanedJets[OffShellW_SubLeadingJetIndex];
+
+              DEBUG = true;
+
+              if (DEBUG) std::cout << "[INFO] Print pt of 4 selected jets: " << OnShellW_LeadingJetIndex << "\t" << OnShellW_SubLeadingJetIndex << "\t" << OffShellW_LeadingJetIndex << "\t" << OffShellW_SubLeadingJetIndex  << std::endl;
+              if (DEBUG) std::cout << "[INFO] jet1 pT = " << jet1->p4().pt() << std::endl;
+              if (DEBUG) std::cout << "[INFO] jet2 pT = " << jet2->p4().pt() << std::endl;
+              if (DEBUG) std::cout << "[INFO] jet3 pT = " << jet3->p4().pt() << std::endl;
+              if (DEBUG) std::cout << "[INFO] jet4 pT = " << jet4->p4().pt() << std::endl;
+              HHWWggTag tag_obj;
+              // HHWWggTag tag_obj_0;
+              if (doHHWWggTagCutFlowAnalysis_){
+                HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4, allJets, tagPhoCleanedJets, Cut_Variables, JetVars);
+                tag_obj = tag_obj_;
+              }
+              else{
+                HHWWggTag tag_obj_(dipho, theMET, jet1, jet2, jet3, jet4 ); // diphoton, electron, MET, jet1, jet2
+                tag_obj = tag_obj_;
+              }
+              // if (loopOverJets == 1) tag_obj.setSystLabel( inputDiPhotonSuffixes_[diphoton_idx] );
+              // else tag_obj.setSystLabel( inputJetsSuffixes_[jet_col_idx]);
+              tag_obj.setSystLabel( systLabel_);
+              tag_obj.setDiPhotonIndex( diphoIndex );
+              // tag_obj.setMVA( -0.9 );
+              tag_obj.setCategoryNumber( catnum );
+              tag_obj.includeWeights( *dipho );
+              // tag_obj.setEventNumber(event.id().event() );
+              // cout << "Pushing back tag object w/ electron" << endl;
+              HHWWggtags->push_back( tag_obj );
+              if( ! event.isRealData() ) {
+                HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
+              }
+            } // END: // minMass ordered selection
+          }  // if (n_good_leptons==0 && n_good_jets>=4)
+        } // if ((n_good_leptons==1 && n_good_jets >=2) or (n_good_jets>=4 && n_good_leptons==0))
 
           // Untagged category
           // Don't have semileptonic selections. Only results in further analysis if doHHWWggTagCutFlowAnalysis_ == True
@@ -1032,21 +1148,21 @@ namespace flashgg {
               // HHWWggTag tag_obj(dipho, tagJets_, theMET, Cut_Variables);
               // HHWWggTag tag_obj(dipho, tagJets_, theMET, Cut_Variables);
 
-              HHWWggTag tag_obj(dipho, allElectrons, goodElectrons, allMuons, goodMuons, theMET, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
+              HHWWggTag tag_obj(dipho, allElectrons, goodElectrons, allMuons, goodMuons, theMET, allJets, tagPhoCleanedJets, Cut_Variables, MuonVars, JetVars);
               // HHWWggTag tag_obj(dipho, theMET, Cut_Variables);
-                  // if (loopOverJets == 1) tag_obj.setSystLabel( inputDiPhotonSuffixes_[diphoton_idx] );
-                  // else tag_obj.setSystLabel( inputJetsSuffixes_[jet_col_idx]);
-                  tag_obj.setSystLabel(systLabel_);
+              // if (loopOverJets == 1) tag_obj.setSystLabel( inputDiPhotonSuffixes_[diphoton_idx] );
+              // else tag_obj.setSystLabel( inputJetsSuffixes_[jet_col_idx]);
+              tag_obj.setSystLabel(systLabel_);
 
-                  tag_obj.setDiPhotonIndex( diphoIndex );
-                  // tag_obj.setMVA( -0.9 );
-                  tag_obj.setCategoryNumber( 2 ); // 2: Untagged category. Does not meet any selection criteria but want to save event
-                  tag_obj.includeWeights( *dipho );
-                  HHWWggtags->push_back( tag_obj );
+              tag_obj.setDiPhotonIndex( diphoIndex );
+              // tag_obj.setMVA( -0.9 );
+              tag_obj.setCategoryNumber( 4 ); // 2: Untagged category. Does not meet any selection criteria but want to save event
+              tag_obj.includeWeights( *dipho );
+              HHWWggtags->push_back( tag_obj );
 
-                  if( ! event.isRealData() ) {
-                    HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
-                  }
+              if( ! event.isRealData() ) {
+                HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
+              }
             }
           }
 

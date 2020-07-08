@@ -19,7 +19,7 @@ process.load("Configuration.StandardSequences.GeometryDB_cff")
 process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 100 )
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1 )
 # process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1 ) # I think this kills / slows down jobs!
 
 systlabels = [""]
@@ -83,12 +83,6 @@ customize.options.register('doHHWWggTag',
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doHHWWggTag'
-                           )
-customize.options.register('doHHWWggFullyHadTag',
-                           False,
-                           VarParsing.VarParsing.multiplicity.singleton,
-                           VarParsing.VarParsing.varType.bool,
-                           'doHHWWggFullyHadTag'
                            )
 customize.options.register('doHHWWggTagCutFlow', # This saves all events for cutflow analysis
                            False,
@@ -307,12 +301,6 @@ if customize.doDoubleHTag:
 if customize.doHHWWggTag:
     import flashgg.Systematics.HHWWggCustomize
     hhwwggc = flashgg.Systematics.HHWWggCustomize.HHWWggCustomize(process, customize, customize.metaConditions)
-    minimalVariables += hhwwggc.variablesToDump()
-    systematicVariables = hhwwggc.systematicVariables()
-
-if customize.doHHWWggFullyHadTag:
-    import flashgg.Systematics.HHWWggFullyHadCustomize
-    hhwwggc = flashgg.Systematics.HHWWggFullyHadCustomize.HHWWggFullyHadCustomize(process, customize, customize.metaConditions)
     minimalVariables += hhwwggc.variablesToDump()
     systematicVariables = hhwwggc.systematicVariables()
 

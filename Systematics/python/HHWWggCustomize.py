@@ -6,10 +6,27 @@ class HHWWggCustomize():
     """
 
     def __init__(self, process, customize, metaConditions):
+        """constructor for HHWWggCustomize Class
+
+        Arguments:
+            process {[type]} -- [description]
+            customize {[type]} -- [description]
+            metaConditions {[type]} -- [description]
+
+        Member functions:
+            process --
+            customize --
+            metaConditions --
+            tagList -- Categories:  0 : SemiLeptonic electron channel
+                                    1 : SemiLeptonic muon channel
+                                    2 : Fully Hadronic channel (jets selection based on pT)
+                                    3 : Fully Hadronic channel (jets selection based on min W and H mass)
+                                    4 : Untagged --> Meets no criteria but want to save event to output
+        """
         self.process = process
         self.customize = customize
         self.metaConditions = metaConditions
-        self.tagList = [ ["HHWWggTag",3] ] # 2 cats: 0: SL electron channel. 1: SL muon channel. 2: Untagged --> Meets no criteria but want to save event to output
+        self.tagList = [ ["HHWWggTag",5] ] # 2 cats: 0: SL electron channel. 1: SL muon channel. 2: Untagged --> Meets no criteria but want to save event to output
         self.customizeTagSequence()
 
     def variablesToDump(self):
