@@ -140,17 +140,17 @@ void WorkspaceCombiner::GetWorkspaces( TDirectoryFile *tdfile )
 
 void WorkspaceCombiner::MergeWorkspaces()
 {
-    
+
     for( unsigned int f = 1; f < inputFileNames.size(); f++ ) {
-        
+
         std::cout << " MergeWorkspaces f=" << f << std::endl;
-        
+
         TFile *file = TFile::Open( inputFileNames[f].c_str() );
-        
+
         cout << endl << "Combining Current File " << f << " / " << inputFileNames.size() << " - " << inputFileNames[f] << endl << endl;
-        
+
         file->cd();
-        
+
         cout << endl << "before workspaceNames loop" << endl << endl;
         for( unsigned int w = 0; w < workspaceNames.size(); w++ ) {
             std::cout << "   " << workspaceNames[w] << " " << workspacePaths[w]  << std::endl;
@@ -169,14 +169,14 @@ void WorkspaceCombiner::MergeWorkspaces()
                 RooDataHist *datahist = dynamic_cast<RooDataHist *>( *it );
                 if ( dataset) std::cout << "   Dataset name: " << dataset->GetName() << std::endl;
                 if ( datahist) std::cout << "   DataHIST name: " << datahist->GetName() << std::endl;
-                
+
                 // loop through datasets
                 if (dataset){
                     if( data[w].find(std::string(dataset->GetName())) != data[w].end() ) {
-                        
+
                         //                    for( d = 0 ; d < data[w].size() ; d++ ) {
                         //                        if( data[w][d]->GetName() == dataset->GetName() ) {
-                        //lC    if (dataset) 
+                        //lC    if (dataset)
                         data[w][std::string(dataset->GetName())]->append( *dataset );
                         //                            break;
                         //                        }
@@ -193,7 +193,7 @@ void WorkspaceCombiner::MergeWorkspaces()
                 /// do the same for dataHists
                 if (datahist){
                     if( dataH[w].find( std::string(datahist->GetName()) ) != dataH[w].end() ) {
-                        
+
                         //                    for( d = 0 ; d < dataH[w].size() ; d++ ) {
                         //                        if( dataH[w][d]->GetName() == datahist->GetName() ) {
                         dataH[w][std::string(datahist->GetName())]->add( *datahist );
@@ -206,7 +206,7 @@ void WorkspaceCombiner::MergeWorkspaces()
                         //                        temp_map[datahist->GetName()] = ( RooDataHist * )datahist->Clone();
                         dataH[w].insert( std::pair<string, RooDataHist*>(std::string(datahist->GetName()), ( RooDataHist * )datahist->Clone()) );
                     }
-                    
+
                 }
                 //loop over RooRealVars (eg IntLumi) file under consideration.
                 //now do the same for RooRealVars
@@ -232,17 +232,17 @@ void WorkspaceCombiner::MergeWorkspaces()
                         }
                     }
                 }
-                
-                
+
+
             }
         }
         cout << endl << "after workspaceNames loop" << endl << endl;
-        
-        
+
+
         file->Close();
-        
+
         cout << endl << "Finished Combining File - " << inputFileNames[f] << endl << endl;
-        
+
     }
 }
 

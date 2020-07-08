@@ -14,7 +14,7 @@ from flashgg.MicroAOD.flashggJets_cfi import  maxJetCollections, flashggDeepCSV
 
 # cfi = configuration fragment include
 # Clone these params into _cfg
-flashggHHWWggTag = cms.EDProducer("FlashggHHWWggFullyHadTagProducer",
+flashggHHWWggTag = cms.EDProducer("FlashggHHWWggTagProducer",
                                     globalVariables=globalVariables,
                                     PhotonTag = cms.InputTag('flashggRandomizedPhotons'),
                                     # DiPhotonTag = cms.InputTag('flashggDiPhotonSystematics'),
@@ -70,7 +70,8 @@ flashggHHWWggTag = cms.EDProducer("FlashggHHWWggFullyHadTagProducer",
                                     # bTag = cms.string(flashggDeepCSV),
                                     # btagThresh = cms.double(100)     # no btag (Save all btags < 100)
                                     btagThresh = cms.double(0.45),
-                                    doHHWWggTagCutFlowAnalysis = cms.bool(True) # save events for cut flow analysis
+                                    doHHWWggTagCutFlowAnalysis = cms.bool(True), # save events for cut flow analysis
                                     # saveHHWWggFinalStateVars = cms.bool(False)
+                                    verbose = cms.bool(False)
                                     )
 # flashggHHWWggTagSequence = cms.Sequence( flashggHHWWggTag ) # not used
