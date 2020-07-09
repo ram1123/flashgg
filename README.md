@@ -51,7 +51,7 @@ The HHWWgg Tagger can be run locally on signal (with 2017 metaConditions) with:
 #### On Data
 
 ```bash
-cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=Era2017_RR-31Mar2018_v2 dataset=/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1
+cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=Era2017_RR-31Mar2018_v2 dataset=/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=1 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=0 saveHHWWggFinalStateVars=0
 ```
 
 1. With default conditions:
@@ -75,7 +75,7 @@ cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditi
 
       1. **Signal**: 
       ```bash
-        cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 dataset=ggF_HHWWgg_qqqq_node11 doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=1 dumpWorkspace=1 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=0
+        cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 dataset=ggF_HHWWgg_qqqq_node11 doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=1 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=0 saveHHWWggFinalStateVars=0
       ```
 
 
@@ -133,3 +133,10 @@ The name `ggF_node11_HHWWgg_qqqq` should be defined in `MetaData/data/cross_sect
   "xs": 0.001
  },
 ```
+
+## Check the json file status
+
+```bash
+fggManageSamples.py -C rasharma-HHWWgg_v2-2_Test_94X_mc2017 
+```
+This command will give the summary status of the DAS sample present with campaign name `rasharma-HHWWgg_v2-2_Test_94X_mc2017`.
