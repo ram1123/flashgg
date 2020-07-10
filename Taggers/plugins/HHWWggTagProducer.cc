@@ -1024,7 +1024,7 @@ namespace flashgg {
               int OffShellW_SubLeadingJetIndex = -1;
 
               for (int CountJet1 = 0; CountJet1 < (int)tagJets.size()-1; CountJet1++) {
-              for (int CountJet2 = 1; CountJet2 < (int)tagJets.size(); CountJet2++) {
+              for (int CountJet2 = CountJet1+1; CountJet2 < (int)tagJets.size(); CountJet2++) {
                 if (DEBUG) std::cout << "(CountJet1,CountJet2) = (" << CountJet1 << "," << CountJet2 << ")" << std::endl;
                 Ptr<flashgg::Jet> jet11 = tagJets[CountJet1];
                 Ptr<flashgg::Jet> jet12 = tagJets[CountJet2];
@@ -1050,7 +1050,7 @@ namespace flashgg {
               for (int CountJet1 = 0; CountJet1 < (int)tagJets.size()-1; CountJet1++) {
               if (CountJet1 == OnShellW_LeadingJetIndex || CountJet1 == OnShellW_SubLeadingJetIndex)
                 continue;
-              for (int CountJet2 = 1; CountJet2 < (int)tagJets.size(); CountJet2++) {
+              for (int CountJet2 = CountJet1+1; CountJet2 < (int)tagJets.size(); CountJet2++) {
                 if (CountJet2 == OnShellW_LeadingJetIndex || CountJet2 == OnShellW_SubLeadingJetIndex)
                   continue;
                 if (DEBUG) std::cout << "(CountJet1,CountJet2) = (" << CountJet1 << "," << CountJet2 << ")" << std::endl;
