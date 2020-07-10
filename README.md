@@ -1,5 +1,9 @@
 # General Introduction
 
+# To-Do
+
+1. Update the cross-section values for fully hadronic benchmark points and SM with high statistics.
+
 # Code setup
 
 ```bash
@@ -77,6 +81,10 @@ cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditi
       ```bash
         cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 dataset=ggF_HHWWgg_qqqq_node11 doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=1 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=0 saveHHWWggFinalStateVars=0
       ```
+      Updated command (With new signal samples):
+      ```bash
+      cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-94X_mc2017 dataset=GluGluToHHTo_WWgg_qqqq_node01 doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=1 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=0 saveHHWWggFinalStateVars=0
+      ```
 
 
 ## Condor Job
@@ -140,3 +148,4 @@ The name `ggF_node11_HHWWgg_qqqq` should be defined in `MetaData/data/cross_sect
 fggManageSamples.py -C rasharma-HHWWgg_v2-2_Test_94X_mc2017 
 ```
 This command will give the summary status of the DAS sample present with campaign name `rasharma-HHWWgg_v2-2_Test_94X_mc2017`.
+
