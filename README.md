@@ -92,55 +92,62 @@ cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditi
 ### On Data
 
 ```bash
-. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_5July_v3/ --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -t -w -s
+. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -t -w -s
 ```
 
 ### On Signal
 ```bash
-. HHWWgg_Run_Jobs.sh --labelName GluGluToHHTo_WWgg_qqqq_node11 --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_5July_v3/ --json Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json  --condorQueue longlunch --year 2017 -g -c -t -w -s
+. HHWWgg_Run_Jobs.sh --labelName GluGluToHHTo_WWgg_qqqq_node01 --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --json Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json  --condorQueue longlunch --year 2017 -g -c -t -w -s
 ```
 
 ### Hadd script
+
+Input root file should be named such that its fourth '\_' delimited element should be "qqqq" or "lnuqq" or "lnulnu" (channel name) and fifth '\_' delimited element should be like "nodeX".
+
 ```bash
 . HHWWgg_Process_Files.sh --inFolder  GluGluToHHTo_WWgg_qqqq_node11 --outFolder GluGluToHHTo_WWgg_qqqq_node11_Hadded -s --signalType EFT
+```
+
+#### Updated command for signal hadd
+```bash
+. HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/  --inFolder GluGluToHHTo_WWgg_qqqq_node01 --outFolder GluGluToHHTo_WWgg_qqqq_EFT_Workspaces_Hadded -s --signalType EFT
 ```
 
 #### On data
 
 Need to run both commands one by one:
+
 - Hadd-ed different RunEra
 
-   ```bash
-   . HHWWgg_Process_Files.sh --inFolder HHWWgg_2017_Data_Trees --outFolder HHWWgg_2017_Data_Trees_Hadded -d
-   ```
+  ```bash
+  . HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --inFolder HHWWgg_2017_Data_Trees --outFolder HHWWgg_2017_Data_Trees_Hadded -d
+  ```
 
-- Hadd-ed everything
-
-   ```bash
-   . HHWWgg_Process_Files.sh --inFolder HHWWgg_2017_Data_Trees_Hadded --outFolder HHWWgg_2017_Data_Trees_Hadded_Combined -d -c
-   ```
+  ```bash
+  . HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --inFolder HHWWgg_2017_Data_Trees_Hadded --outFolder HHWWgg_2017_Data_Trees_Hadded_Combined -d -c
+  ```
 
 ### Important point
 
 1. First point
 
-```bash
-$cat Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json 
-{
-   "processes" : {
-        "GluGluToHHTo_WWgg_qqqq_node11" : [ "/ggF_node11_HHWWgg_qqqq"  ]
+  ```bash
+  $cat Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json 
+  {
+     "processes" : {
+          "GluGluToHHTo_WWgg_qqqq_node11" : [ "/ggF_node11_HHWWgg_qqqq"  ]
 
-},
-    "cmdLine" : "campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 targetLumi=1e+3 useAAA=1 useEOS=0 puTarget=6.245e-06,...,8.814e-12"
-```
+  },
+      "cmdLine" : "campaign=rasharma-HHWWgg_v2-2_Test_94X_mc2017 targetLumi=1e+3 useAAA=1 useEOS=0 puTarget=6.245e-06,...,8.814e-12"
+  ```
 
 The name `ggF_node11_HHWWgg_qqqq` should be defined in `MetaData/data/cross_sections.json`. Something like:
 
-```json
-   "ggF_node11_HHWWgg_qqqq": {
-  "xs": 0.001
- },
-```
+  ```json
+     "ggF_node11_HHWWgg_qqqq": {
+    "xs": 0.001
+   },
+  ```
 
 ## Check the json file status
 
