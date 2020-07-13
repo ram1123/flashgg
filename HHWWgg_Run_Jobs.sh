@@ -184,8 +184,7 @@ then
 
       command+=${metaConditions}
 
-      command+=' doHHWWggFullyHadTag=True HHWWggTagsOnly=True '
-      #command+=' doHHWWggTag=True HHWWggTagsOnly=True '
+      command+=' doHHWWggTag=True HHWWggTagsOnly=True '
 
       if [ $calcSystematics == 'true' ]
       then

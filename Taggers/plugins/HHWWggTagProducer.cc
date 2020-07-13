@@ -1013,7 +1013,7 @@ namespace flashgg {
             { // minMass ordered selection
               // Ptr<flashgg::Electron> tag_electron = goodElectrons[0];
               catnum = 2;
-              DEBUG = true;
+              // DEBUG = true;
 
               double TempMinWMass = 999999.0;
               double TempMinHMass = 999999.0;
@@ -1078,7 +1078,7 @@ namespace flashgg {
               Ptr<flashgg::Jet> jet3 = tagJets[OffShellW_LeadingJetIndex];
               Ptr<flashgg::Jet> jet4 = tagJets[OffShellW_SubLeadingJetIndex];
 
-              DEBUG = true;
+              // DEBUG = true;
 
               if (DEBUG) std::cout << "[INFO] Print pt of 4 selected jets: " << OnShellW_LeadingJetIndex << "\t" << OnShellW_SubLeadingJetIndex << "\t" << OffShellW_LeadingJetIndex << "\t" << OffShellW_SubLeadingJetIndex  << std::endl;
               if (DEBUG) std::cout << "[INFO] jet1 pT = " << jet1->p4().pt() << std::endl;
