@@ -55,7 +55,7 @@ The HHWWgg Tagger can be run locally on signal (with 2017 metaConditions) with:
 #### On Data
 
 ```bash
-cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=Era2017_RR-31Mar2018_v2 dataset=/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=1 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=0 saveHHWWggFinalStateVars=0
+cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=Era2017_RR-31Mar2018_v2/legacyRun2FullV1/DoubleEG dataset=/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=1 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=0 saveHHWWggFinalStateVars=0
 ```
 
 1. With default conditions:
@@ -86,6 +86,10 @@ cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditi
       cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-94X_mc2017 dataset=GluGluToHHTo_WWgg_qqqq_node01 doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=1 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=0 saveHHWWggFinalStateVars=0
       ```
 
+16 July:
+```bash
+cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=rasharma-94X_mc2017 dataset=GluGluToHHTo_WWgg_qqqq_node01 doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=10000 doSystematics=1 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1
+```
 
 ## Condor Job
 
@@ -95,22 +99,31 @@ cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditi
 . HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -t -w -s
 ```
 
+#### with tress only all vars
+
+```bash
+. HHWWgg_Run_Jobs.sh --labelName HHWWgg_2017_Data_Trees --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_16July/ --json Taggers/test/HHWWgg_2017_Data_All/HHWWgg_Data_All_2017.json --condorQueue longlunch --year 2017 -g -c -v -t -s
+```
+
 ### On Signal
 ```bash
 . HHWWgg_Run_Jobs.sh --labelName GluGluToHHTo_WWgg_qqqq_node01 --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --json Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json  --condorQueue longlunch --year 2017 -g -c -t -w -s
+```
+
+#### with tress only all vars
+```bash
+. HHWWgg_Run_Jobs.sh --labelName GluGluToHHTo_WWgg_qqqq_EFT_Trees --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_16July/ --json Taggers/test/HHWWgg_v2-6/HHWWggFullyHad.json  --condorQueue longlunch --year 2017 -g -c -v -t -s
 ```
 
 ### Hadd script
 
 Input root file should be named such that its fourth '\_' delimited element should be "qqqq" or "lnuqq" or "lnulnu" (channel name) and fifth '\_' delimited element should be like "nodeX".
 
-```bash
-. HHWWgg_Process_Files.sh --inFolder  GluGluToHHTo_WWgg_qqqq_node11 --outFolder GluGluToHHTo_WWgg_qqqq_node11_Hadded -s --signalType EFT
-```
-
-#### Updated command for signal hadd
+#### command for signal hadd
 ```bash
 . HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/  --inFolder GluGluToHHTo_WWgg_qqqq_node01 --outFolder GluGluToHHTo_WWgg_qqqq_EFT_Workspaces_Hadded -s --signalType EFT
+
+. HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_16July/  --inFolder GluGluToHHTo_WWgg_qqqq_Radion_Trees --outFolder GluGluToHHTo_WWgg_qqqq_Radion_Trees_Hadded -s --signalType Res
 ```
 
 #### On data
@@ -120,11 +133,11 @@ Need to run both commands one by one:
 - Hadd-ed different RunEra
 
   ```bash
-  . HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --inFolder HHWWgg_2017_Data_Trees --outFolder HHWWgg_2017_Data_Trees_Hadded -d
+  . HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_16July/ --inFolder HHWWgg_2017_Data_Trees --outFolder HHWWgg_2017_Data_Trees_Hadded -d
   ```
 
   ```bash
-  . HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --inFolder HHWWgg_2017_Data_Trees_Hadded --outFolder HHWWgg_2017_Data_Trees_Hadded_Combined -d -c
+  . HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_16July/ --inFolder HHWWgg_2017_Data_Trees_Hadded --outFolder HHWWgg_2017_Data_Trees_Hadded_Combined -d -c
   ```
 
 ### Important point

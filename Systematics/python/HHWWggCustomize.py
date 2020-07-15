@@ -40,7 +40,14 @@ class HHWWggCustomize():
             "passPhotonSels[2,0,2] := Cut_Variables[1]",
             "passbVeto[2,0,2] := Cut_Variables[2]",
             "ExOneLep[2,0,2] := Cut_Variables[3]",
-            "goodJets[2,0,2] := Cut_Variables[4]"
+            "AtLeast2GoodJets[2,0,2] := Cut_Variables[4]",
+            "AtLeast4GoodJets[2,0,2] := Cut_Variables[5]",
+            "AtLeast4GoodJets0Lep[2,0,2] := Cut_Variables[6]",
+            "mW1_40To160[2,0,2] := Cut_Variables[7]",
+            "mW1_65To105[2,0,2] := Cut_Variables[8]",
+            "mW2_0To160[2,0,2] := Cut_Variables[9]",
+            "mH_105To160[2,0,2] := Cut_Variables[10]",
+            "mH_40To210[2,0,2] := Cut_Variables[11]"
         ]
 
         #-- b scores
@@ -65,8 +72,55 @@ class HHWWggCustomize():
             "subleadPhoMVA[2,0,2]:=slp_Hgg_MVA"
         ]
 
+        otherVariables=[
+            "W1Candidate_E := dijet.E()",
+            "W1Candidate_M := dijet.M()",
+            "W1Candidate_pt := dijet.pt()",
+            "W1Candidate_px := dijet.px()",
+            "W1Candidate_py := dijet.py()",
+            "W1Candidate_pz := dijet.pz()",
+            "W1Candidate_eta := dijet.eta()",
+            "W1Candidate_phi := dijet.phi()",
+
+            "W2Candidate_E := dijet2.E()",
+            "W2Candidate_M := dijet2.M()",
+            "W2Candidate_pt := dijet2.pt()",
+            "W2Candidate_px := dijet2.px()",
+            "W2Candidate_py := dijet2.py()",
+            "W2Candidate_pz := dijet2.pz()",
+            "W2Candidate_eta := dijet2.eta()",
+            "W2Candidate_phi := dijet2.phi()",
+
+            "HWWCandidate_E := HWW.E()",
+            "HWWCandidate_M := HWW.M()",
+            "HWWCandidate_pt := HWW.pt()",
+            "HWWCandidate_px := HWW.px()",
+            "HWWCandidate_py := HWW.py()",
+            "HWWCandidate_pz := HWW.pz()",
+            "HWWCandidate_eta := HWW.eta()",
+            "HWWCandidate_phi := HWW.phi()",
+
+            "HGGCandidate_E := HGG.E()",
+            "HGGCandidate_M := HGG.M()",
+            "HGGCandidate_pt := HGG.pt()",
+            "HGGCandidate_px := HGG.px()",
+            "HGGCandidate_py := HGG.py()",
+            "HGGCandidate_pz := HGG.pz()",
+            "HGGCandidate_eta := HGG.eta()",
+            "HGGCandidate_phi := HGG.phi()",
+
+            "HHCandidate_E := HH.E()",
+            "HHCandidate_M := HH.M()",
+            "HHCandidate_pt := HH.pt()",
+            "HHCandidate_px := HH.px()",
+            "HHCandidate_py := HH.py()",
+            "HHCandidate_pz := HH.pz()",
+            "HHCandidate_eta := HH.eta()",
+            "HHCandidate_phi := HH.phi()"
+        ]
+
         vars = ["E","pt","px","py","pz","eta","phi"]
-        objects = ["Leading_Photon","Subleading_Photon","Electron","Muon","MET","Leading_Jet","Subleading_Jet"]
+        objects = ["Leading_Photon","Subleading_Photon","Electron","Muon","MET","Leading_Jet","Subleading_Jet","Sub2leading_Jet","Sub3leading_Jet"]
         finalStateVars = []
         finalStateVars.append("Leading_Photon_MVA:=lp_Hgg_MVA")
         finalStateVars.append("Subleading_Photon_MVA:=slp_Hgg_MVA")
@@ -142,23 +196,23 @@ class HHWWggCustomize():
 
         # for removal of prompt-prompt events from QCD and GJet samples
         # Save extra Muon variables
-        nMuons = 5 # highest 5 pT muons (no selections applied)
-        nVars = 6 # 5 IDs and Isolation
-        extraMuonVars = ["isLooseMuon","isMediumMuon","isTightMuon","isSoftMuon","isHighPtMuon","muonIso"]
-        for m in range(0,nMuons):
-            for n in range(0,nVars):
-                muonVarTitle = extraMuonVars[n]
-                # MuonVars_[muonIndex*numVars + 0] = isLooseMuon;
-                # MuonVars_[muonIndex*numVars + 1] = isMediumMuon;
-                # MuonVars_[muonIndex*numVars + 2] = isTightMuon;
-                # MuonVars_[muonIndex*numVars + 3] = isSoftMuon;
-                # MuonVars_[muonIndex*numVars + 4] = isHighPtMuon;
-                # MuonVars_[muonIndex*numVars + 5] = muonIso;
-                i = m*nVars + n
-                vname = "MuonVars[%s]"%(i)
-                vtitle = "allMuons_%s_%s"%(m,muonVarTitle)
-                entry = "%s:=%s"%(vtitle,vname)
-                finalStateVars.append(entry)
+        # nMuons = 5 # highest 5 pT muons (no selections applied)
+        # nVars = 6 # 5 IDs and Isolation
+        # extraMuonVars = ["isLooseMuon","isMediumMuon","isTightMuon","isSoftMuon","isHighPtMuon","muonIso"]
+        # for m in range(0,nMuons):
+        #     for n in range(0,nVars):
+        #         muonVarTitle = extraMuonVars[n]
+        #         # MuonVars_[muonIndex*numVars + 0] = isLooseMuon;
+        #         # MuonVars_[muonIndex*numVars + 1] = isMediumMuon;
+        #         # MuonVars_[muonIndex*numVars + 2] = isTightMuon;
+        #         # MuonVars_[muonIndex*numVars + 3] = isSoftMuon;
+        #         # MuonVars_[muonIndex*numVars + 4] = isHighPtMuon;
+        #         # MuonVars_[muonIndex*numVars + 5] = muonIso;
+        #         i = m*nVars + n
+        #         vname = "MuonVars[%s]"%(i)
+        #         vtitle = "allMuons_%s_%s"%(m,muonVarTitle)
+        #         entry = "%s:=%s"%(vtitle,vname)
+        #         finalStateVars.append(entry)
 
         # Save extra Jet variables
         nJets = 5 # highest 5 pT muons (no selections applied)
@@ -203,6 +257,7 @@ class HHWWggCustomize():
             # variables += bScores
 
         if self.customize.saveHHWWggFinalStateVars:
+            variables += otherVariables
             variables += finalStateVars
             variables += cutFlowVars
             # variables += bScores

@@ -509,7 +509,7 @@ namespace flashgg {
 
       // Cut Variables
       // double has_PS_Dipho = 0, pass_METfilters = 0, dipho_vertex_is_zero = 0, pass_leadPhoOverMassThreshold = 0, pass_subleadPhoOverMassThreshold = 0,
-      double pass_leadPhoOverMassThreshold = 0, pass_subleadPhoOverMassThreshold = 0; 
+      double pass_leadPhoOverMassThreshold = 0, pass_subleadPhoOverMassThreshold = 0;
       //   pass_LeadPhoton_MVA = 0, pass_SubLeadPhoton_MVA = 0, pass_dipho_MVA = 0, number_passed_jetid = 0;
       // double dipho_vertex_is_zero = -999;
       // double SLW_Tag = 0.; // Semi-Leptonic W Tag
@@ -716,21 +716,21 @@ namespace flashgg {
           passMVAs = 0;
           passMVAs = checkPassMVAs(leadPho, subleadPho, diphoton_vertex);
 
-          // leading/subleading photon pt 
-          if( dipho->leadingPhoton()->pt() > ( dipho->mass() )*leadPhoOverMassThreshold_ ){ 
+          // leading/subleading photon pt
+          if( dipho->leadingPhoton()->pt() > ( dipho->mass() )*leadPhoOverMassThreshold_ ){
               pass_leadPhoOverMassThreshold = 1;
             }
-          if( dipho->subLeadingPhoton()->pt() > ( dipho->mass() )*subleadPhoOverMassThreshold_ ) { 
+          if( dipho->subLeadingPhoton()->pt() > ( dipho->mass() )*subleadPhoOverMassThreshold_ ) {
               pass_subleadPhoOverMassThreshold = 1;
             }
 
-          // Doing cut flow analysis: Don't skip event, but check if photon selections are passed 
+          // Doing cut flow analysis: Don't skip event, but check if photon selections are passed
           if(doHHWWggTagCutFlowAnalysis_){
-            if(!passMVAs || !pass_leadPhoOverMassThreshold || !pass_subleadPhoOverMassThreshold) Cut_Variables[1] = 0.0; // failed photon selections 
-            else Cut_Variables[1] = 1.0; // passed photon selections 
+            if(!passMVAs || !pass_leadPhoOverMassThreshold || !pass_subleadPhoOverMassThreshold) Cut_Variables[1] = 0.0; // failed photon selections
+            else Cut_Variables[1] = 1.0; // passed photon selections
           }
 
-          // Not doing cut flow analysis: Skip event if photon selections are not passed 
+          // Not doing cut flow analysis: Skip event if photon selections are not passed
           else{
             if(!passMVAs || !pass_leadPhoOverMassThreshold || !pass_subleadPhoOverMassThreshold) continue; // Do not save event if leading and subleading photons don't pass MVA cuts or pt/mgg cuts
           }
@@ -850,8 +850,8 @@ namespace flashgg {
                   edm::Ptr<flashgg::Jet> thejet = Jets_->ptrAt( candIndex_outer );
                   allJets.push_back(thejet);
 
-                  // JetID sleection 
-                  if(!thejet->passesJetID  ( flashgg::Tight2017 ) ){ continue; } 
+                  // JetID sleection
+                  if(!thejet->passesJetID  ( flashgg::Tight2017 ) ){ continue; }
 
                   if( fabs( thejet->eta() ) > jetEtaThreshold_ ) { keepJet=false; }
 
@@ -920,6 +920,10 @@ namespace flashgg {
             else Cut_Variables[3] = 0.0;
             if (n_good_jets >= 2) Cut_Variables[4] = 1.0; // at least 2 good jets
             else Cut_Variables[4] = 0.0;
+            if (n_good_jets >= 4) Cut_Variables[5] = 1.0; // at least 4 good jets
+            else Cut_Variables[5] = 0.0;
+            if (n_good_leptons==0 && n_good_jets>=4) Cut_Variables[6] = 1.0;  // At least 4 good jets without any good leptons
+            else Cut_Variables[6] = 0.0;
           }
           else
             if ((n_good_leptons > 1) || (n_good_jets <= 1)) continue;
@@ -1064,7 +1068,7 @@ namespace flashgg {
                 Ptr<flashgg::Jet> jet11 = tagJets[CountJet1];
                 Ptr<flashgg::Jet> jet12 = tagJets[CountJet2];
 
-                double deltaMass =  abs((jet11->p4() + jet12->p4()).M() - 125.0);
+                double deltaMass =  abs((jet11->p4() + jet12->p4() + tagJets[OnShellW_LeadingJetIndex]->p4() + tagJets[OnShellW_SubLeadingJetIndex]->p4() ).M() - 125.0);
                 if (DEBUG) std::cout << "deltaMass = " << deltaMass << "\t TempMinHMass = " << TempMinHMass << std::endl;
                 if ( deltaMass < TempMinHMass)
                 {
@@ -1092,6 +1096,13 @@ namespace flashgg {
               if (DEBUG) std::cout << "[INFO] jet2 pT = " << jet2->p4().pt() << std::endl;
               if (DEBUG) std::cout << "[INFO] jet3 pT = " << jet3->p4().pt() << std::endl;
               if (DEBUG) std::cout << "[INFO] jet4 pT = " << jet4->p4().pt() << std::endl;
+
+              if ( (jet1->p4() + jet2->p4()).M() > 40 && (jet1->p4() + jet2->p4()).M() < 160 ) Cut_Variables[7] = 1.0;
+              if ( (jet1->p4() + jet2->p4()).M() > 65 && (jet1->p4() + jet2->p4()).M() < 105 ) Cut_Variables[8] = 1.0;
+              if ( (jet3->p4() + jet4->p4()).M() > 0 && (jet3->p4() + jet4->p4()).M() < 160 ) Cut_Variables[9] = 1.0;
+              if ( (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).M() > 105 && (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).M() < 160 ) Cut_Variables[10] = 1.0;
+              if ( (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).M() > 40 && (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).M() < 210 ) Cut_Variables[11] = 1.0;
+
               HHWWggTag tag_obj;
               // HHWWggTag tag_obj_0;
               if (doHHWWggTagCutFlowAnalysis_){
