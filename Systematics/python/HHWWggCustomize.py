@@ -40,7 +40,9 @@ class HHWWggCustomize():
             "passPhotonSels[2,0,2] := Cut_Variables[1]",
             "passbVeto[2,0,2] := Cut_Variables[2]",
             "ExOneLep[2,0,2] := Cut_Variables[3]",
-            "goodJets[2,0,2] := Cut_Variables[4]"
+            "AtLeast2GoodJets[2,0,2] := Cut_Variables[4]",
+            "AtLeast4GoodJets[2,0,2] := Cut_Variables[5]",
+            "AtLeast4GoodJets0Lep[2,0,2] := Cut_Variables[6]"
         ]
 
         #-- b scores
