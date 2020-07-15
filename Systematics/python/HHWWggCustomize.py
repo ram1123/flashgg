@@ -67,8 +67,38 @@ class HHWWggCustomize():
             "subleadPhoMVA[2,0,2]:=slp_Hgg_MVA"
         ]
 
+        otherVariables=[
+            "W1Candidate_E := dijet.E()",
+            "W1Candidate_M := dijet.M()",
+            "W1Candidate_pt := dijet.pt()",
+            "W1Candidate_px := dijet.px()",
+            "W1Candidate_py := dijet.py()",
+            "W1Candidate_pz := dijet.pz()",
+            "W1Candidate_eta := dijet.eta()",
+            "W1Candidate_phi := dijet.phi()",
+
+            "W2Candidate_E := dijet2.E()",
+            "W2Candidate_M := dijet2.M()",
+            "W2Candidate_pt := dijet2.pt()",
+            "W2Candidate_px := dijet2.px()",
+            "W2Candidate_py := dijet2.py()",
+            "W2Candidate_pz := dijet2.pz()",
+            "W2Candidate_eta := dijet2.eta()",
+            "W2Candidate_phi := dijet2.phi()",
+
+            "HWWCandidate_E := HWW.E()",
+            "HWWCandidate_M := HWW.M()",
+            "HWWCandidate_pt := HWW.pt()",
+            "HWWCandidate_px := HWW.px()",
+            "HWWCandidate_py := HWW.py()",
+            "HWWCandidate_pz := HWW.pz()",
+            "HWWCandidate_eta := HWW.eta()",
+            "HWWCandidate_phi := HWW.phi()"
+
+        ]
+
         vars = ["E","pt","px","py","pz","eta","phi"]
-        objects = ["Leading_Photon","Subleading_Photon","Electron","Muon","MET","Leading_Jet","Subleading_Jet"]
+        objects = ["Leading_Photon","Subleading_Photon","Electron","Muon","MET","Leading_Jet","Subleading_Jet","Sub2leading_Jet","Sub3leading_Jet"]
         finalStateVars = []
         finalStateVars.append("Leading_Photon_MVA:=lp_Hgg_MVA")
         finalStateVars.append("Subleading_Photon_MVA:=slp_Hgg_MVA")
@@ -206,6 +236,7 @@ class HHWWggCustomize():
         if self.customize.saveHHWWggFinalStateVars:
             variables += finalStateVars
             variables += cutFlowVars
+            variables += otherVariables
             # variables += bScores
 
         if self.customize.doHHWWggDebug:

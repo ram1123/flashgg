@@ -52,6 +52,10 @@ void HHWWggTag::GetObjects(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::
   Leading_Jet_ = *jet1;
   Subleading_Jet_ = *jet2;
 
+  dijet_ = (*jet1).p4() + (*jet2).p4();
+
+  HWW_ = Leading_Jet_.p4() + Subleading_Jet_.p4() + Electron_.p4() + MET_.p4();
+
   lp_Hgg_MVA_ = Leading_Photon_->phoIdMvaDWrtVtx( dipho->vtx() );
   slp_Hgg_MVA_ = Subleading_Photon_->phoIdMvaDWrtVtx( dipho->vtx() );
 }
@@ -65,6 +69,9 @@ void HHWWggTag::GetObjects(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::
   MET_ = *MET;
   Leading_Jet_ = *jet1;
   Subleading_Jet_ = *jet2;
+
+  dijet_ = (*jet1).p4() + (*jet2).p4();
+  HWW_ = Leading_Jet_.p4() + Subleading_Jet_.p4() + Muon_.p4() + MET_.p4();
 
   lp_Hgg_MVA_ = Leading_Photon_->phoIdMvaDWrtVtx( dipho->vtx() );
   slp_Hgg_MVA_ = Subleading_Photon_->phoIdMvaDWrtVtx( dipho->vtx() );
@@ -81,6 +88,11 @@ void HHWWggTag::GetObjects(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::
   Subleading_Jet_ = *jet2;
   Sub2leading_Jet_ = *jet3;
   Sub3leading_Jet_ = *jet4;
+
+  dijet_ = (*jet1).p4() + (*jet2).p4();
+  dijet2_ = (*jet3).p4() + (*jet4).p4();
+
+  HWW_ = dijet_ + dijet2_;
 
   lp_Hgg_MVA_ = Leading_Photon_->phoIdMvaDWrtVtx( dipho->vtx() );
   slp_Hgg_MVA_ = Subleading_Photon_->phoIdMvaDWrtVtx( dipho->vtx() );
@@ -131,8 +143,9 @@ HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::Electr
 }
 
 // HHWWggTag_1
-HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::Muon> muon, edm::Ptr<flashgg::Met> MET,
-                      edm::Ptr<flashgg::Jet> jet1, edm::Ptr<flashgg::Jet> jet2)
+HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::Muon> muon,
+                     edm::Ptr<flashgg::Met> MET,
+                     edm::Ptr<flashgg::Jet> jet1, edm::Ptr<flashgg::Jet> jet2)
 {
   dipho_ = dipho;
   GetObjects(dipho);
@@ -143,15 +156,17 @@ HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::Met> M
                       edm::Ptr<flashgg::Jet> jet1, edm::Ptr<flashgg::Jet> jet2,
                       edm::Ptr<flashgg::Jet> jet3, edm::Ptr<flashgg::Jet> jet4)
 {
-  //std::cout << "DEBUG: Inside HHWWggtags class constructor for 4 jets only" << std::endl;
   dipho_ = dipho;
   GetObjects(dipho);
 }
 
 // HHWWggTag_0 with cutFlowAnalysis
-HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::Electron> electron, std::vector<edm::Ptr<flashgg::Electron>> allElectrons, std::vector<edm::Ptr<flashgg::Electron>> goodElectrons,
+HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::Electron> electron,
+                     std::vector<edm::Ptr<flashgg::Electron>> allElectrons,
+                     std::vector<edm::Ptr<flashgg::Electron>> goodElectrons,
                      std::vector<edm::Ptr<flashgg::Muon>> allMuons,
-                     edm::Ptr<flashgg::Met> MET, edm::Ptr<flashgg::Jet> jet1, edm::Ptr<flashgg::Jet> jet2,
+                     edm::Ptr<flashgg::Met> MET,
+                     edm::Ptr<flashgg::Jet> jet1, edm::Ptr<flashgg::Jet> jet2,
                      std::vector<edm::Ptr<flashgg::Jet>> allJets, std::vector<edm::Ptr<flashgg::Jet>> goodJets,
                      std::vector<double> Cut_Variables, std::vector<double> MuonVars, std::vector<double> JetVars): Cut_Variables_(Cut_Variables), MuonVars_(MuonVars), JetVars_(JetVars)
 {
@@ -167,10 +182,13 @@ HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::Electr
 }
 
 // HHWWggTag_1 with cutFlowAnalysis
-HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, std::vector<edm::Ptr<flashgg::Electron>> allElectrons, edm::Ptr<flashgg::Muon> muon, std::vector<edm::Ptr<flashgg::Muon>> allMuons, std::vector<edm::Ptr<flashgg::Muon>> goodMuons,
-              edm::Ptr<flashgg::Met> MET, edm::Ptr<flashgg::Jet> jet1, edm::Ptr<flashgg::Jet> jet2,
-              std::vector<edm::Ptr<flashgg::Jet>> allJets, std::vector<edm::Ptr<flashgg::Jet>> goodJets,
-              std::vector<double> Cut_Variables,  std::vector<double> MuonVars, std::vector<double> JetVars) : Cut_Variables_(Cut_Variables), MuonVars_(MuonVars), JetVars_(JetVars)
+HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, std::vector<edm::Ptr<flashgg::Electron>> allElectrons,
+                     edm::Ptr<flashgg::Muon> muon, std::vector<edm::Ptr<flashgg::Muon>> allMuons,
+                     std::vector<edm::Ptr<flashgg::Muon>> goodMuons,
+                     edm::Ptr<flashgg::Met> MET,
+                     edm::Ptr<flashgg::Jet> jet1, edm::Ptr<flashgg::Jet> jet2,
+                     std::vector<edm::Ptr<flashgg::Jet>> allJets, std::vector<edm::Ptr<flashgg::Jet>> goodJets,
+                     std::vector<double> Cut_Variables, std::vector<double> MuonVars, std::vector<double> JetVars) : Cut_Variables_(Cut_Variables), MuonVars_(MuonVars), JetVars_(JetVars)
 {
   dipho_ = dipho;
   GetObjects(dipho, muon, MET, jet1, jet2);
@@ -182,11 +200,14 @@ HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho, std::vector<edm::Ptr<fla
   goodJets_ = GetJets(goodJets);
 }
 
+// HHWWggTag_2 with cutFlowAnalysis
 HHWWggTag::HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho,
               edm::Ptr<flashgg::Met> MET,
               edm::Ptr<flashgg::Jet> jet1, edm::Ptr<flashgg::Jet> jet2,
               edm::Ptr<flashgg::Jet> jet3, edm::Ptr<flashgg::Jet> jet4,
-              std::vector<edm::Ptr<flashgg::Jet>> allJets, std::vector<edm::Ptr<flashgg::Jet>> goodJets, std::vector<double> Cut_Variables, std::vector<double> JetVars) : Cut_Variables_(Cut_Variables), JetVars_(JetVars)
+              std::vector<edm::Ptr<flashgg::Jet>> allJets,
+              std::vector<edm::Ptr<flashgg::Jet>> goodJets, std::vector<double> Cut_Variables,
+              std::vector<double> JetVars) : Cut_Variables_(Cut_Variables), JetVars_(JetVars)
 {
   //std::cout << "DEBUG: Inside HHWWggtags class constructor for 4 jets only and other vars" << std::endl;
   dipho_ = dipho;

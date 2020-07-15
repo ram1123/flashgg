@@ -144,6 +144,10 @@ namespace flashgg {
     const std::vector<flashgg::Jet> allJets() const {return allJets_;}
     const std::vector<flashgg::Jet> goodJets() const {return goodJets_;}
 
+    const LorentzVector & dijet() const { return dijet_; }
+    const LorentzVector & dijet2() const { return dijet2_; }
+    const LorentzVector & HWW() const { return HWW_; }
+
     // const std::vector<flashgg::DiPhotonCandidate> diphoVector() const { return diphoVector_; };
     // const std::vector<flashgg::Electron> electronVector() const {return electronVector_;}
     // const std::vector<flashgg::Muon> muonVector() const {return muonVector_;}
@@ -196,6 +200,10 @@ namespace flashgg {
     std::vector<flashgg::Muon> goodMuons_;
     std::vector<flashgg::Jet> allJets_;
     std::vector<flashgg::Jet> goodJets_;
+
+    LorentzVector dijet_;
+    LorentzVector dijet2_;
+    LorentzVector HWW_;
 
     // std::vector<flashgg::Met> METVector_;
     // std::vector<reco::GenParticle> GenParticlesVector_;
