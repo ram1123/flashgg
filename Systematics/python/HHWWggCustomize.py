@@ -93,8 +93,16 @@ class HHWWggCustomize():
             "HWWCandidate_py := HWW.py()",
             "HWWCandidate_pz := HWW.pz()",
             "HWWCandidate_eta := HWW.eta()",
-            "HWWCandidate_phi := HWW.phi()"
+            "HWWCandidate_phi := HWW.phi()",
 
+            "HHCandidate_E := HH.E()",
+            "HHCandidate_M := HH.M()",
+            "HHCandidate_pt := HH.pt()",
+            "HHCandidate_px := HH.px()",
+            "HHCandidate_py := HH.py()",
+            "HHCandidate_pz := HH.pz()",
+            "HHCandidate_eta := HH.eta()",
+            "HHCandidate_phi := HH.phi()"
         ]
 
         vars = ["E","pt","px","py","pz","eta","phi"]
@@ -173,23 +181,23 @@ class HHWWggCustomize():
                         finalStateVars.append(entry)
 
         # Save extra Muon variables
-        nMuons = 5 # highest 5 pT muons (no selections applied)
-        nVars = 6 # 5 IDs and Isolation
-        extraMuonVars = ["isLooseMuon","isMediumMuon","isTightMuon","isSoftMuon","isHighPtMuon","muonIso"]
-        for m in range(0,nMuons):
-            for n in range(0,nVars):
-                muonVarTitle = extraMuonVars[n]
-                # MuonVars_[muonIndex*numVars + 0] = isLooseMuon;
-                # MuonVars_[muonIndex*numVars + 1] = isMediumMuon;
-                # MuonVars_[muonIndex*numVars + 2] = isTightMuon;
-                # MuonVars_[muonIndex*numVars + 3] = isSoftMuon;
-                # MuonVars_[muonIndex*numVars + 4] = isHighPtMuon;
-                # MuonVars_[muonIndex*numVars + 5] = muonIso;
-                i = m*nVars + n
-                vname = "MuonVars[%s]"%(i)
-                vtitle = "allMuons_%s_%s"%(m,muonVarTitle)
-                entry = "%s:=%s"%(vtitle,vname)
-                finalStateVars.append(entry)
+        # nMuons = 5 # highest 5 pT muons (no selections applied)
+        # nVars = 6 # 5 IDs and Isolation
+        # extraMuonVars = ["isLooseMuon","isMediumMuon","isTightMuon","isSoftMuon","isHighPtMuon","muonIso"]
+        # for m in range(0,nMuons):
+        #     for n in range(0,nVars):
+        #         muonVarTitle = extraMuonVars[n]
+        #         # MuonVars_[muonIndex*numVars + 0] = isLooseMuon;
+        #         # MuonVars_[muonIndex*numVars + 1] = isMediumMuon;
+        #         # MuonVars_[muonIndex*numVars + 2] = isTightMuon;
+        #         # MuonVars_[muonIndex*numVars + 3] = isSoftMuon;
+        #         # MuonVars_[muonIndex*numVars + 4] = isHighPtMuon;
+        #         # MuonVars_[muonIndex*numVars + 5] = muonIso;
+        #         i = m*nVars + n
+        #         vname = "MuonVars[%s]"%(i)
+        #         vtitle = "allMuons_%s_%s"%(m,muonVarTitle)
+        #         entry = "%s:=%s"%(vtitle,vname)
+        #         finalStateVars.append(entry)
 
         # Save extra Jet variables
         nJets = 5 # highest 5 pT muons (no selections applied)
@@ -234,9 +242,9 @@ class HHWWggCustomize():
             # variables += bScores
 
         if self.customize.saveHHWWggFinalStateVars:
+            variables += otherVariables
             variables += finalStateVars
             variables += cutFlowVars
-            variables += otherVariables
             # variables += bScores
 
         if self.customize.doHHWWggDebug:
