@@ -42,7 +42,12 @@ class HHWWggCustomize():
             "ExOneLep[2,0,2] := Cut_Variables[3]",
             "AtLeast2GoodJets[2,0,2] := Cut_Variables[4]",
             "AtLeast4GoodJets[2,0,2] := Cut_Variables[5]",
-            "AtLeast4GoodJets0Lep[2,0,2] := Cut_Variables[6]"
+            "AtLeast4GoodJets0Lep[2,0,2] := Cut_Variables[6]",
+            "mW1_40To160[2,0,2] := Cut_Variables[7]",
+            "mW1_65To105[2,0,2] := Cut_Variables[8]",
+            "mW2_0To160[2,0,2] := Cut_Variables[9]",
+            "mH_105To160[2,0,2] := Cut_Variables[10]",
+            "mH_40To210[2,0,2] := Cut_Variables[11]"
         ]
 
         #-- b scores
@@ -68,7 +73,7 @@ class HHWWggCustomize():
         ]
 
         vars = ["E","pt","px","py","pz","eta","phi"]
-        objects = ["Leading_Photon","Subleading_Photon","Electron","Muon","MET","Leading_Jet","Subleading_Jet"]
+        objects = ["Leading_Photon","Subleading_Photon","Electron","Muon","MET","Leading_Jet","Subleading_Jet","Sub2leading_Jet","Sub3leading_Jet"]
         finalStateVars = []
         finalStateVars.append("Leading_Photon_MVA:=lp_Hgg_MVA")
         finalStateVars.append("Subleading_Photon_MVA:=slp_Hgg_MVA")
@@ -142,56 +147,56 @@ class HHWWggCustomize():
                         entry = "%s:=%s"%(vtitle,vname)
                         finalStateVars.append(entry)
 
-        # Save extra Muon variables
-        nMuons = 5 # highest 5 pT muons (no selections applied)
-        nVars = 6 # 5 IDs and Isolation
-        extraMuonVars = ["isLooseMuon","isMediumMuon","isTightMuon","isSoftMuon","isHighPtMuon","muonIso"]
-        for m in range(0,nMuons):
-            for n in range(0,nVars):
-                muonVarTitle = extraMuonVars[n]
-                # MuonVars_[muonIndex*numVars + 0] = isLooseMuon;
-                # MuonVars_[muonIndex*numVars + 1] = isMediumMuon;
-                # MuonVars_[muonIndex*numVars + 2] = isTightMuon;
-                # MuonVars_[muonIndex*numVars + 3] = isSoftMuon;
-                # MuonVars_[muonIndex*numVars + 4] = isHighPtMuon;
-                # MuonVars_[muonIndex*numVars + 5] = muonIso;
-                i = m*nVars + n
-                vname = "MuonVars[%s]"%(i)
-                vtitle = "allMuons_%s_%s"%(m,muonVarTitle)
-                entry = "%s:=%s"%(vtitle,vname)
-                finalStateVars.append(entry)
+        # # Save extra Muon variables
+        # nMuons = 5 # highest 5 pT muons (no selections applied)
+        # nVars = 6 # 5 IDs and Isolation
+        # extraMuonVars = ["isLooseMuon","isMediumMuon","isTightMuon","isSoftMuon","isHighPtMuon","muonIso"]
+        # for m in range(0,nMuons):
+        #     for n in range(0,nVars):
+        #         muonVarTitle = extraMuonVars[n]
+        #         # MuonVars_[muonIndex*numVars + 0] = isLooseMuon;
+        #         # MuonVars_[muonIndex*numVars + 1] = isMediumMuon;
+        #         # MuonVars_[muonIndex*numVars + 2] = isTightMuon;
+        #         # MuonVars_[muonIndex*numVars + 3] = isSoftMuon;
+        #         # MuonVars_[muonIndex*numVars + 4] = isHighPtMuon;
+        #         # MuonVars_[muonIndex*numVars + 5] = muonIso;
+        #         i = m*nVars + n
+        #         vname = "MuonVars[%s]"%(i)
+        #         vtitle = "allMuons_%s_%s"%(m,muonVarTitle)
+        #         entry = "%s:=%s"%(vtitle,vname)
+        #         finalStateVars.append(entry)
 
-        # Save extra Jet variables
-        nJets = 5 # highest 5 pT muons (no selections applied)
-        nVars = 4 # 4 IDs
-        # nVars = 5 # 4 IDs + 1 PU ID
-        # nVars = 12 # 4 IDs + 8 PU ID's
-        extraJetVars = ["passLoose","passTight","passTight2017","passTight2018"]
-        # extraJetVars = ["passLoose","passTight","passTight2017","passTight2018","passesJetPUIdLoose"]
-                        # "passesJetPuIdnone","passesJetPuIdloose","passesJetPuIdmedium","passesJetPuIdtight"
-                        # "passesJetPuIdmixed","passesJetPuIdforward_loose","passesJetPuIdforward_medium","passesJetPuIdforward_tight"
-                        # ]
-        for j in range(0,nJets):
-            for n in range(0,nVars):
-                jetVarTitle = extraJetVars[n]
-                #   JetVars_[jetIndex*numVars + 0] = passLoose;
-                #   JetVars_[jetIndex*numVars + 1] = passTight;
-                #   JetVars_[jetIndex*numVars + 2] = passTight2017;
-                #   JetVars_[jetIndex*numVars + 3] = passTight2018;
+        # # Save extra Jet variables
+        # nJets = 5 # highest 5 pT muons (no selections applied)
+        # nVars = 4 # 4 IDs
+        # # nVars = 5 # 4 IDs + 1 PU ID
+        # # nVars = 12 # 4 IDs + 8 PU ID's
+        # extraJetVars = ["passLoose","passTight","passTight2017","passTight2018"]
+        # # extraJetVars = ["passLoose","passTight","passTight2017","passTight2018","passesJetPUIdLoose"]
+        #                 # "passesJetPuIdnone","passesJetPuIdloose","passesJetPuIdmedium","passesJetPuIdtight"
+        #                 # "passesJetPuIdmixed","passesJetPuIdforward_loose","passesJetPuIdforward_medium","passesJetPuIdforward_tight"
+        #                 # ]
+        # for j in range(0,nJets):
+        #     for n in range(0,nVars):
+        #         jetVarTitle = extraJetVars[n]
+        #         #   JetVars_[jetIndex*numVars + 0] = passLoose;
+        #         #   JetVars_[jetIndex*numVars + 1] = passTight;
+        #         #   JetVars_[jetIndex*numVars + 2] = passTight2017;
+        #         #   JetVars_[jetIndex*numVars + 3] = passTight2018;
 
-                #   JetVars_[jetIndex*numVars + 4] = passesJetPuIdnone;
-                #   JetVars_[jetIndex*numVars + 5] = passesJetPuIdloose;
-                #   JetVars_[jetIndex*numVars + 6] = passesJetPuIdmedium;
-                #   JetVars_[jetIndex*numVars + 7] = passesJetPuIdtight;
-                #   JetVars_[jetIndex*numVars + 8] = passesJetPuIdmixed;
-                #   JetVars_[jetIndex*numVars + 9] = passesJetPuIdforward_loose;
-                #   JetVars_[jetIndex*numVars + 10] = passesJetPuIdforward_medium;
-                #   JetVars_[jetIndex*numVars + 11] = passesJetPuIdforward_tight;
-                i = j*nVars + n
-                vname = "JetVars[%s]"%(i)
-                vtitle = "allJets_%s_%s"%(j,jetVarTitle)
-                entry = "%s:=%s"%(vtitle,vname)
-                finalStateVars.append(entry)
+        #         #   JetVars_[jetIndex*numVars + 4] = passesJetPuIdnone;
+        #         #   JetVars_[jetIndex*numVars + 5] = passesJetPuIdloose;
+        #         #   JetVars_[jetIndex*numVars + 6] = passesJetPuIdmedium;
+        #         #   JetVars_[jetIndex*numVars + 7] = passesJetPuIdtight;
+        #         #   JetVars_[jetIndex*numVars + 8] = passesJetPuIdmixed;
+        #         #   JetVars_[jetIndex*numVars + 9] = passesJetPuIdforward_loose;
+        #         #   JetVars_[jetIndex*numVars + 10] = passesJetPuIdforward_medium;
+        #         #   JetVars_[jetIndex*numVars + 11] = passesJetPuIdforward_tight;
+        #         i = j*nVars + n
+        #         vname = "JetVars[%s]"%(i)
+        #         vtitle = "allJets_%s_%s"%(j,jetVarTitle)
+        #         entry = "%s:=%s"%(vtitle,vname)
+        #         finalStateVars.append(entry)
 
         # for removal of prompt-prompt events from QCD and GJet samples
         finalStateVars.append("Leading_Photon_genMatchType:=Leading_Photon.genMatchType()")
@@ -206,7 +211,7 @@ class HHWWggCustomize():
         if self.customize.saveHHWWggFinalStateVars:
             variables += finalStateVars
             variables += cutFlowVars
-            # variables += bScores
+            variables += bScores
 
         if self.customize.doHHWWggDebug:
             variables += debugVars
