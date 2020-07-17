@@ -147,6 +147,7 @@ namespace flashgg {
     const LorentzVector & dijet() const { return dijet_; }
     const LorentzVector & dijet2() const { return dijet2_; }
     const LorentzVector & HWW() const { return HWW_; }
+    const LorentzVector & HGG() const { return HGG_; }
     const LorentzVector & HH() const { return HH_; }
 
     // const std::vector<flashgg::DiPhotonCandidate> diphoVector() const { return diphoVector_; };
@@ -205,6 +206,7 @@ namespace flashgg {
     LorentzVector dijet_;
     LorentzVector dijet2_;
     LorentzVector HWW_;
+    LorentzVector HGG_;
     LorentzVector HH_;
 
     // std::vector<flashgg::Met> METVector_;

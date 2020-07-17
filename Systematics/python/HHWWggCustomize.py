@@ -42,7 +42,12 @@ class HHWWggCustomize():
             "ExOneLep[2,0,2] := Cut_Variables[3]",
             "AtLeast2GoodJets[2,0,2] := Cut_Variables[4]",
             "AtLeast4GoodJets[2,0,2] := Cut_Variables[5]",
-            "AtLeast4GoodJets0Lep[2,0,2] := Cut_Variables[6]"
+            "AtLeast4GoodJets0Lep[2,0,2] := Cut_Variables[6]",
+            "mW1_40To160[2,0,2] := Cut_Variables[7]",
+            "mW1_65To105[2,0,2] := Cut_Variables[8]",
+            "mW2_0To160[2,0,2] := Cut_Variables[9]",
+            "mH_105To160[2,0,2] := Cut_Variables[10]",
+            "mH_40To210[2,0,2] := Cut_Variables[11]"
         ]
 
         #-- b scores
@@ -94,6 +99,15 @@ class HHWWggCustomize():
             "HWWCandidate_pz := HWW.pz()",
             "HWWCandidate_eta := HWW.eta()",
             "HWWCandidate_phi := HWW.phi()",
+
+            "HGGCandidate_E := HGG.E()",
+            "HGGCandidate_M := HGG.M()",
+            "HGGCandidate_pt := HGG.pt()",
+            "HGGCandidate_px := HGG.px()",
+            "HGGCandidate_py := HGG.py()",
+            "HGGCandidate_pz := HGG.pz()",
+            "HGGCandidate_eta := HGG.eta()",
+            "HGGCandidate_phi := HGG.phi()",
 
             "HHCandidate_E := HH.E()",
             "HHCandidate_M := HH.M()",

@@ -1068,7 +1068,7 @@ namespace flashgg {
                 Ptr<flashgg::Jet> jet11 = tagJets[CountJet1];
                 Ptr<flashgg::Jet> jet12 = tagJets[CountJet2];
 
-                double deltaMass =  abs((jet11->p4() + jet12->p4()).M() - 125.0);
+                double deltaMass =  abs((jet11->p4() + jet12->p4() + tagJets[OnShellW_LeadingJetIndex]->p4() + tagJets[OnShellW_SubLeadingJetIndex]->p4() ).M() - 125.0);
                 if (DEBUG) std::cout << "deltaMass = " << deltaMass << "\t TempMinHMass = " << TempMinHMass << std::endl;
                 if ( deltaMass < TempMinHMass)
                 {
@@ -1096,6 +1096,13 @@ namespace flashgg {
               if (DEBUG) std::cout << "[INFO] jet2 pT = " << jet2->p4().pt() << std::endl;
               if (DEBUG) std::cout << "[INFO] jet3 pT = " << jet3->p4().pt() << std::endl;
               if (DEBUG) std::cout << "[INFO] jet4 pT = " << jet4->p4().pt() << std::endl;
+
+              if ( (jet1->p4() + jet2->p4()).M() > 40 && (jet1->p4() + jet2->p4()).M() < 160 ) Cut_Variables[7] = 1.0;
+              if ( (jet1->p4() + jet2->p4()).M() > 65 && (jet1->p4() + jet2->p4()).M() < 105 ) Cut_Variables[8] = 1.0;
+              if ( (jet3->p4() + jet4->p4()).M() > 0 && (jet3->p4() + jet4->p4()).M() < 160 ) Cut_Variables[9] = 1.0;
+              if ( (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).M() > 105 && (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).M() < 160 ) Cut_Variables[10] = 1.0;
+              if ( (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).M() > 40 && (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).M() < 210 ) Cut_Variables[11] = 1.0;
+
               HHWWggTag tag_obj;
               // HHWWggTag tag_obj_0;
               if (doHHWWggTagCutFlowAnalysis_){
