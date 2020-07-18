@@ -126,9 +126,11 @@ do
 	if [[ $runSignal == "true" ]]; then
 
 		if [[ $signalType == "Res" ]]; then
-			mass="$(cut -d'_' -f3 <<<$file_i)" # get third '_' delimited element of file path. Should be X250, X260, etc.
+            mass="$(cut -d'_' -f3 <<<$file_i)" # get third '_' delimited element of file path. Should be X250, X260, etc.
+			channel="$(cut -d'_' -f5 <<<$file_i)" # get fifth '_' delimited element of file path. Should be qqqq, llnuqq, lnulnu.
 			infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
-			outfilePath="${nTupleDirec}/${outputFolder}/${mass}_HHWWgg_qqlnu.root"
+			outfilePath="${nTupleDirec}/${outputFolder}/${mass}_HHWWgg_${channel}.root"
+            # FIXME: here ${channel} is also taking .root part. So, need to protect this.
 
 		elif [[ $signalType == "EFT" ]]; then
             # Input root file should be named such that its fourth '_' delimited

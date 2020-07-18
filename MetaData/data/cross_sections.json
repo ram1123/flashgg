@@ -1437,6 +1437,33 @@
    "GluGluToHHTo_WWgg_qqqq_nodeSM": {
   "xs": 0.001
  },
+ "ggF_X1100_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X1200_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X1300_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X1500_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X2000_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X260_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X270_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X300_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X350_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
  "VHToGG_M130_13TeV_amcatnloFXFX_madspin_pythia8": {
   "xs": 1.9989,
   "itype": -130400,
