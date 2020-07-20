@@ -128,6 +128,7 @@ do
 		if [[ $signalType == "Res" ]]; then
             mass="$(cut -d'_' -f3 <<<$file_i)" # get third '_' delimited element of file path. Should be X250, X260, etc.
 			channel="$(cut -d'_' -f5 <<<$file_i)" # get fifth '_' delimited element of file path. Should be qqqq, llnuqq, lnulnu.
+            channel=${node%?????} # remove ".root"
 			infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
 			outfilePath="${nTupleDirec}/${outputFolder}/${mass}_HHWWgg_${channel}.root"
             # FIXME: here ${channel} is also taking .root part. So, need to protect this.
