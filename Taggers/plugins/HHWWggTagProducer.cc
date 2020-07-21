@@ -478,6 +478,134 @@ namespace flashgg {
       return JetVars_;
     }
 
+    std::vector<double> HHWWggTagProducer::GetMuonVars(const std::vector<edm::Ptr<flashgg::Muon> > &muonPointers, const std::vector<edm::Ptr<reco::Vertex> > &vertexPointers)
+    {
+      unsigned int maxMuons = 5; // Shouldn't need more than this 
+      unsigned int numVars = 6; // 5 IDs + isolation 
+      unsigned int numVecEntries = maxMuons * numVars;
+      std::vector<double> MuonVars_(numVecEntries,-999); // initialize vector with -999 vals 
+      double isLooseMuon = -999, isMediumMuon = -999, isTightMuon = -999, isSoftMuon = -999, isHighPtMuon = -999;
+      double muonIso = -999;
+      int vtxInd = 0;
+      double dzmin = 9999;      
+
+      for( unsigned int muonIndex = 0; muonIndex < muonPointers.size(); muonIndex++ ) {
+          if(muonIndex >= maxMuons) continue; // only save info from 5 highest pT muon objects       
+          isLooseMuon = -999, isMediumMuon = -999, isTightMuon = -999, isSoftMuon = -999, isHighPtMuon = -999;
+          muonIso = -999;
+          Ptr<flashgg::Muon> muon = muonPointers[muonIndex];
+          vtxInd = 0;
+          dzmin = 9999;
+          // If no innertrack, set medium, tight, soft, highpt vals to -999 as they can't be calculated without it 
+          // I think this is correct because there are non-zero isolation values when isTightMuon is -999
+          if( !muon->innerTrack() ){
+            isLooseMuon = muon::isLooseMuon( *muon );
+            muonIso = ( muon->pfIsolationR04().sumChargedHadronPt 
+                                      + max( 0.,muon->pfIsolationR04().sumNeutralHadronEt 
+                                            + muon->pfIsolationR04().sumPhotonEt - 0.5 * muon->pfIsolationR04().sumPUPt ) ) / ( muon->pt() );            
+            MuonVars_[muonIndex*numVars + 0] = isLooseMuon;
+            MuonVars_[muonIndex*numVars + 1] = isMediumMuon;
+            MuonVars_[muonIndex*numVars + 2] = isTightMuon;
+            MuonVars_[muonIndex*numVars + 3] = isSoftMuon;
+            MuonVars_[muonIndex*numVars + 4] = isHighPtMuon;
+            MuonVars_[muonIndex*numVars + 5] = muonIso;     
+            continue;        
+          }               
+          for( size_t ivtx = 0 ; ivtx < vertexPointers.size(); ivtx++ ) {
+              Ptr<reco::Vertex> vtx = vertexPointers[ivtx];
+              if( fabs( muon->innerTrack()->vz() - vtx->position().z() ) < dzmin ) {                    
+                  dzmin = fabs( muon->innerTrack()->vz() - vtx->position().z() );
+                  vtxInd = ivtx;
+              }
+          }
+          Ptr<reco::Vertex> best_vtx = vertexPointers[vtxInd];            
+          isLooseMuon = muon::isLooseMuon( *muon );
+          isMediumMuon = muon::isMediumMuon( *muon );
+          isTightMuon = muon::isTightMuon( *muon, *best_vtx );
+          isSoftMuon = muon::isSoftMuon( *muon, *best_vtx );
+          isHighPtMuon = muon::isHighPtMuon( *muon, *best_vtx );
+
+          muonIso = ( muon->pfIsolationR04().sumChargedHadronPt 
+                                    + max( 0.,muon->pfIsolationR04().sumNeutralHadronEt 
+                                          + muon->pfIsolationR04().sumPhotonEt - 0.5 * muon->pfIsolationR04().sumPUPt ) ) / ( muon->pt() );
+
+            MuonVars_[muonIndex*numVars + 0] = isLooseMuon;
+            MuonVars_[muonIndex*numVars + 1] = isMediumMuon;
+            MuonVars_[muonIndex*numVars + 2] = isTightMuon;
+            MuonVars_[muonIndex*numVars + 3] = isSoftMuon;
+            MuonVars_[muonIndex*numVars + 4] = isHighPtMuon;
+            MuonVars_[muonIndex*numVars + 5] = muonIso;  
+
+          // if(isLooseMuon==0 && isTightMuon==1){
+          //   cout << "--------------------------------" << endl;
+          //   cout << "Muon passes tight but not loose" << endl;
+          //   cout << "muon->isPFMuon():" << muon->isPFMuon() << endl;
+          //   cout << "muon->isGlobalMuon():" << muon->isGlobalMuon() << endl;
+          //   cout << "muon->isTrackerMuon():" << muon->isTrackerMuon() << endl;
+          // }
+      }
+
+      return MuonVars_;
+    }
+
+    std::vector<double> HHWWggTagProducer::GetJetVars(const std::vector<edm::Ptr<flashgg::Jet> > &jetPointers, const edm::Ptr<flashgg::DiPhotonCandidate> dipho)
+    {
+      unsigned int maxJets = 5; // Shouldn't need more than this 
+      unsigned int numVars = 4; // 4 IDs + Jet PU ID 
+      // unsigned int numVars = 5; // 4 IDs + Jet PU ID 
+      // unsigned int numVars = 12; // 4 IDs + 8 PUjetIDs
+      unsigned int numVecEntries = maxJets * numVars;
+      std::vector<double> JetVars_(numVecEntries,-999); // initialize vector with -999 vals 
+      double passLoose = -999, passTight = -999, passTight2017 = -999, passTight2018 = -999;
+      // double passesJetPUIdLoose = -999;
+      // double passesJetPuIdnone = -999, passesJetPuIdloose = -999, passesJetPuIdmedium = -999, passesJetPuIdtight = -999;
+      // double passesJetPuIdmixed = -999, passesJetPuIdforward_loose = -999, passesJetPuIdforward_medium = -999, passesJetPuIdforward_tight = -999;
+
+      for( unsigned int jetIndex = 0; jetIndex < jetPointers.size(); jetIndex++ ) {
+          if(jetIndex >= maxJets) continue; // only save info from 5 highest pT Jet objects 
+          passLoose = -999, passTight = -999, passTight2017 = -999, passTight2018 = -999;
+          Ptr<flashgg::Jet> jet = jetPointers[jetIndex];
+
+          // passesJetPuId
+          // one=0, loose=1, medium=2, tight=3, mixed=4, forward_loose=5, forward_medium=6, forward_tight=7
+         
+          // Loose=0, Tight=1, Tight2017=2, Tight2018=3
+          passLoose = jet->passesJetID  ( flashgg::Loose );
+          passTight = jet->passesJetID  ( flashgg::Tight );
+          passTight2017 = jet->passesJetID  ( flashgg::Tight2017 );
+          passTight2018 = jet->passesJetID  ( flashgg::Tight2018 );
+
+          // passesJetPUIdLoose = jet->passesPuJetId(dipho, PileupJetIdentifier::kLoose);
+
+          // passesJetPuIdnone = jet->passesPuJetId  ( flashgg::none );
+          // passesJetPuIdloose = jet->passesPuJetId  ( flashgg::loose );
+          // passesJetPuIdmedium = jet->passesPuJetId  ( flashgg::medium );
+          // passesJetPuIdtight = jet->passesPuJetId  ( flashgg::tight );
+          // passesJetPuIdmixed = jet->passesPuJetId  ( flashgg::mixed );
+          // passesJetPuIdforward_loose = jet->passesPuJetId  ( flashgg::forward_loose );
+          // passesJetPuIdforward_medium = jet->passesPuJetId  ( flashgg::forward_medium );
+          // passesJetPuIdforward_tight = jet->passesPuJetId  ( flashgg::forward_tight );                    
+
+          JetVars_[jetIndex*numVars + 0] = passLoose;
+          JetVars_[jetIndex*numVars + 1] = passTight;
+          JetVars_[jetIndex*numVars + 2] = passTight2017;
+          JetVars_[jetIndex*numVars + 3] = passTight2018;
+          // JetVars_[jetIndex*numVars + 4] = passesJetPUIdLoose;
+
+          // JetVars_[jetIndex*numVars + 4] = passesJetPuIdnone;
+          // JetVars_[jetIndex*numVars + 5] = passesJetPuIdloose;
+          // JetVars_[jetIndex*numVars + 6] = passesJetPuIdmedium;
+          // JetVars_[jetIndex*numVars + 7] = passesJetPuIdtight;
+          // JetVars_[jetIndex*numVars + 8] = passesJetPuIdmixed;
+          // JetVars_[jetIndex*numVars + 9] = passesJetPuIdforward_loose;
+          // JetVars_[jetIndex*numVars + 10] = passesJetPuIdforward_medium;
+          // JetVars_[jetIndex*numVars + 11] = passesJetPuIdforward_tight;
+
+      }      
+
+      return JetVars_;
+    }
+
     void HHWWggTagProducer::produce( Event &event, const EventSetup & )
     {
       bool DEBUG = false;

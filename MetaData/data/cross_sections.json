@@ -1011,7 +1011,7 @@
     "xs": 0.001,
     "kf": 1.06
  },
- "ttHJetToGG_M123_13TeV_amcatnloFXFX_madspin_pythia8_v2": {
+  "ttHJetToGG_M123_13TeV_amcatnloFXFX_madspin_pythia8_v2": {
   "xs": 0.5315,
   "itype": -123300,
   "kf": 1.06,
