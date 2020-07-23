@@ -26,7 +26,7 @@ Contacts:
 - Toyoko Orimoto - Toyoko.Orimoto@cern.ch
 
 Presentations:
-- [29 June 2020 Overall Analysis Update]](https://indico.cern.ch/event/922765/contributions/3915475/attachments/2065622/3466480/29_June_2020_HHWWgg_Status.pdf)
+- [29 June 2020 Overall Analysis Update](https://indico.cern.ch/event/922765/contributions/3915475/attachments/2065622/3466480/29_June_2020_HHWWgg_Status.pdf)
 - [23 June 2020 Resonant Status](https://indico.cern.ch/event/922772/contributions/3915644/attachments/2062412/3460281/23_June_2020_HHWWgg_Res_Update.pdf)
 - [19 May 2020 Non-Res Status](https://indico.cern.ch/event/904968/contributions/3866826/attachments/2041516/3419252/19_May_2020_HH_WWgg_NonResStatus.pdf)
 - [11 November 2019 Update](https://indico.cern.ch/event/847923/contributions/3632148/attachments/1942588/3221820/HH_WWgg_Analysis_Update_11_November_2019_2.pdf)
@@ -310,11 +310,15 @@ Explanation of additional flag:
 Explanation of additional flag:
 - **b**: Specifies the script that it need to hadd background files.
 
+## Rename Workspace
+
+- Script [RenameWorkspace_DataTagger.cpp](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/RenameWorkspace_DataTagger.cpp) helps to rename workspace for data.
+- Script [RenameWorkspace_SignalTagger.cpp](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/RenameWorkspace_SignalTagger.cpp) helps to rename workspaces for signal.
 
 # Few Important Things To Note Before running the framework
 
 1. Campaign `RunIIFall17-3-2-0` contains `flashggMetsCorr` as **InputTag** not `flashggMets`.
-    1. Whenever we need to run over this campaign then we need to uncomment the MetTag in `Taggers/python/flashggHHWWggCandidate_cfi.py`.
+    1. Whenever we need to run over this campaign then we need to uncomment the MetTag in [Taggers/python/flashggHHWWggTag_cfi.py](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/Taggers/python/flashggHHWWggTag_cfi.py).
 
 2. Sample name flow:
 
@@ -337,6 +341,7 @@ Explanation of additional flag:
 
    - The output root file name will be `output_ggF_node11_HHWWgg_qqqq_*.root` when running using condor.
    - The workspace name will be `GluGluToHHTo_WWgg_qqqq_node11`.
+
 
 
 # To-Do List
