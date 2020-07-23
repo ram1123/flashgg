@@ -23,11 +23,14 @@ fggDirec="$PWD/" # flashgg directory (It should be ${PWD}, if now please change 
 inputFolder=""
 outputFolder=""
 runSignal=""
+runBackground=""
 runData=""
 allData=""
+haddWorkspace=""
+haddTrees=""
 
 ## Get user specified argumenets
-options=$(getopt -o sdc --long nTupleDir: --long inFolder: --long outFolder: --long signalType: -- "$@") # end name with colon ':' to specify argument string
+options=$(getopt -o sdbcwt --long nTupleDir: --long inFolder: --long outFolder: --long signalType: -- "$@") # end name with colon ':' to specify argument string
 [ $? -eq 0 ] || {
       echo "Incorrect option provided"
       exit 1
@@ -37,7 +40,10 @@ while true; do
       case "$1" in
       -s) runSignal="true";;
       -d) runData="true";;
-	  -c) allData="true";;
+      -b) runBackground="true";;
+	-c) allData="true";;
+      -w) haddWorkspace="true";;
+      -t) haddTrees="true";;
       --nTupleDir) shift; nTupleDirec=$1 ;;
       --inFolder) shift; inputFolder=$1 ;;
       --outFolder) shift; outputFolder=$1 ;;
@@ -65,9 +71,10 @@ then
       return
 fi
 
-if [ -z "$runSignal" ] && [ -z "$runData" ]
+if [ -z "$runSignal" ] && [ -z "$runData" ] && [ -z "$runBackground" ]
 then
       echo "Please add the flag -s to run on signal output or -d to run on data output"
+      echo "or add -b to run over backgrounds."
       echo "exiting"
       return
 fi
@@ -78,6 +85,23 @@ then
       echo "Options are: Res, EFT, NMSSM"
       echo "exiting"
       return
+fi
+
+if [ "$haddTrees" == "true" ] && [ "haddWorkspace" == "true" ]
+then
+      echo "The two flags -w and -t can't be specified together."
+      echo "exiting"
+      return
+fi
+
+if [ "$haddTrees" == "true" ]
+then
+    haddVar=1
+fi
+
+if [ "$haddWorkspace" == "true" ]
+then
+    haddVar=2
 fi
 
 ## Output read arguments to user
@@ -94,6 +118,9 @@ mkdir -p $outputFolder
 cd $outputFolder
 scriptLoc=$fggDirec
 scriptLoc+="Systematics/scripts/hadd_all.py"
+scriptLoc+=" $haddVar"
+
+echo "SCRIPT: $scriptLoc"
 
 cd $fggDirec
 cmsenv
@@ -153,7 +180,10 @@ do
 			mY=${mY%?????} # remove ".root"
 			infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
 			outfilePath="${nTupleDirec}/${outputFolder}/${mX}_${mY}_HHWWgg_qqlnu.root"
-		fi
+		else
+                  infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
+                  outfilePath="${nTupleDirec}/${outputFolder}/${file_i}"
+            fi
 
 	fi
 
