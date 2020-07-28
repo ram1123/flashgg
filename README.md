@@ -319,8 +319,17 @@ Explanation of additional flag:
 
 # Few Important Things To Note Before running the framework
 
-1. Campaign `RunIIFall17-3-2-0` contains `flashggMetsCorr` as **InputTag** not `flashggMets`.
-    1. Whenever we need to run over this campaign then we need to uncomment the MetTag in [Taggers/python/flashggHHWWggTag_cfi.py](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/Taggers/python/flashggHHWWggTag_cfi.py).
+1. Campaign `RunIIFall17-3-2-0` contains `flashggMetsCorr` as **InputTag** not `flashggMets`. 
+  1. Whenever we need to run over this campaign then we need to edit three files:
+    1. uncomment/comment the MetTag in [Taggers/python/flashggHHWWggTag_cfi.py](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/Taggers/python/flashggHHWWggTag_cfi.py).
+    1. uncomment/comment the MetTag in [Taggers/python/flashggHHWWggCandidate_cfi.py](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/Taggers/python/flashggHHWWggCandidate_cfi.py).
+    1. uncomment/comment the MetTag in [Systematics/python/flashggMetSystematics_cfi.py](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/Systematics/python/flashggMetSystematics_cfi.py).
+
+  1. **Alternatively, you can apply the patch `flashggMets_To_flashggMetsCorr.patch` using command below**
+
+      ```bash
+      git apply flashggMets_To_flashggMetsCorr.patch
+      ```
 
 2. Sample name flow:
 
