@@ -90,13 +90,31 @@ customize.options.register('doHHWWggTagCutFlow', # This saves all events for cut
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doHHWWggTagCutFlow'
-                           ),
+                           )
 customize.options.register('saveHHWWggFinalStateVars', # This saves all events for cutflow analysis
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'saveHHWWggFinalStateVars'
-                           ),                           
+                           )
+customize.options.register('doHHWWggNonResAnalysis', # If true and doing HHWWggTag, will apply non res analysis selections 
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'doHHWWggNonResAnalysis'
+                           )  
+customize.options.register('doHHWWggFHptOrdered', # For HHWWgg analysis fully hardonic state, select jets based on pT order and not min WH difference 
+                           False,
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'doHHWWggFHptOrdered'
+                           )     
+customize.options.register('HHWWggAnalysisChannel', # SL, FL or FH 
+                           "SL", ## run semileptonic by default if nothing specified 
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.string,
+                           'HHWWggAnalysisChannel'
+                           )                                                                               
 customize.options.register('doHHWWggDebug', # save more variables to perform checks 
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
@@ -572,6 +590,7 @@ process.tagsDumper.src = "flashggSystTagMerger"
 process.tagsDumper.processId = "test"
 process.tagsDumper.dumpTrees = customize.dumpTrees
 process.tagsDumper.dumpWorkspace = customize.dumpWorkspace
+# process.tagsDumper.dumpHistos = False
 process.tagsDumper.dumpHistos = False
 process.tagsDumper.quietRooFit = True
 process.tagsDumper.nameTemplate = cms.untracked.string("$PROCESS_$SQRTS_$CLASSNAME_$SUBCAT_$LABEL")
@@ -830,7 +849,7 @@ if customize.doDoubleHTag:
     hhc.doubleHTagRunSequence(systlabels,jetsystlabels,phosystlabels)
   
 # if customize.doHHWWggTag:
-#     hhwwggc.HHWWggTagRunSequence(systlabels,jetsystlabels,phosystlabels)  
+    # hhwwggc.HHWWggTagRunSequence(systlabels,jetsystlabels,phosystlabels)  
 
 if customize.doFiducial:
     if ( customize.doPdfWeights or customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) 
@@ -867,6 +886,15 @@ for mn in mns:
         print str(module),module.src
     elif hasattr(module,"DiPhotonTag"):
         print str(module),module.DiPhotonTag
+
+print "--- has mvashift in input: ---"
+for mn in mns:
+    module = getattr(process,mn)
+    if hasattr(module,"src") and type(module.src) == type(cms.InputTag("")) and module.src.value().count("MvaShift"):
+        print str(module),module.src
+    elif hasattr(module,"MvaShift"):
+        print str(module),module.DiPhotonTag
+
 print
 printSystematicInfo(process)
 
