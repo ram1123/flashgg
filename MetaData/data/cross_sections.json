@@ -1449,6 +1449,45 @@
    "GluGluToHHTo_WWgg_qqqq_nodeSM": {
   "xs": 0.001
  },
+  "ggF_X260_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X270_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X300_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X350_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X400_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X450_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X500_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X550_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X600_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X650_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X700_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+  "ggF_X900_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
+ "ggF_X1000_HHWWgg_qqqq": {
+  "xs": 0.001
+ },
  "ggF_X1100_HHWWgg_qqqq": {
   "xs": 0.001
  },
@@ -1462,18 +1501,6 @@
   "xs": 0.001
  },
   "ggF_X2000_HHWWgg_qqqq": {
-  "xs": 0.001
- },
-  "ggF_X260_HHWWgg_qqqq": {
-  "xs": 0.001
- },
-  "ggF_X270_HHWWgg_qqqq": {
-  "xs": 0.001
- },
-  "ggF_X300_HHWWgg_qqqq": {
-  "xs": 0.001
- },
-  "ggF_X350_HHWWgg_qqqq": {
   "xs": 0.001
  },
  "VHToGG_M130_13TeV_amcatnloFXFX_madspin_pythia8": {

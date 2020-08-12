@@ -49,6 +49,13 @@ class HHWWggCustomize():
             "mH_40To210[2,0,2] := Cut_Variables[11]"
         ]
 
+        # JetIndexVars = [
+        #     "FullyHadSelectedJetIndex0[4,0,4] := JetIndex[0]",
+        #     "FullyHadSelectedJetIndex1[4,0,4] := JetIndex[1]",
+        #     "FullyHadSelectedJetIndex2[4,0,4] := JetIndex[2]",
+        #     "FullyHadSelectedJetIndex3[4,0,4] := JetIndex[3]"
+        # ]
+
         #-- b scores
         bScores = []
         # for jeti in range(0,6):
@@ -117,7 +124,22 @@ class HHWWggCustomize():
             "HHCandidate_py := HH.py()",
             "HHCandidate_pz := HH.pz()",
             "HHCandidate_eta := HH.eta()",
-            "HHCandidate_phi := HH.phi()"
+            "HHCandidate_phi := HH.phi()",
+
+            # Delta eta between two higgs
+            "DeltaEta_HH := HWW.eta() - HGG.eta()",
+            # Delta phi between two higgs
+            "DeltaPhi_HH := HWW.phi() - HGG.phi()",
+            # Delta R between two higgs
+            "DeltaR_HH := sqrt((HWW.phi() - HGG.phi())*(HWW.phi() - HGG.phi()) + (HWW.eta() - HGG.eta())*(HWW.eta() - HGG.eta()))",
+            # cos (HWW, HGG): cos(theta) between Higgs decaying to W's and Higgs decaying to two photons
+            "cosThetaHH := cos(HWW.theta() - HGG.theta())",
+            # cos (W1, W2): cos(theta) between two w-boson system
+            "cosThetaWW := cos(dijet.theta() - dijet2.theta())",
+            # Delta Phi between Higgs decaying to two photons and the selected leading jet for the w-candidate
+            # "DeltaPhi_HGG_SelectedLeadJet := HGG.phi() - goodJets[JetIndex[0]].p4().phi()",
+            # Detta R between Higgs decaying to two photons and the selected leading jet for the w-candidate
+            # "DeltaR_HGG_SelectedLeadJet := sqrt( (HGG.phi() - goodJets[JetIndex[0]].p4().phi())*(HGG.phi() - goodJets[JetIndex[0]].p4().phi()) +  (HGG.eta() - goodJets[JetIndex[0]].p4().eta())*(HGG.eta() - goodJets[JetIndex[0]].p4().eta()) ) "
         ]
 
         vars = ["E","pt","px","py","pz","eta","phi"]
@@ -260,6 +282,7 @@ class HHWWggCustomize():
             variables += otherVariables
             variables += finalStateVars
             variables += cutFlowVars
+            # variables += JetIndexVars
             # variables += bScores
 
         if self.customize.doHHWWggDebug:
