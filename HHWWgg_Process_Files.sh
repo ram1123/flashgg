@@ -153,22 +153,23 @@ do
 	if [[ $runSignal == "true" ]]; then
 
 		if [[ $signalType == "Res" ]]; then
-      mass="$(cut -d'_' -f3 <<<$file_i)" # get third '_' delimited element of file path. Should be X250, X260, etc.
-      channel="$(cut -d'_' -f5 <<<$file_i)" # get fifth '_' delimited element of file path. Should be qqlnu, lnulnu, qqqq
-      channel=${node%?????} # remove ".root"
-      infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
+                  mass="$(cut -d'_' -f3 <<<$file_i)" # get third '_' delimited element of file path. Should be X250, X260, etc.
+                  channel="$(cut -d'_' -f5 <<<$file_i)" # get fifth '_' delimited element of file path. Should be qqlnu, lnulnu, qqqq
+                  channel=${channel//'.root'/} # remove ".root"
+                  infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
 			outfilePath="${nTupleDirec}/${outputFolder}/${mass}_HHWWgg_${channel}.root"
+                  # EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/X1100_HHWWgg_qqqq.root"
 
 		elif [[ $signalType == "NONRES" ]]; then
-      # Input root file should be named such that its fourth '_' delimited
-      # element should be "qqqq" or "lnuqq" or "lnulnu" (channel name) and
-      # fifth '_' delimited element should be like "nodeX".
-			node="$(cut -d'_' -f5 <<<$file_i)" # get fifth '_' delimited element. nodeX.root
+                  # Input root file should be named such that its fourth '_' delimited
+                  # element should be "qqqq" or "lnuqq" or "lnulnu" (channel name) and
+                  # fifth '_' delimited element should be like "nodeX".
+                  node="$(cut -d'_' -f5 <<<$file_i)" # get fifth '_' delimited element. nodeX.root
 			node=${node%?????} # remove ".root"
-      channel="$(cut -d'_' -f4 <<<$file_i)" # get fourth '_' delimited element. qqqq_nodeX.root
+                  channel="$(cut -d'_' -f4 <<<$file_i)" # get fourth '_' delimited element. qqqq_nodeX.root
 			infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
-      outfilePath="${nTupleDirec}/${outputFolder}/${node}_HHWWgg_${channel}.root"
-      # EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/node11_HHWWgg_qqqq.root"
+                  outfilePath="${nTupleDirec}/${outputFolder}/${node}_HHWWgg_${channel}.root"
+                  # EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/node11_HHWWgg_qqqq.root"
 			# EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/node11_HHWWgg_lnuqq.root"
 
 		elif [[ $signalType == "NMSSM" ]]; then

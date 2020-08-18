@@ -73,9 +73,14 @@ flashggHHWWggTag = cms.EDProducer("FlashggHHWWggTagProducer",
                                     doHHWWggTagCutFlowAnalysis = cms.bool(False), # save events for cut flow analysis
                                     doHHWWggNonResAnalysis = cms.bool(False),
                                     doHHWWggFHptOrdered = cms.bool(False), # for FH final state, choose four leading pT jets as four jets
+                                    # HHWWggFHJetSedlectionMethod options:
+                                    #     default option: 1
+                                    #     0: select jet pT ordered;
+                                    #     1: select jets based on min W and H mass;
+                                    #     2: select jet without Higgs mass requirement
+                                    # HHWWggFHJetSedlectionMethod = cms.uint32(1),
                                     doHHWWggDebug = cms.bool(False),
                                     HHWWggAnalysisChannel = cms.string("SL"), # final state analysis to run. SL by default. Can be SL, FL, or FH
                                     # saveHHWWggFinalStateVars = cms.bool(False)
-                                    verbose = cms.bool(False)
                                     )
 # flashggHHWWggTagSequence = cms.Sequence( flashggHHWWggTag ) # not used

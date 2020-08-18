@@ -238,6 +238,22 @@ simply submit with the command:
 
 For this example, workday may be a better choice of work flavour as there are some backgrounds with many events such as GJet, QCD, Drell Yan and DiPhotonJetsBox that may take a long time to run.
 
+#### Resubmit failed jobs
+
+There is a script [resubmit_jobs.py](Systematics/scripts/resubmit_jobs.py) which helps us to resubmit the jobs.
+
+Uses:
+
+```bash
+python Systematics/scripts/resubmit_jobs.py --dir HHWWgg_v2-6_PtOrderNoBqrk_RadionWorkspace  -s /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/August12/HHWWgg_v2-6_PtOrderNoBqrk_RadionWorkspace/
+```
+
+Explanation of each flag:
+
+- **dir**: Name of local condor directory in which condor logs are present.
+- **s**: Full path of the directory in which first condor job send its output.
+
+
 ## nTuple Processing
 
 After your condor jobs are complete, you should have a number of output files for each signal point or data taking era. The first check is to make sure the output number of files equals the number of condor jobs. If there are output files missing, the condor .err .out and .log files may point to the reason why.

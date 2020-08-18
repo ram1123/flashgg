@@ -407,7 +407,8 @@
 <class name="edm::Wrapper<std::vector<flashgg::HHWWggTag> >"/>
 
 
-<class name="flashgg::HHWWggCandidate" ClassVersion="81">
+<class name="flashgg::HHWWggCandidate" ClassVersion="82">
+ <version ClassVersion="82" checksum="3614779157"/>
  <version ClassVersion="81" checksum="1256447613"/>
  <version ClassVersion="80" checksum="3614779157"/>
  <version ClassVersion="79" checksum="2864014914"/>
