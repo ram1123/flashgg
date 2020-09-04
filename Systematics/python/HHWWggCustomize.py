@@ -282,6 +282,7 @@ class HHWWggCustomize():
             variables += otherVariables
             variables += finalStateVars
             variables += cutFlowVars
+            variables += phoEs
             # variables += JetIndexVars
             # variables += bScores
 

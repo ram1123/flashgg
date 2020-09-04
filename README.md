@@ -2,21 +2,21 @@ Table of Contents
 =================
 
    * [General Info](#general-info)
-   * [Setting Up HHWWgg_dev Repository](#setting-hhwwgg_dev-repository)
+   * [Setting Up HHWWgg_dev Repository](#setting-up-hhwwgg_dev-repository)
       * [Setting up a voms Proxy](#setting-up-a-voms-proxy)
       * [HHWWgg Tagger](#hhwwgg-tagger)
          * [Running Locally](#running-locally)
          * [Running on Condor](#running-on-condor)
             * [Example: 2017 Data / MC Variables](#example-2017-data--mc-variables)
+            * [Resubmit failed jobs](#resubmit-failed-jobs)
       * [nTuple Processing](#ntuple-processing)
          * [Workspaces](#workspaces)
             * [Hadd Signal](#hadd-signal)
             * [Hadd Data](#hadd-data)
          * [Trees](#trees)
-            * [Hadd Background](#hadd-background)
+            * [Hadd MC Background](#hadd-mc-background)
       * [Rename Workspace](#rename-workspace)
    * [Few Important Things To Note Before running the framework](#few-important-things-to-note-before-running-the-framework)
-   * [To-Do List](#to-do-list)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc).
 
@@ -175,6 +175,7 @@ The many final state variables job is useful for studying the kinematics of all 
 . HHWWgg_Run_Jobs.sh --labelName HHWWgg_v2-6_Trees_X600_Test --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --json Taggers/test/HHWWgg_v2-6/HHWWgg_v2-6_X600.json --condorQueue longlunch --year 2017 -g -c -v -t
 ```
 
+
 An explanation of the flags:
 - **labelName**: The name used for the output folder placed in ntupleDirec
 - **nEvents**: The max events to run on. To run on all events, specify the flag argument: "all"
@@ -319,7 +320,7 @@ If you ran with trees, these are hadded in the usual way with the hadd command. 
 Explanation of additional flag:
 - **t**: Specifies to hadd the trees.
 
-#### Hadd Background
+#### Hadd MC Background
 
 ```bash
 . HHWWgg_Process_Files.sh --nTupleDir /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/background/ --inFolder Allbkg --outFolder Allbkg_Hadded -b -t
