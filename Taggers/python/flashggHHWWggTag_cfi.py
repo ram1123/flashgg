@@ -19,7 +19,6 @@ flashggHHWWggTag = cms.EDProducer("FlashggHHWWggTagProducer",
                                     PhotonTag = cms.InputTag('flashggRandomizedPhotons'),
                                     # DiPhotonTag = cms.InputTag('flashggDiPhotonSystematics'),
                                     DiPhotonTag = cms.InputTag('flashggPreselectedDiPhotons'),
-                                    # DiPhotonTag = cms.InputTag('flashggDiPhotons'),
                                     SystLabel = cms.string(""),
                                     JetsName = cms.string("bRegProducer"), #
                                     JetsCollSize = cms.uint32(maxJetCollections), #
@@ -56,6 +55,7 @@ flashggHHWWggTag = cms.EDProducer("FlashggHHWWggTagProducer",
                                     LongitudinalImpactParam = cms.double(0.2),
                                     deltaRPhoElectronThreshold = cms.double(0.4), # was 1
                                     deltaMassElectronZThreshold = cms.double(10.),
+                                    # deltaMassElectronZ_FL_Threshold = cms.double(5.), # set in hhwwgg customize instead 
                                     electronEtaThresholds=cms.vdouble(1.4442,1.566,2.5),
                                     nonTrigMVAThresholds = cms.vdouble(0.913286,0.805013,0.358969),
                                     nonTrigMVAEtaCuts = cms.vdouble(0.8,1.479,2.5),
@@ -73,14 +73,22 @@ flashggHHWWggTag = cms.EDProducer("FlashggHHWWggTagProducer",
                                     doHHWWggTagCutFlowAnalysis = cms.bool(False), # save events for cut flow analysis
                                     doHHWWggNonResAnalysis = cms.bool(False),
                                     doHHWWggFHptOrdered = cms.bool(False), # for FH final state, choose four leading pT jets as four jets
-                                    # HHWWggFHJetSedlectionMethod options:
-                                    #     default option: 1
-                                    #     0: select jet pT ordered;
-                                    #     1: select jets based on min W and H mass;
-                                    #     2: select jet without Higgs mass requirement
-                                    # HHWWggFHJetSedlectionMethod = cms.uint32(1),
-                                    doHHWWggDebug = cms.bool(False),
+                                    doHHWWggDebug = cms.bool(False), # False by default to avoid extra print statements, set true with flag 
                                     HHWWggAnalysisChannel = cms.string("SL"), # final state analysis to run. SL by default. Can be SL, FL, or FH
                                     # saveHHWWggFinalStateVars = cms.bool(False)
+                                    deltaRLeps = cms.double(0.4),
+                                    MetPtThreshold = cms.double(20.),
+                                    EB_Photon_MVA_Threshold = cms.double(0.07),#tth -0.7
+                                    EE_Photon_MVA_Threshold = cms.double(-0.03),
+                                    #bTag = cms.string(flashggDeepCSV),
+                                    # btagThresh = cms.double(100)     # no btag (Save all btags < 100)
+                                    lep1ptThre = cms.double(20.),
+                                    lep2ptThre = cms.double(10.),
+                                    lep3ptThre = cms.double(10.),
+                                    DiLepPtThre = cms.double(0.),
+                                    DiLepMassThre = cms.double(0.),
+                                    MassTThre = cms.double(0.),
+                                    MassT_l2Thre = cms.double(0.),
+                                    SaveOthers = cms.bool(True)
                                     )
 # flashggHHWWggTagSequence = cms.Sequence( flashggHHWWggTag ) # not used
