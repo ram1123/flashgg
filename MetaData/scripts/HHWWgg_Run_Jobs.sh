@@ -56,10 +56,7 @@ HHWWggAnalysisChannel="SL"
 doHHWWggFHptOrdered="false" # fully hadronic jets selection; if pt ordered selection it should be true
 
 ## Get user specified argumenets
-
-##-- what is the purpose of "output" ?
 options=$(getopt -o gcvstwrnf --long channel: --long nEvents: --long output: --long labelName: --long json: --long condorQueue: --long year: -- "$@") # end name with colon ':' to specify argument string
-# options=$(getopt -o gcvstwrn --long nEvents: --long labelName: --long json: --long condorQueue: --long year: -- "$@") # end name with colon ':' to specify argument string
 
 [ $? -eq 0 ] || {
       echo "Incorrect option provided"

@@ -16,7 +16,6 @@
 ## User specific variables. Customize to your own working area(s)
 # nTupleDirec="/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_5July_v3/"
 nTupleDirec="$PWD/" # condor output directory
-# nTupleDirec="/eos/user/a/atishelm/ntuples/HHWWgg/"
 echo "nTupleDirec = ${nTupleDirec}"
 fggDirec="$PWD/" # flashgg directory (It should be ${PWD}, if now please change this)
 
@@ -121,6 +120,8 @@ scriptLoc=$fggDirec
 scriptLoc+="Systematics/scripts/hadd_all.py"
 scriptLoc+=" $haddVar"
 
+echo "SCRIPT: $scriptLoc"
+
 cd $fggDirec
 cmsenv
 cd $nTupleDirec
@@ -167,7 +168,7 @@ do
 			node=${node%?????} # remove ".root"
                   channel="$(cut -d'_' -f4 <<<$file_i)" # get fourth '_' delimited element. qqqq_nodeX.root
 			infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
-                  outfilePath="${nTupleDirec}/${outputFolder}/${node}_HHWWgg_${channel}.root"
+                  outfilePath="${nTupleDirec}/${outputFolder}/${node}_HHWWgg_${channel}.root" ##-- I think it's helpful to have the production mode in the name
                   # EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/node11_HHWWgg_qqqq.root"
 			# EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/node11_HHWWgg_lnuqq.root"
 
@@ -177,7 +178,7 @@ do
 			mY="$(cut -d'_' -f 5 <<<$file_i)"
 			mY=${mY%?????} # remove ".root"
 			infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
-			outfilePath="${nTupleDirec}/${outputFolder}/${mX}_${mY}_HHWWgg_qqlnu.root" ##-- I think it's helpful to have the production mode in the name 
+			outfilePath="${nTupleDirec}/${outputFolder}/${mX}_${mY}_HHWWgg_qqlnu.root" ##-- I think it's helpful to have the production mode in the name
 		else
                   infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
                   outfilePath="${nTupleDirec}/${outputFolder}/${file_i}"
@@ -197,7 +198,7 @@ do
 	echo "infilePath: $infilePath"
 	echo "outfilePath: $outfilePath"
 	mv $infilePath $outfilePath
-	#. ../run.sh ../RenameWorkspace_SignalTagger $infilePath $outfilePath $mass # could potential be helpful 
+	#. ../run.sh ../RenameWorkspace_SignalTagger $infilePath $outfilePath $mass # could potential be helpful
 	let "i=i+1"
 
 done

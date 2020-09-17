@@ -40,6 +40,18 @@ Repositories:
 
 These instructions describe how to run flashgg modules specific to the `HH->WWgg` analysis. The current plugin designed to work with workspaceStd is the HHWWgg Tagger.
 
+# Summary workflow of this framework
+
+1. You should have the MicroAOD
+2. Prepare the campaign
+3. Add cross-section value in the cross-section.json
+4. Check running interactive
+5. Condor job submission
+  1. Before moving run the condor re-submit script to check if all jobs completed or not. If not, then it will automatically submit the jobs.
+  2. Wait for all jobs to finish
+6. Hadd the outputs using hadd script.
+7. 
+
 # Setting Up HHWWgg_dev Repository
 
 The HHWWgg development branch is obtained in a similar fasion to the `dev_legacy_runII` branch:

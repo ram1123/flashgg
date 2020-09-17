@@ -578,12 +578,13 @@ namespace flashgg {
 
       return FHJets_;
     }
+
     double Event_num = 1;
     void HHWWggTagProducer::produce( Event &event, const EventSetup & )
     {
       bool DEBUG = false;
 
-      if (DEBUG) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce" <<Event_num<< endl;
+      if (Event_num%500==1) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce:: Event_num = " <<Event_num<< endl;
 
       // Get particle objects
       event.getByToken( photonToken_, photons );
@@ -622,8 +623,8 @@ namespace flashgg {
       int n_good_jets = 0;
       bool hasHighbTag = 0;
       float btagVal = 0;
-      double leadPho_pt = 0;
-      double subleadPho_pt = 0;
+      // double leadPho_pt = 0;
+      // double subleadPho_pt = 0;
       double sumpT = 0;
 
       // Electrons
@@ -651,7 +652,7 @@ namespace flashgg {
 
 
       // int n_METs = METs->size(); // Should be 1, but using as a way to obtain met four vector
-      double diphoMVA = -99;
+      // double diphoMVA = -99;
       // double lead_pho_Hgg_MVA = -99, sublead_pho_Hgg_MVA = -99;
 
       // Saved Objects after selections
@@ -786,10 +787,15 @@ namespace flashgg {
           const flashgg::Photon* subleadPho = dipho->subLeadingPhoton();
 
           if(doHHWWggNonResAnalysis_){
-            leadPho_pt = leadPho->pt();
-            subleadPho_pt = subleadPho->pt();
-            sumpT = leadPho_pt + subleadPho_pt;
-            if(!doHHWWggTagCutFlowAnalysis_ && sumpT < 100.) continue; // if not doing cut flow analysis to save events, remove event
+            // leadPho_pt = leadPho->pt();
+            // subleadPho_pt = subleadPho->pt();
+            // sumpT = leadPho_pt + subleadPho_pt;
+            sumpT = dipho->pt();
+            if(!doHHWWggTagCutFlowAnalysis_ && sumpT < 100.) 
+            {
+              if (Event_num==1) std::cout<<"Photon pt > 100 cut applied" << std::endl;
+              continue; // if not doing cut flow analysis to save events, remove event
+            }
           }
 
           //-- MVA selections
