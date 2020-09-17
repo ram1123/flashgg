@@ -22,23 +22,20 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc).
 
 # General Info
 Contacts:
+- Petr Mandrik - petr.mandrik@cern.ch 
 - Abraham Tishelman-Charny - abraham.tishelman.charny@cern.ch
-- Badder Marzocchi - badder.marzocchi@cern.ch
-- Toyoko Orimoto - Toyoko.Orimoto@cern.ch
+- Jin Wang - Jin.Wang@cern.ch
 
 Presentations:
-- [29 June 2020 Overall Analysis Update](https://indico.cern.ch/event/922765/contributions/3915475/attachments/2065622/3466480/29_June_2020_HHWWgg_Status.pdf)
-- [23 June 2020 Resonant Status](https://indico.cern.ch/event/922772/contributions/3915644/attachments/2062412/3460281/23_June_2020_HHWWgg_Res_Update.pdf)
-- [19 May 2020 Non-Res Status](https://indico.cern.ch/event/904968/contributions/3866826/attachments/2041516/3419252/19_May_2020_HH_WWgg_NonResStatus.pdf)
-- [11 November 2019 Update](https://indico.cern.ch/event/847923/contributions/3632148/attachments/1942588/3221820/HH_WWgg_Analysis_Update_11_November_2019_2.pdf)
-- [21 October 2019 Status](https://indico.cern.ch/event/847927/contributions/3606888/attachments/1930081/3196452/HH_WWgg_Analysis_Status_21_October_2019.pdf)
+- [8 September 2020 Non-Res Plans](https://indico.cern.ch/event/944262/contributions/4000298/attachments/2098804/3528297/8_September_2020_HH_WWgg_NonResUpdate.pdf)
+- [29 June 2020 Analysis Update](https://indico.cern.ch/event/922765/contributions/3915475/attachments/2065622/3466480/29_June_2020_HHWWgg_Status.pdf)
 
 Repositories:
 - [HHWWgg Flashgg Final Fit](https://github.com/atishelmanch/flashggFinalFit/tree/HHWWgg_Dev_runII_102x)
 - [HHWWgg MicroAOD Production](https://github.com/atishelmanch/flashgg/tree/HHWWgg_Crab)
 - [HHWWgg Analysis Tools](https://github.com/NEUAnalyses/HHWWgg_Tools/tree/master)
 
-These instructions describe how to run flashgg modules specific to the `HH->WWgg` analysis. The current plugin designed to work with workspaceStd is the HHWWgg Tagger.
+These instructions describe how to run flashgg modules specific to the `HH->WWgg` analysis. The HHWWgg Tagger plugin, HHWWggTagProducer, is designed to work with workspaceStd.
 
 # Summary workflow of this framework
 
@@ -58,12 +55,12 @@ The HHWWgg development branch is obtained in a similar fasion to the `dev_legacy
 
 ```bash
 export SCRAM_ARCH=slc7_amd64_gcc700
-cmsrel CMSSW_10_5_0
-cd CMSSW_10_5_0/src
+cmsrel CMSSW_10_6_8
+cd CMSSW_10_6_8/src
 cmsenv
 git cms-init
-cd $CMSSW_BASE/src
-git clone -b HHWWgg_dev https://github.com/atishelmanch/flashgg
+cd $CMSSW_BASE/src 
+git clone -b HHWWgg_dev https://github.com/atishelmanch/flashgg.git
 source flashgg/setup_flashgg.sh
 ```
 
@@ -91,7 +88,7 @@ to set this proxy to your `X509_USER_PROXY` environment variable for the example
 
 ```bash
 cd $CMSSW_BASE/src/flashgg
-. proxy.sh x509up_u95168
+. MetaData/scripts/proxy.sh x509up_u95168
 ```
 
 where `x590up_u95168` would be replaced by whatever your proxy name is.
@@ -103,10 +100,10 @@ and if desired to include tagging of other flashgg tags on the same events.
 
 ### Running Locally
 
-The HHWWgg Tagger can be run locally on **signal (with 2017 metaConditions)** with:
+You can try the HHWWgg Tagger locally on the SM HH->WWgg->qqlnugg **signal (with 2017 metaConditions)** with:
 
 ```bash
-cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=HHWWgg_v2-6 dataset=ggF_X600_HHWWgg_qqlnu doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL
+cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=HHWWgg_SM2017 dataset=GluGluToHHTo_WWgg_qqlnu_nodeSM doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL
 ```
 
 and on **2016 data**:
@@ -155,8 +152,9 @@ to the leptonically decaying W boson, **and at least two 'good' jets**, correspo
 
 - **HHWWggTag_0**: Semileptonic electron final state (qqlnugg with l = electron)
 - **HHWWggTag_1**: Semileptonic muon final state (qqlnugg with l = muon)
-- **HHWWggTag_2**: Fully hadronic state (jets selected based on min Mass, or 4 highest pT jets if flag doHHWWggFHptOrdered=1 is set)
-- **HHWWggTag_3**: Untagged (if doHHWWggTagCutFlow=1)
+- **HHWWggTag_2**: Fully hadronic state (qqqqgg) (jets selected based on min Mass, or 4 highest pT jets if flag doHHWWggFHptOrdered=1 is set)
+- **HHWWggTag_3**: Fully Leptonic final state (lnulnugg)
+- **HHWWggTag_4**: Untagged (only used if doHHWWggTagCutFlow=1)
 
 Note that the untagged category is only filled if you are running with the flag `doHHWWggTagCutFlow=1`. To add another category, the number of categories
 specified in [Systematics/python/HHWWggCustomize.py](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/Systematics/python/HHWWggCustomize.py) should be changed like so: `self.tagList = [ ["HHWWggTag",4] ] -> self.tagList = [ ["HHWWggTag",5] ]`. Then, when saving a tag object

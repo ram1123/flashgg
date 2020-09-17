@@ -63,6 +63,7 @@ namespace flashgg {
     edm::Service<TFileService> fs;
 
     // TH1F* indexes;
+    // TH2F* diphopTs;
 
   private:
     double genTotalWeight;
@@ -246,7 +247,10 @@ namespace flashgg {
 
       genInfo_ = pSet.getUntrackedParameter<edm::InputTag>( "genInfo", edm::InputTag("generator") );
       genInfoToken_ = consumes<GenEventInfoProduct>( genInfo_ );
-      // numDiphoCand = fs->make<TH1F> ("numDiphoCand","numDiphoCand",10,0,10);
+      // diphopt = fs->make<TH1F> ("diphopt", "diphopt", 500,0,500);
+      // phoptsum = fs->make<TH1F> ("phoptsum", "phoptsum", 500,0,500);
+
+      // diphopTs = fs->make<TH2F> ("diphopTs","diphoton pTs", 50,0,500,50,0,500); // for looking at dipho pT and sum of dipho photon pTs
 
       // WTags = fs->make<TH1F> ("WTags","W Tags",3,0,3);
       EB_Photon_MVA_Threshold_ =pSet.getParameter<double>( "EB_Photon_MVA_Threshold");
@@ -582,9 +586,10 @@ namespace flashgg {
     double Event_num = 1;
     void HHWWggTagProducer::produce( Event &event, const EventSetup & )
     {
-      bool DEBUG = false;
 
-      if (Event_num%500==1) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce:: Event_num = " <<Event_num<< endl;
+      if (Event_num%1000==1) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce:: Event_num = " <<Event_num<< endl;
+      // if (doHHWWggDebug_) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce" <<Event_num<< endl;
+      if (doHHWWggDebug_) cout << "[HHWWggTagProducer.cc] - systLabel: " << systLabel_ << endl;  
 
       // Get particle objects
       event.getByToken( photonToken_, photons );
@@ -626,6 +631,7 @@ namespace flashgg {
       // double leadPho_pt = 0;
       // double subleadPho_pt = 0;
       double sumpT = 0;
+      double diPho_pT = 0;
 
       // Electrons
 
@@ -763,6 +769,23 @@ namespace flashgg {
         std::unique_ptr<vector<HHWWggTag> > HHWWggtags( new vector<HHWWggTag> );
 
         // if (diPhotons->size() > 0){ // for each systematic
+
+      // if(doHHWWggDebug_){
+    
+      //   for( unsigned int diphoIndex = 0; diphoIndex < diphotons->size(); diphoIndex++ ){
+      //     edm::Ptr<flashgg::DiPhotonCandidate> dipho = diphotons->ptrAt( diphoIndex );
+      //     const flashgg::Photon* leadPho = dipho->leadingPhoton();
+      //     const flashgg::Photon* subleadPho = dipho->subLeadingPhoton();     
+      //     diPho_pT = dipho->pt();
+      //     // cout << "dipho " << diphoIndex << " pT: " << diPho_pT << endl;
+      //     leadPho_pt = leadPho->pt();
+      //     subleadPho_pt = subleadPho->pt();
+      //     sumpT = leadPho_pt + subleadPho_pt; 
+      //     // cout << "dipho " << diphoIndex << " sum pT: " << sumpT << endl;     
+      //     // diphopTs->Fill(diPho_pT,sumpT);  
+      //   }
+
+      // }
 
         if (diphotons->size() > 0){
         for( unsigned int diphoIndex = 0; diphoIndex < 1; diphoIndex++ )
@@ -1026,7 +1049,7 @@ namespace flashgg {
           /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
           //-- Categorize Events
-          if (DEBUG) std::cout << "[INFO] n_good_leptons = " << n_good_leptons << ",\t n_good_jets = " << n_good_jets << std::endl;
+          if (doHHWWggDebug_) std::cout << "[INFO] n_good_leptons = " << n_good_leptons << ",\t n_good_jets = " << n_good_jets << std::endl;
 
           //-- Semi-Leptonic Final state tags
           if(HHWWggAnalysisChannel_ == "SL")
