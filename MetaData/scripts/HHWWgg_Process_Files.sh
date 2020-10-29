@@ -164,7 +164,7 @@ do
                   FinalState="$(cut -d'_' -f5 <<<$file_i)" # get fifth '_' delimited element of file path. Should be qqlnu, lnulnu, qqqq
                   FinalState=${FinalState//'.root'/} # remove ".root"
                   infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
-                  outfilePath="${nTupleDirec}/${outputFolder}/${mass}_${channel}_${channel}.root"
+                  outfilePath="${nTupleDirec}/${outputFolder}/${mass}_HH${channel}_${FinalState}.root"
                   # EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/X1100_HHWWgg_qqqq.root"
             elif [[ ${signalType} == "NORES" ]]; then
                   echo "===> Inside NONRES condition"
@@ -179,7 +179,7 @@ do
                   echo "FinalState: ${FinalState}"
                   echo "channel: ${channel}"
                   infilePath="${nTupleDirec}/${inputFolder}/${file_i}"
-                  outfilePath="${nTupleDirec}/${outputFolder}/${node}_${FinalState}_${channel}.root" ##-- I think it's helpful to have the production mode in the name
+                  outfilePath="${nTupleDirec}/${outputFolder}/${node}_HH${channel}_${FinalState}.root" ##-- I think it's helpful to have the production mode in the name
                   # EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/node11_HHWWgg_qqqq.root"
                   # EXAMPLE: outfilePath="${nTupleDirec}/${outputFolder}/node11_HHWWgg_lnuqq.root"
             elif [[ ${signalType} == "NMSSM" ]]; then

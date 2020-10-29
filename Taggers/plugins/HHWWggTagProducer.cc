@@ -789,7 +789,7 @@ namespace flashgg {
 
           if (sumpT < 160.)
           {
-            if (Event_num==1) std::cout<<"Photon pt > 160 cut applied" << std::endl;
+            if (Event_num<100) std::cout<<"Photon pt > 160 cut applied" << std::endl;
             continue;
           }
 
