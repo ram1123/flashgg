@@ -787,9 +787,9 @@ namespace flashgg {
           const flashgg::Photon* subleadPho = dipho->subLeadingPhoton();
           sumpT = dipho->pt();
 
-          if (sumpT < 200.)
+          if (sumpT < 160.)
           {
-            if (Event_num==1) std::cout<<"Photon pt > 100 cut applied" << std::endl;
+            if (Event_num==1) std::cout<<"Photon pt > 160 cut applied" << std::endl;
             continue;
           }
 

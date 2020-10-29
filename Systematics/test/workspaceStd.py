@@ -158,7 +158,7 @@ customize.options.register('doSystematics',
                            'doSystematics'
                            )
 customize.options.register('doPdfWeights',
-                           True,
+                           False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doPdfWeights'
