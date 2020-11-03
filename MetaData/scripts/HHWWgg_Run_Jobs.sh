@@ -30,11 +30,11 @@
 ## User specific variables. Customize to your own working area(s)
 
 #fggDirec="/afs/cern.ch/work/a/atishelm/21JuneFlashgg/CMSSW_10_5_0/src/flashgg/" # flashgg directory
-fggDirec="/afs/cern.ch/work/a/atishelm/private/HHWWgg_flashgg/21JuneFlashgg/CMSSW_10_5_0/src/flashgg/"
-ntupleDirec="/eos/user/a/atishelm/ntuples/HHWWgg/" # condor output directory
-#fggDirec="$PWD/" # flashgg directory (It should be ${PWD})
-echo "PWD = ${fggDirec}"
-#ntupleDirec="$PWD/" # condor output directory
+# fggDirec="/afs/cern.ch/work/a/atishelm/private/HHWWgg_flashgg/21JuneFlashgg/CMSSW_10_5_0/src/flashgg/"
+# ntupleDirec="/eos/user/a/atishelm/ntuples/HHWWgg/" # condor output directory
+fggDirec="$PWD/" # flashgg directory (It should be ${PWD})
+echo "fggDirec = ${fggDirec}"
+ntupleDirec="$PWD/" # condor output directory
 echo "ntupleDirec = ${ntupleDirec}"
 
 ## Other script parameters

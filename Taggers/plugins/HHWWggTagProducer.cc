@@ -583,7 +583,7 @@ namespace flashgg {
       return FHJets_;
     }
 
-    double Event_num = 1;
+    int Event_num = 1;
     void HHWWggTagProducer::produce( Event &event, const EventSetup & )
     {
 
@@ -808,6 +808,13 @@ namespace flashgg {
           //-- Get Photons
           const flashgg::Photon* leadPho = dipho->leadingPhoton();
           const flashgg::Photon* subleadPho = dipho->subLeadingPhoton();
+          sumpT = dipho->pt();
+
+          // if (sumpT < 105.) 
+          // {
+          //   if (Event_num==1) std::cout<<"Photon pt > 100 cut applied" << std::endl;
+          //   continue;
+          // }
 
           if(doHHWWggNonResAnalysis_){
             // leadPho_pt = leadPho->pt();
@@ -1008,6 +1015,7 @@ namespace flashgg {
           }
           else if(hasHighbTag) continue; // Skip event if it has at least one jet with a btag above threshold, and you're not doing a cut flow analysis
           n_good_jets = tagJets.size();
+          // if(hasHighbTag) continue;
 
           // MET
           if( METs->size() != 1 ) { std::cout << "WARNING - #MET is not 1" << std::endl;}
@@ -1135,6 +1143,13 @@ namespace flashgg {
               }
 
               HHWWggTag tag_obj;
+
+              // if ( (jet1->p4() + jet2->p4()).M() < 65 || (jet1->p4() + jet2->p4()).M() > 105 ) continue;
+              // if ( (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).M() < 105 || (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).M() > 160 ) continue;
+              // if ((jet1->p4()).Pt()<53) continue;
+              //if ( (jet1->p4() + jet2->p4()).Pt() < 51 ) continue;
+              //if ( (jet3->p4() + jet4->p4()).Pt() < 51 ) continue;
+              //if ( (jet1->p4() + jet2->p4() + jet3->p4() + jet4->p4()).Pt() < 100) continue;
 
               if (doHHWWggTagCutFlowAnalysis_){
                 // Save cut flow variables
