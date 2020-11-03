@@ -71,6 +71,8 @@ namespace flashgg {
     std::vector<double> GetMuonVars(const std::vector<edm::Ptr<flashgg::Muon> > &muonPointers, const std::vector<edm::Ptr<reco::Vertex> > &vertexPointers);
     std::vector<double> GetJetVars(const std::vector<edm::Ptr<flashgg::Jet> > &jetPointers, const edm::Ptr<flashgg::DiPhotonCandidate> dipho);
     vector<Ptr<flashgg::Jet>> GetFHminWHJets(bool doHHWWggDebug_, std::vector<edm::Ptr<Jet> > tagJets_);
+    float getGenCosThetaStar_CS(TLorentzVector h1, TLorentzVector h2);
+
     void produce( Event &, const EventSetup & ) override;
     std::vector<edm::EDGetTokenT<edm::View<DiPhotonCandidate> > > diPhotonTokens_;
     std::string inputDiPhotonName_;
@@ -125,6 +127,8 @@ namespace flashgg {
 
     //----output collection
     // auto_ptr<vector<HHWWggCandidate> > HHWWggColl_;
+    vector< edm::EDGetTokenT<float> > reweights_;
+    int doReweight_; // non resonant reweighting 
 
     double EB_Photon_MVA_Threshold_;
     double EE_Photon_MVA_Threshold_;
@@ -249,6 +253,12 @@ namespace flashgg {
       genInfoToken_ = consumes<GenEventInfoProduct>( genInfo_ );
       // diphopt = fs->make<TH1F> ("diphopt", "diphopt", 500,0,500);
       // phoptsum = fs->make<TH1F> ("phoptsum", "phoptsum", 500,0,500);
+
+      doReweight_ = (pSet.getParameter<int>("doReweight")); 
+      auto names = pSet.getParameter<vector<string>>("reweight_names");
+      for (auto & name : names ) {
+          reweights_.push_back(consumes<float>(edm::InputTag(pSet.getParameter<string>("reweight_producer") , name))) ;
+      }
 
       // diphopTs = fs->make<TH2F> ("diphopTs","diphoton pTs", 50,0,500,50,0,500); // for looking at dipho pT and sum of dipho photon pTs
 
@@ -583,12 +593,44 @@ namespace flashgg {
       return FHJets_;
     }
 
-    int Event_num = 1;
+    float HHWWggTagProducer::getGenCosThetaStar_CS(TLorentzVector h1, TLorentzVector h2)
+    {
+    // cos theta star angle in the Collins Soper frame
+        TLorentzVector hh = h1 + h2;
+        h1.Boost(-hh.BoostVector());                     
+        return h1.CosTheta();
+    }
+
+    // int Event_num = 1;
     void HHWWggTagProducer::produce( Event &event, const EventSetup & )
     {
 
       // if (doHHWWggDebug_) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce" <<Event_num<< endl;
       if (doHHWWggDebug_) cout << "[HHWWggTagProducer.cc] - systLabel: " << systLabel_ << endl;  
+
+
+
+      //read reweighting
+      vector<float> reweight_values;
+      if (doReweight_>0) 
+      {
+          for (auto & reweight_token : reweights_)
+          {
+              edm::Handle<float> reweight_hadle;
+              event.getByToken(reweight_token, reweight_hadle);
+              reweight_values.push_back(*reweight_hadle);
+          }
+      }
+
+
+      if(doHHWWggDebug_){
+        cout << "[HHWWggDebug]" << endl;
+        cout << " oReweight_: " << doReweight_ << endl;
+        cout << "reweight_values.size(): " << reweight_values.size() << endl;
+        for(unsigned int i = 0; i < reweight_values.size(); i++){
+          cout << "reweight_values[" << i << "] = " << reweight_values[i] << endl;
+        }
+      }
 
       // Get particle objects
       event.getByToken( photonToken_, photons );
@@ -682,6 +724,8 @@ namespace flashgg {
 
       //-- MC truth
       TagTruthBase truth_obj;
+      double genMhh = 0.;
+      double genCosThetaStar_CS = 0.;      
       if( ! event.isRealData() ) {
           Handle<View<reco::GenParticle> > genParticles;
           std::vector<edm::Ptr<reco::GenParticle> > selHiggses;
@@ -689,17 +733,30 @@ namespace flashgg {
           reco::GenParticle::Point higgsVtx(0.,0.,0.);
 
           for( unsigned int genLoop = 0 ; genLoop < genParticles->size(); genLoop++ ) {
-              int pdgid = genParticles->ptrAt( genLoop )->pdgId();
+               edm::Ptr<reco::GenParticle> genPar = genParticles->ptrAt(genLoop);
+               if (selHiggses.size()>1) break;
+              if (genPar->pdgId()==25 && genPar->isHardProcess()){
+                  selHiggses.push_back(genPar); // to obtain diHiggs 
+                  higgsVtx = genParticles->ptrAt( genLoop )->vertex(); // for dZ calculation
+              } 
+
+              // int pdgid = genParticles->ptrAt( genLoop )->pdgId();
               // pdgId->Fill(pdgid);
 
               // if( pdgid == 25 || pdgid == 22 ) { // not so sure if this is correct for HHWWgg because of potential photons from hadronization
-              if( pdgid == 25 ) {
-                  higgsVtx = genParticles->ptrAt( genLoop )->vertex();
-                  // gen_vertex_z = higgsVtx.z();
-                  break;
-              }
+              // if( pdgid == 25 ) {
+              //     higgsVtx = genParticles->ptrAt( genLoop )->vertex();
+              //     // gen_vertex_z = higgsVtx.z();
+              //     break;
+              // }
           }
-
+          if (selHiggses.size()==2){
+              TLorentzVector H1,H2;
+              H1.SetPtEtaPhiE(selHiggses[0]->p4().pt(),selHiggses[0]->p4().eta(),selHiggses[0]->p4().phi(),selHiggses[0]->p4().energy());
+              H2.SetPtEtaPhiE(selHiggses[1]->p4().pt(),selHiggses[1]->p4().eta(),selHiggses[1]->p4().phi(),selHiggses[1]->p4().energy());
+              genMhh  = (H1+H2).M();
+              genCosThetaStar_CS = getGenCosThetaStar_CS(H1,H2);   
+          }
           truth_obj.setGenPV( higgsVtx );
           truths->push_back( truth_obj );
       }
@@ -851,7 +908,6 @@ namespace flashgg {
           else{
             if(!passMVAs || !pass_leadPhoOverMassThreshold || !pass_subleadPhoOverMassThreshold) continue; // Do not save event if leading and subleading photons don't pass MVA cuts or pt/mgg cuts
           }
-
 
           // Check MET Filters
           // if(passMETfilters){
@@ -1111,7 +1167,13 @@ namespace flashgg {
               tag_obj.setSystLabel( systLabel_);
               tag_obj.setDiPhotonIndex( diphoIndex );
               tag_obj.setCategoryNumber( catnum );
-              tag_obj.includeWeights( *dipho );
+              tag_obj.includeWeights( *dipho ); ///////***** Need to add weights for all analysis objects. jets, leptons. can use include weights or includeweightsbylabel
+              tag_obj.setGenMhh( genMhh );
+              tag_obj.setGenCosThetaStar_CS( genCosThetaStar_CS );              
+              if (doReweight_>0){ 
+                
+                tag_obj.setBenchmarkReweight( reweight_values ); 
+              }
               HHWWggtags->push_back( tag_obj );
               if( ! event.isRealData() ) {
                 HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
@@ -1171,6 +1233,9 @@ namespace flashgg {
               tag_obj.setDiPhotonIndex( diphoIndex );
               tag_obj.setCategoryNumber( catnum );
               tag_obj.includeWeights( *dipho );
+              tag_obj.setGenMhh( genMhh );
+              tag_obj.setGenCosThetaStar_CS( genCosThetaStar_CS );              
+              if (doReweight_>0) tag_obj.setBenchmarkReweight( reweight_values ); 
               HHWWggtags->push_back( tag_obj );
               if( ! event.isRealData() ) {
                 HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
@@ -1260,6 +1325,9 @@ namespace flashgg {
                   tag_obj.setMVA( -0.9 );
                   tag_obj.setCategoryNumber( catnum );
                   tag_obj.includeWeights( *dipho );
+                  tag_obj.setGenMhh( genMhh );
+                  tag_obj.setGenCosThetaStar_CS( genCosThetaStar_CS );                  
+                  if (doReweight_>0) tag_obj.setBenchmarkReweight( reweight_values ); 
                   HHWWggtags->push_back( tag_obj );
                   if( ! event.isRealData() ) {
                     HHWWggtags->back().setTagTruth( edm::refToPtr( edm::Ref<vector<TagTruthBase> >( rTagTruth, 0 ) ) );
@@ -1328,6 +1396,9 @@ namespace flashgg {
                   tag_obj.setMVA( -0.9 );
                   tag_obj.setCategoryNumber( catnum);
                   tag_obj.includeWeights( *dipho );
+                  tag_obj.setGenMhh( genMhh );
+                  tag_obj.setGenCosThetaStar_CS( genCosThetaStar_CS );                  
+                  if (doReweight_>0) tag_obj.setBenchmarkReweight( reweight_values ); 
                   HHWWggtags->push_back( tag_obj );
 
                   if( ! event.isRealData() ) {
@@ -1399,6 +1470,9 @@ namespace flashgg {
                   tag_obj.setMVA( -0.9 );
                   tag_obj.setCategoryNumber( catnum );
                   tag_obj.includeWeights( *dipho );
+                  tag_obj.setGenMhh( genMhh );
+                  tag_obj.setGenCosThetaStar_CS( genCosThetaStar_CS );                  
+                  if (doReweight_>0) tag_obj.setBenchmarkReweight( reweight_values ); 
                   HHWWggtags->push_back( tag_obj );
 
                   if( ! event.isRealData() ) {
@@ -1412,12 +1486,16 @@ namespace flashgg {
           // Untagged category
           else {
             if(doHHWWggTagCutFlowAnalysis_){
+              if(doHHWWggDebug_) cout << "Filling untagged category..." << endl;
               catnum = 4;
               HHWWggTag tag_obj(dipho, allElectrons, goodElectrons, allMuons, goodMuons, theMET, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
               tag_obj.setSystLabel(systLabel_);
               tag_obj.setDiPhotonIndex( diphoIndex );
               tag_obj.setCategoryNumber( catnum ); // Untagged category. Does not meet any selection criteria but want to save event
               tag_obj.includeWeights( *dipho );
+              tag_obj.setGenMhh( genMhh );
+              tag_obj.setGenCosThetaStar_CS( genCosThetaStar_CS );              
+              if (doReweight_>0) tag_obj.setBenchmarkReweight( reweight_values ); 
               HHWWggtags->push_back( tag_obj );
 
               if( ! event.isRealData() ) {
@@ -1430,7 +1508,7 @@ namespace flashgg {
       } // if at least 1 PS diphoton
       event.put( std::move( HHWWggtags ) );
       event.put( std::move( truths ) );
-      Event_num=Event_num + 1;
+      // Event_num=Event_num + 1; // can just set the output message log event by event in workspaceStd
     } // HHWWggTagProducer::produce
 
   } // namespace flashgg

@@ -35,6 +35,9 @@ namespace flashgg {
     ~HHWWggTag();
 
     //-- Utilities 
+    // double getGenCosThetaStar_CS() { return genCosThetaStar_CS_; }
+    // double genCosThetaStar_CS(); 
+    // float getCosThetaStar_CS() const;
     void GetPhoAtt(edm::Ptr<DiPhotonCandidate> dipho);
     void GetObjects(edm::Ptr<DiPhotonCandidate> dipho);
     void GetObjects(edm::Ptr<DiPhotonCandidate> dipho, edm::Ptr<flashgg::Met>);
@@ -142,6 +145,16 @@ namespace flashgg {
     const reco::Candidate::LorentzVector& Subleading_lepton() const { return Subleading_lepton_; };
     const float dipho_MVA() const {return dipho_MVA_;};
 
+    void setBenchmarkReweight(std::vector<float> x) { benchmark_reweights_ = x; }
+    float getBenchmarkReweight(int targetNode) const { return benchmark_reweights_[targetNode]; }
+
+    void setGenMhh(double x) { genMhh_ = x; }
+    double genMhh() const { return genMhh_; }
+    void setGenCosThetaStar_CS(double x) { genCosThetaStar_CS_ = x; }
+    double getGenCosThetaStar_CS() const { return genCosThetaStar_CS_; }
+    // float fabs_CosThetaStar_CS() const {return fabs_CosThetaStar_CS_;}
+    // float getCosThetaStar_CS() const;
+
   private:
     double mva_;
     long eventNumber_;
@@ -177,6 +190,12 @@ namespace flashgg {
     reco::Candidate::LorentzVector Leading_lepton_;
     reco::Candidate::LorentzVector Subleading_lepton_;
     float dipho_MVA_;
+    vector<float> benchmark_reweights_;    
+
+    double genMhh_;
+    double genCosThetaStar_CS_;
+    // double fabs_CosThetaStar_CS_;
+
   };
 
 }
