@@ -46,6 +46,7 @@ These instructions describe how to run flashgg modules specific to the `HH->WWgg
 5. Condor job submission
   1. Before moving run the condor re-submit script to check if all jobs completed or not. If not, then it will automatically submit the jobs.
   2. Wait for all jobs to finish
+  3. When all jobs finished then try to check if any jobs failed or not? If failed resubmit them.
 6. Hadd the outputs using hadd script.
 7. 
 

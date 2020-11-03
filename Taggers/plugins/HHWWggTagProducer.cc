@@ -587,7 +587,6 @@ namespace flashgg {
     void HHWWggTagProducer::produce( Event &event, const EventSetup & )
     {
 
-      if (Event_num%1000==1) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce:: Event_num = " <<Event_num<< endl;
       // if (doHHWWggDebug_) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce" <<Event_num<< endl;
       if (doHHWWggDebug_) cout << "[HHWWggTagProducer.cc] - systLabel: " << systLabel_ << endl;  
 
@@ -810,18 +809,18 @@ namespace flashgg {
           const flashgg::Photon* subleadPho = dipho->subLeadingPhoton();
           sumpT = dipho->pt();
 
-          // if (sumpT < 105.) 
-          // {
-          //   if (Event_num==1) std::cout<<"Photon pt > 100 cut applied" << std::endl;
-          //   continue;
-          // }
+          if (sumpT < 160.)
+          {
+            if (Event_num==1) std::cout<<"Photon pt > 160 cut applied" << std::endl;
+            continue;
+          }
 
           if(doHHWWggNonResAnalysis_){
             // leadPho_pt = leadPho->pt();
             // subleadPho_pt = subleadPho->pt();
             // sumpT = leadPho_pt + subleadPho_pt;
             sumpT = dipho->pt();
-            if(!doHHWWggTagCutFlowAnalysis_ && sumpT < 100.) 
+            if(!doHHWWggTagCutFlowAnalysis_ && sumpT < 100.)
             {
               if (Event_num==1) std::cout<<"Photon pt > 100 cut applied" << std::endl;
               continue; // if not doing cut flow analysis to save events, remove event
@@ -1016,6 +1015,7 @@ namespace flashgg {
           else if(hasHighbTag) continue; // Skip event if it has at least one jet with a btag above threshold, and you're not doing a cut flow analysis
           n_good_jets = tagJets.size();
           // if(hasHighbTag) continue;
+          // std::cout << "hasHighbTag: " << hasHighbTag << std::endl;
 
           // MET
           if( METs->size() != 1 ) { std::cout << "WARNING - #MET is not 1" << std::endl;}
@@ -1064,13 +1064,13 @@ namespace flashgg {
           {
             if ( (n_good_leptons == 1) && (n_good_jets >= 2)) {
 
-              // HHWWggTag_0 - Semileptonic Electron 
+              // HHWWggTag_0 - Semileptonic Electron
               HHWWggTag tag_obj;
 
               if (n_good_electrons == 1){
                 catnum = 0;
-  
-                // If doing cutflow analysis, save all final state object variables 
+
+                // If doing cutflow analysis, save all final state object variables
                 if(doHHWWggTagCutFlowAnalysis_){
                   jet1 = tagJets[0];
                   jet2 = tagJets[1];
@@ -1080,34 +1080,34 @@ namespace flashgg {
                   tag_obj = tag_obj_;
                 }
 
-                // If not doing cutflow analysis, save the minimum which is just the dipho information for the final fit, to keep process and output lightweight 
+                // If not doing cutflow analysis, save the minimum which is just the dipho information for the final fit, to keep process and output lightweight
                 else{
                   HHWWggTag tag_obj_(dipho); // diphoton, electron, MET, jet1, jet2
                   tag_obj = tag_obj_;
-                } 
-              } // n_good_electrons == 1 
+                }
+              } // n_good_electrons == 1
 
-              // HHWWggTag_1 - Semileptonic Muon 
+              // HHWWggTag_1 - Semileptonic Muon
               if (n_good_muons == 1){
                 catnum = 1;
 
-                // If doing cutflow analysis, save all final state object variables 
+                // If doing cutflow analysis, save all final state object variables
                 if (doHHWWggTagCutFlowAnalysis_){
                   jet1 = tagJets[0];
                   jet2 = tagJets[1];
-                  Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );                
+                  Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
                   Ptr<flashgg::Muon> tag_muon = goodMuons[0];
                   HHWWggTag tag_obj_(dipho, allElectrons, tag_muon, allMuons, goodMuons, theMET, jet1, jet2, allJets, tagJets, Cut_Variables, MuonVars, JetVars);
                   tag_obj = tag_obj_;
                 }
-                // If not doing cutflow analysis, save the minimum which is just the dipho information for the final fit, to keep process and output lightweight 
+                // If not doing cutflow analysis, save the minimum which is just the dipho information for the final fit, to keep process and output lightweight
                 else{
                   HHWWggTag tag_obj_(dipho); // diphoton, muon, MET, jet1, jet2
                   tag_obj = tag_obj_;
-                } 
-              } // n_good_muons == 1 
+                }
+              } // n_good_muons == 1
 
-              // Save tag object attributes in any case 
+              // Save tag object attributes in any case
               tag_obj.setSystLabel( systLabel_);
               tag_obj.setDiPhotonIndex( diphoIndex );
               tag_obj.setCategoryNumber( catnum );
@@ -1166,7 +1166,7 @@ namespace flashgg {
               else{
                 HHWWggTag tag_obj_(dipho); // diphoton, electron, MET, jet1, jet2
                 tag_obj = tag_obj_;
-              } 
+              }
               tag_obj.setSystLabel( systLabel_);
               tag_obj.setDiPhotonIndex( diphoIndex );
               tag_obj.setCategoryNumber( catnum );
@@ -1178,10 +1178,10 @@ namespace flashgg {
             }  // if (n_good_leptons==0 && n_good_jets>=4)
           } // Fully Hadronic Categories
 
-          // Fully Leptonic Final State Tags 
+          // Fully Leptonic Final State Tags
 
           if(HHWWggAnalysisChannel_ == "FL")
-          {  
+          {
             int catnum = 3;
             Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
             if ( (n_good_leptons >=2 ) && (theMET->getCorPt() >= MetPtThreshold_) && num_FL_dr>=1 && (leadPho->p4().pt()+subleadPho->p4().pt())>0){
@@ -1246,15 +1246,15 @@ namespace flashgg {
 
                     if(doHHWWggTagCutFlowAnalysis_){
                       Cut_Variables[18]=0.;
-                      HHWWggTag tag_obj_(dipho, tag_electron1, tag_electron2, theMET,Cut_Variables,dipho_MVA); 
-                      tag_obj = tag_obj_;                  
+                      HHWWggTag tag_obj_(dipho, tag_electron1, tag_electron2, theMET,Cut_Variables,dipho_MVA);
+                      tag_obj = tag_obj_;
                     }
 
                     else{
                       HHWWggTag tag_obj_(dipho);
-                      tag_obj = tag_obj_;                  
-                    } 
-                    
+                      tag_obj = tag_obj_;
+                    }
+
                   tag_obj.setSystLabel(systLabel_);
                   tag_obj.setDiPhotonIndex( diphoIndex );
                   tag_obj.setMVA( -0.9 );
@@ -1322,7 +1322,7 @@ namespace flashgg {
                   else{
                     HHWWggTag tag_obj_(dipho);
                     tag_obj = tag_obj_;
-                  } 
+                  }
                   tag_obj.setSystLabel(systLabel_);
                   tag_obj.setDiPhotonIndex( diphoIndex );
                   tag_obj.setMVA( -0.9 );
@@ -1388,12 +1388,12 @@ namespace flashgg {
                     if(tag_electron1->pt()>tag_muon1->pt()) Cut_Variables[18]=2.;//e mu
                     else Cut_Variables[18]=3.; //mu e
                     HHWWggTag tag_obj_(dipho, tag_electron1, tag_muon1, theMET,Cut_Variables,dipho_MVA);
-                    tag_obj = tag_obj_; 
+                    tag_obj = tag_obj_;
                   }
                   else{
                     HHWWggTag tag_obj_(dipho);
-                    tag_obj = tag_obj_; 
-                  } 
+                    tag_obj = tag_obj_;
+                  }
                   tag_obj.setSystLabel(systLabel_);
                   tag_obj.setDiPhotonIndex( diphoIndex );
                   tag_obj.setMVA( -0.9 );
