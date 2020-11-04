@@ -868,7 +868,7 @@ namespace flashgg {
 
           if (sumpT < 160.)
           {
-            if (Event_num==1) std::cout<<"Photon pt > 160 cut applied" << std::endl;
+            // if (Event_num==1) std::cout<<"Photon pt > 160 cut applied" << std::endl;
             continue;
           }
 
@@ -879,7 +879,7 @@ namespace flashgg {
             sumpT = dipho->pt();
             if(!doHHWWggTagCutFlowAnalysis_ && sumpT < 100.)
             {
-              if (Event_num==1) std::cout<<"Photon pt > 100 cut applied" << std::endl;
+              //if (Event_num==1) std::cout<<"Photon pt > 100 cut applied" << std::endl;
               continue; // if not doing cut flow analysis to save events, remove event
             }
           }
