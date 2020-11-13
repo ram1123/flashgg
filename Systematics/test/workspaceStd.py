@@ -487,7 +487,17 @@ if is_signal:
             if customize.HHWWggTagsOnly: variablesToUse.append("MuonIsoWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"Muon%sISOWeight%s01sigma\")" % (direction,str(customize.metaConditions["HHWWggTag"]['MUON_ISO']),direction))
             else: variablesToUse.append("MuonIsoWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"Muon%sISOWeight%s01sigma\")" % (direction,str(customize.metaConditions['MUON_ISO']),direction))
             variablesToUse.append("JetBTagCutWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"JetBTagCutWeight%s01sigma\")" % (direction,direction))
-            variablesToUse.append("JetBTagReshapeWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"JetBTagReshapeWeight%s01sigma\")" % (direction,direction))
+            # variablesToUse.append("JetBTagReshapeWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"JetBTagReshapeWeight%s01sigma\")" % (direction,direction))
+            #variable for b-tag SF
+            variablesToUse.append("JetBTagReshapeWeightJES%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightJES%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightLF%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightLF%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeighthfstats1%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeighthfstats1%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeighthfstats2%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeighthfstats2%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightcferr1%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightcferr1%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightcferr2%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightcferr2%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightHF%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightHF%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightlfstats1%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightlfstats1%s01sigma\")" % (direction,direction))
+            variablesToUse.append("JetBTagReshapeWeightlfstats2%s01sigma[1,-999999.,999999.] := weight(\"JetBTagReshapeWeightlfstats2%s01sigma\")" % (direction,direction))
             if applyL1Prefiring:
                 variablesToUse.append("prefireWeight%s01sigma[1,-999999.,999999.] := weight(\"prefireWeight%s01sigma\")" % (direction,direction))
             if (not customize.HHWWggTagsOnly):
