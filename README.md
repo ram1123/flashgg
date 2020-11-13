@@ -124,6 +124,11 @@ and if desired to include tagging of other flashgg tags on the same events.
 
 You can try the HHWWgg Tagger locally on the SM HH->WWgg->qqlnugg **signal (with 2017 metaConditions)** with:
 
+**FH:**
+```bash
+cmsRun Systematics/test/workspaceStd.py metaConditions=$CMSSW_BASE/src/flashgg/MetaData/data/MetaConditions/Era2016_RR-17Jul2018_v1-HHWWgg.json campaign=Era2016_RR-17Jul2018_v2 dataset=GluGluToHHTo2G4Q_node_1_TuneCUETP8M1_PSWeights_13TeV-madgraph-pythia8 doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=FH
+```
+
 ```bash
 cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1-HHWWgg.json campaign=HHWWgg_SM2017 dataset=GluGluToHHTo_WWgg_qqlnu_nodeSM doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL HHWWgguseZeroVtx=1
 ```

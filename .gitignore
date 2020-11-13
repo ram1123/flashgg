@@ -5,6 +5,11 @@ classes_def.xml
 .__*
 *.swp
 *~
+*.err
+*.out
+*.sub
+*.gz
+FHWW*_201*/
 
 # User specific files
 HHWWgg_v2_6_*/
