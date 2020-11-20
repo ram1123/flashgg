@@ -104,25 +104,25 @@ and if desired to include tagging of other flashgg tags on the same events.
 You can try the HHWWgg Tagger locally on the SM HH->WWgg->qqlnugg **signal (with 2017 metaConditions)** with:
 
 ```bash
-cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=HHWWgg_SM2017 dataset=GluGluToHHTo_WWgg_qqlnu_nodeSM doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL
+cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=HHWWgg_SM2017 dataset=GluGluToHHTo_WWgg_qqlnu_nodeSM doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL HHWWgguseZeroVtx=1
 ```
 
 and on **2016 data**:
 
 ```bash
-cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2016_RR-17Jul2018_v1.json campaign=Era2016_RR-17Jul2018_v2 dataset=/DoubleEG/spigazzi-Era2016_RR-17Jul2018_v2-legacyRun2FullV1-v0-Run2016B-17Jul2018_ver2-v1-86023db6be00ee64cd62a3172358fb9f/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL
+cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2016_RR-17Jul2018_v1.json campaign=Era2016_RR-17Jul2018_v2 dataset=/DoubleEG/spigazzi-Era2016_RR-17Jul2018_v2-legacyRun2FullV1-v0-Run2016B-17Jul2018_ver2-v1-86023db6be00ee64cd62a3172358fb9f/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL HHWWgguseZeroVtx=1
 ```
 
 and on **2017 data**:
 
 ```bash
-cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=Era2017_RR-31Mar2018_v2 dataset=/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL
+cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=Era2017_RR-31Mar2018_v2 dataset=/DoubleEG/spigazzi-Era2017_RR-31Mar2018_v2-legacyRun2FullV1-v0-Run2017B-31Mar2018-v1-d9c0c6cde5cc4a64343ae06f842e5085/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL HHWWgguseZeroVtx=1 
 ```
 
 and on **2018 data**:
 
 ```bash
-cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2018_RR-17Sep2018_v1.json campaign=Era2018_RR-17Sep2018_v2 dataset=/EGamma/spigazzi-Era2018_RR-17Sep2018_v2-legacyRun2FullV2-v0-Run2018A-17Sep2018-v2-dc8e5fb301bfbf2559680ca888829f0c/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=509 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL
+cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2018_RR-17Sep2018_v1.json campaign=Era2018_RR-17Sep2018_v2 dataset=/EGamma/spigazzi-Era2018_RR-17Sep2018_v2-legacyRun2FullV2-v0-Run2018A-17Sep2018-v2-dc8e5fb301bfbf2559680ca888829f0c/USER doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=509 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 processId=Data processType=Data doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL HHWWgguseZeroVtx=1
 ```
 
 All flags are either defined in `MetaData/python/JobConfig.py`, or `Systematics/test/workspaceStd.py`.
@@ -143,6 +143,7 @@ An explanation of the flags in this example:
 - **doHHWWggTagCutFlow**: Categorize all events that pass pre-selection into HHWWgg categories. Without this flag, events that do not pass all analysis selections are cut.
 - **saveHHWWggFinalStateVars**: Save many final state variables such as kinematics for leptons and jets before and after analysis level selections. Variables are defined in [Systematics/python/HHWWggCustomize.py](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/Systematics/python/HHWWggCustomize.py)
 - **HHWWggAnalysisChannel**: The HHWWgg channel analysis to run. This determines the possible categories events can fall into. Options are SL (Semi-Leptonic), FL (Fully-Leptonic) and FH (Fully-Hadronic). By default, if no value is specified, SL is used. NOTE that the untagged category will OVERLAP if combined with other analysis channels.
+- **HHWWgguseZeroVtx**: When running over diphoton candidates, checking if they pass preselection, only consider diphoton candidates produced with respect to the Zeroeth vertex. Note that if this is set to false, the standard Hgg vertex will be used for diphoton candidate reconstruction.
 
 With the options specified in the example, if this works properly, you should get an output file named: `output_numEvent500.root` containing a tree for each `HHWWggTag`.
 
@@ -344,6 +345,48 @@ Explanation of additional flag:
 
 - Script [RenameWorkspace_DataTagger.cpp](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/RenameWorkspace_DataTagger.cpp) helps to rename workspace for data.
 - Script [RenameWorkspace_SignalTagger.cpp](https://github.com/atishelmanch/flashgg/blob/a7da39035c95cfe3f94b8aa6a428c5811e7dbc59/RenameWorkspace_SignalTagger.cpp) helps to rename workspaces for signal.
+
+# Examples 
+
+The purpose of this portion of the README is to provide examples of running the HHWWggTagger. 
+
+## 2018 Semi-Leptonic SM NLO 
+
+The following instructions are an example workflow for producing STAT only results with the centrally produced 2018 SM SL 2018 signal sample. You can first check that the analysis runs locally with the command:
+
+```bash
+    cmsRun Systematics/test/workspaceStd.py metaConditions=MetaData/data/MetaConditions/Era2017_RR-31Mar2018_v1.json campaign=SL-EFT-2018 dataset=GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV-powheg-pythia8 doHHWWggTag=1 HHWWggTagsOnly=1 maxEvents=500 doSystematics=0 dumpWorkspace=0 dumpTrees=1 useAAA=1 doHHWWggTagCutFlow=1 saveHHWWggFinalStateVars=1 HHWWggAnalysisChannel=SL HHWWgguseZeroVtx=1
+```
+
+This should produce an output root file with a tree for each tag, and electron / muon events in tags 0 / 1. As long as it is non zero, this should mean the tagger is working properly. 
+
+The next step is to run over all events using the fggRunJobs script. This can be run and customized with the script MetaData/scripts/SubmitJobs.py. It's helpful first check that everything works by submitting a low number of events and producing output trees:
+
+```bash
+    python MetaData/scripts/SubmitJobs.py --fggDirec /afs/cern.ch/work/a/atishelm/private/flashgg-10_6_8/CMSSW_10_6_8/src/flashgg --outDirec /eos/user/a/atishelm/ntuples/HHWWgg_flashgg --label HHWWgg-SL-SM-NLO-LowEvents-Trees --nEvents 1000 --saveHHWWggFinalStateVars --HHWWgg --dumpTrees --jsonPath Taggers/test/Examples/HHWWgg-SL-SM-NLO/SL_SM2018.json
+```
+
+Where of course the paths for fggDirec and outDirec should be changed to your flashgg location and output directory. You can then monitor your condor job progress with a [Monidor](https://github.com/atishelmanch/Monidor). If the output trees have entries and values of CMS_hgg_mass for example look sensible, you can run on all events simply by changing the --nEvents flag, and switching from trees to workspaces in order to have an output compatible with fggfinalfit:
+
+```bash
+    python MetaData/scripts/SubmitJobs.py --fggDirec /afs/cern.ch/work/a/atishelm/private/flashgg-10_6_8/CMSSW_10_6_8/src/flashgg --outDirec /eos/user/a/atishelm/ntuples/HHWWgg_flashgg --label HHWWgg-SL-SM-NLO-2018 --nEvents -1 --HHWWgg --dumpWorkspace --jsonPath Taggers/test/Examples/HHWWgg-SL-SM-NLO/SL_SM2018.json
+```
+
+Where again progress can be monitored via a [Monidor](https://github.com/atishelmanch/Monidor). If all works properly, you should have a number of output files equal to the number of condor jobs submitted. 
+
+One can then run on 2018 data, first running on a low number of events to make sure everything is compatible:
+
+```bash 
+    python MetaData/scripts/SubmitJobs.py --fggDirec /afs/cern.ch/work/a/atishelm/private/flashgg-10_6_8/CMSSW_10_6_8/src/flashgg --outDirec /eos/user/a/atishelm/ntuples/HHWWgg_flashgg --label 2018-DoubleEG-Data-LowEvents --nEvents 1000 --HHWWgg --dumpTrees --jsonPath Taggers/test/Examples/HHWWgg-SL-SM-NLO/HHWWgg_Data_All_2018.json --saveHHWWggFinalStateVars --condorQueue microCentury
+```
+
+If the output trees have some number of events greater than 0, especially in the untagged category (currently HHWWggTag_4), the tagger should be working properly. One can then run on all events with the command:
+
+```bash
+    python MetaData/scripts/SubmitJobs.py --fggDirec /afs/cern.ch/work/a/atishelm/private/flashgg-10_6_8/CMSSW_10_6_8/src/flashgg --outDirec /eos/user/a/atishelm/ntuples/HHWWgg_flashgg --label 2018-DoubleEG-Data --nEvents -1 --HHWWgg --dumpWorkspace --jsonPath Taggers/test/Examples/HHWWgg-SL-SM-NLO/HHWWgg_Data_All_2018.json --condorQueue microCentury    
+```
+
+Where the condorQueue flag can be adjusted if more time is required to complete jobs on the first attempt. If jobs fail, they can be resubmitted with the script Systematics/scripts/resubmit_jobs.py. 
 
 # Few Important Things To Note Before running the framework
 
