@@ -44,11 +44,11 @@ These instructions describe how to run flashgg modules specific to the `HH->WWgg
 3. Add cross-section value in the cross-section.json
 4. Check running interactive
 5. Condor job submission
-  1. Before moving run the condor re-submit script to check if all jobs completed or not. If not, then it will automatically submit the jobs.
+  1. Before moving to next step check if all jobs processed successfully or not?
+  2. If any job filed resubmit them.
   2. Wait for all jobs to finish
-  3. When all jobs finished then try to check if any jobs failed or not? If failed resubmit them.
 6. Hadd the outputs using hadd script.
-7. 
+7. Finally use the flashggfinalfit for limit extraction.
 
 # Setting Up HHWWgg_dev Repository
 
@@ -186,7 +186,6 @@ The many final state variables job is useful for studying the kinematics of all 
 ```bash
 . HHWWgg_Run_Jobs.sh --labelName HHWWgg_v2-6_Trees_X600_Test --nEvents all --output /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/HHWWgg_10July/ --json Taggers/test/HHWWgg_v2-6/HHWWgg_v2-6_X600.json --condorQueue longlunch --year 2017 -g -c -v -t
 ```
-
 
 An explanation of the flags:
 - **labelName**: The name used for the output folder placed in ntupleDirec

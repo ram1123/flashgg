@@ -455,6 +455,12 @@ class HHWWggCustomize():
             self.process.flashggHHWWggTag.doHHWWggNonResAnalysis = cms.bool(True)
         if self.customize.doHHWWggFHptOrdered:
             self.process.flashggHHWWggTag.doHHWWggFHptOrdered = cms.bool(True)
+        if self.customize.doHHWWggFHminWHJets:
+            self.process.flashggHHWWggTag.doHHWWggFHminWHJets = cms.bool(True)
+        if self.customize.doHHWWggFHminWHLead2Jet:
+            self.process.flashggHHWWggTag.doHHWWggFHminWHLead2Jet = cms.bool(True)
+        if self.customize.doHHWWggFHminHiggsMassOnly:
+            self.process.flashggHHWWggTag.doHHWWggFHminHiggsMassOnly = cms.bool(True)
         if self.customize.doHHWWggDebug:
             self.process.flashggHHWWggTag.doHHWWggDebug = cms.bool(True)
 
