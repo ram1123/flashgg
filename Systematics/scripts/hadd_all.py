@@ -1,44 +1,49 @@
-from os import listdir,popen,access,F_OK
+from os import listdir,popen,access,F_OK,getcwd,system
 from sys import argv
 
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option('--doBigData', default=False, action='store_true', help='Make one big data file')
+parser.add_option('--doEGamma', default=False, action='store_true', help='use EGamma rather than DoubleEG (2018 data)')
+parser.add_option('--targetString', default=None, help='String to match to include')
+parser.add_option('--skipString', default=None, help='String to match to skip')
+parser.add_option('--haddTrees', default=False, action='store_true', help='Hadd tree if true')
+parser.add_option('--haddWorkspace', default=True, action='store_true', help='Hadd workspace if true')
+(opts,args) = parser.parse_args()
+
 targetstring = ""
-haddTrees = True
-haddWorkspace = False
+if opts.targetString is not None: 
+    targetstring = opts.targetString
+haddTrees = opts.haddTrees
+haddWorkspace = opts.haddWorkspace
 
-print "===> argv: ",argv,len(argv)
-print "argv[1] = ",argv[1]
-if len(argv) > 1:
-    if int(argv[1]) == 1:
-        haddTrees = True
-        haddWorkspace = False
-    else:
-        haddTrees = False
-        haddWorkspace = True
-
-print "haddTrees: ",haddTrees
-print "haddWorkspace: ",haddWorkspace
-
-if len(argv) > 2:
-    targetstring = argv[2]
+print "haddTrees = ",haddTrees
+print "haddWorkspace = ",haddWorkspace
+print "targetstring = ",targetstring
+system('pwd')
 
 skipstring = ""
-if len(argv) > 3:
-    skipstring = argv[3]
+if opts.skipString is not None: 
+    skipstring = opts.skipString
 
 dobig = False
 dobigsig = False
-dobigdata = False # LOL
-
+dobigdata = opts.doBigData
+doegamma = opts.doEGamma
 
 filelist = {}
 bigfiles = []
 bigsigfiles = []
 
 def printAndExec(cmd):
-    print "\n\n=====> ",cmd
+    print "=====> ",cmd
     result = popen(cmd).read()
     print result
 
+print "="*51
+print listdir(".")
+print getcwd()
+print "="*51
 for fn in listdir("."):
     if fn.count(".root") and fn.count(targetstring) and (not skipstring or not fn.count(skipstring)):
         fnr = "_".join(fn[:-5].split("_")[:-1])+"_%i.root"
@@ -54,18 +59,21 @@ for fn in listdir("."):
             filelist[fnr] = [fnn]
 
 for fnr in filelist.keys():
+    print "[INFO][hadd_all.py#61] fnr = ",fnr
     result = sorted(filelist[fnr])
     print fnr,result
     # assert(result[-1]+1 == len(result))
     ##-- If num files shouldn't follow ordered naming convention like USER_1, USER_2, ... then remove assertion 
     assert(result[-1]+1 == len(result)) #FIXME
     bigfile = fnr.replace("_%i","")
+    print "bigfile: ",bigfile
     bigfiles.append(bigfile)
     if bigfile.count("HToGG") or bigfile.count("ttHJetToGG"):
         bigsigfiles.append(bigfile)
     if access(bigfile,F_OK):
-        print "skipping",bigfile
+        print "[INFO][hadd_all.py#72] skipping",bigfile
         continue
+    print "[INFO][hadd_all.py#74] "
     if len(result) > 8:
         filesperintermediate = int((len(result))**0.5)
         subres = []
@@ -78,7 +86,7 @@ for fnr in filelist.keys():
             mediumfile = fnr.replace("_%i","intermediate%i"%i)
             mediumlist.append(mediumfile)
             if access(mediumfile,F_OK):
-                print "skipping",mediumfile
+                print "[INFO][hadd_all.py#86] skipping",mediumfile
                 continue
             if haddWorkspace:
                 cmd = "hadd_workspaces %s %s" % (mediumfile," ".join(fnr%fnn for fnn in subres[i]))
@@ -96,7 +104,7 @@ for fnr in filelist.keys():
         if haddTrees:
             cmd = "hadd %s %s" % (bigfile," ".join([fnr%fnn for fnn in result]))
         printAndExec(cmd)
-print
+print "[INFO][hadd_all.py#104] ... "
 if not access("everything.root",F_OK) and dobig:
     if haddWorkspace:
         cmd = "hadd_workspaces everything.root %s" % (" ".join(bigfiles))
