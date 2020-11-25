@@ -8,16 +8,16 @@ from flashgg.MetaData.MetaConditionsReader import *
 class MicroAODCustomize(object):
 
     def __init__(self,*args,**kwargs):
-        
+
         super(MicroAODCustomize,self).__init__()
-    
+
         self.options = VarParsing.VarParsing()
 
         self.options.register ('conditionsJSON',
                                 "", # default value
                                VarParsing.VarParsing.multiplicity.singleton, # singleton or list
                                VarParsing.VarParsing.varType.string,          # string, int, or float
-                               "conditionsJSON")        
+                               "conditionsJSON")
         self.options.register ('fileNames',
                                 "", # default value
                                VarParsing.VarParsing.multiplicity.list, # singleton or list
@@ -94,16 +94,16 @@ class MicroAODCustomize(object):
         ## this allows to use VarParsing methods on JobConfig
         if hasattr(self.options,name):
             return getattr(self.options,name)
-        
+
         raise AttributeError
-    
+
     def __call__(self,process):
         self.customize(process)
         self.userCustomize(process)
-    
+
     # empty default definition for userCustomize
     def userCustomize(self,process):
-        pass 
+        pass
 
     def parse(self):
         self.options.parseArguments()
@@ -116,15 +116,20 @@ class MicroAODCustomize(object):
 
         self.customizePhotons(process)
         self.customizeDiPhotons(process)
-        
+
         if self.puppi == 0:
             self.customizePFCHS(process)
+            self.customizePFCHSAK8(process)
+            self.customizePFPuppiAK8(process)
             self.customizeRemovePuppi(process)
         elif self.puppi == 1:
             self.customizePuppi(process)
             self.customizeRemovePFCHS(process)
-        else: # e.g. 2                                                                                                                               
+            self.customizeRemovePFCHSAK8(process)
+            self.customizeRemovePFPuppiAK8(process)
+        else: # e.g. 2
             self.customizePFCHS(process)
+            self.customizePFCHSAK8(process)
             self.customizePuppi(process)
         if self.processType == "data":
             self.customizeData(process)
@@ -179,18 +184,18 @@ class MicroAODCustomize(object):
             self.customizeDec2016Regression(process)
         if self.runEGMEleID:
             if 'eleIdVersion' in self.metaConditions.keys():
-                getattr(self, 'customize'+self.metaConditions['eleIdVersion'])(process)            
+                getattr(self, 'customize'+self.metaConditions['eleIdVersion'])(process)
             else:
                 getattr(self,'customizeRunIIEleID')(process)
         if self.runEGMPhoID:
             if 'phoIdVersion' in self.metaConditions.keys():
-                getattr(self, 'customize'+self.metaConditions['phoIdVersion'])(process)            
+                getattr(self, 'customize'+self.metaConditions['phoIdVersion'])(process)
             else:
                 getattr(self,'customizeRunIIEGMPhoID')(process)
             # check if ok for 2016
-            self.insertEGMSequence( process ) 
+            self.insertEGMSequence( process )
         print "Final customized process:",process.p
-            
+
     # signal specific customization
     def customizeSignal(self,process):
         print "customizeSignal"
@@ -201,9 +206,9 @@ class MicroAODCustomize(object):
         if "flashggMETsCorrections" in self.metaConditions.keys() and self.metaConditions["flashggMETsCorrections"] != "":
             setMetCorr = getattr(flashgg.MicroAOD.flashggMETs_cff.setMetCorr, self.metaConditions["flashggMETsCorrections"])
             setMetCorr(process)
-            
+
         process.p *=process.flashggMetSequence
-        
+
         # if os.environ["CMSSW_VERSION"].count("CMSSW_8_0"):
         #     process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
         #     process.rivetProducerHTXS = cms.EDProducer('HTXSRivetProducer',
@@ -248,7 +253,7 @@ class MicroAODCustomize(object):
         self.customizePDFs(process)
         self.customizeHLT(process)
 
-    def customizePDFs(self,process):     
+    def customizePDFs(self,process):
         process.load("flashgg/MicroAOD/flashggPDFWeightObject_cfi")
         if "mc2hessianCSV" in self.metaConditions.keys() and self.metaConditions["mc2hessianCSV"] != "":
             setattr(process.flashggPDFWeightObject, "mc2hessianCSV", str(self.metaConditions["mc2hessianCSV"]))
@@ -267,7 +272,7 @@ class MicroAODCustomize(object):
 
         if "sherpa" in self.datasetName:
             process.flashggGenPhotonsExtra.defaultType = 1
-            
+
     # data specific customization
     def customizeData(self,process):
         print "CUSTOMIZE DATA"
@@ -279,7 +284,7 @@ class MicroAODCustomize(object):
         if "flashggMETsCorrections" in self.metaConditions.keys() and self.metaConditions["flashggMETsCorrections"] != "":
             setMetCorr = getattr(flashgg.MicroAOD.flashggMETs_cff.setMetCorr, self.metaConditions["flashggMETsCorrections"])
             setMetCorr(process)
-            
+
         process.p *=process.flashggMetSequence
 
         for pathName in process.paths:
@@ -317,7 +322,7 @@ class MicroAODCustomize(object):
     def customizeDec2016Regression(self,process):
         if not (process.GlobalTag.globaltag == "80X_mcRun2_asymptotic_2016_TrancheIV_v7" or process.GlobalTag.globaltag == "80X_dataRun2_2016SeptRepro_v6"):
             raise Exception,"Regression application turned on but globalTag has unexpected value %s - see MicroAODCustomize.py" % process.GlobalTag.globaltag
-        
+
         from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
         process = regressionWeights(process)
         process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
@@ -334,10 +339,10 @@ class MicroAODCustomize(object):
         switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
         my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.mvaElectronID_Fall17_iso_V2_cff',
                          'RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Fall17_94X_V2_cff',
-                         'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff'] 
+                         'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
         for idmod in my_id_modules:
             setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
-        process.flashggElectrons.eleVetoIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-veto")  
+        process.flashggElectrons.eleVetoIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-veto")
         process.flashggElectrons.eleLooseIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-loose")
         process.flashggElectrons.eleMediumIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-medium")
         process.flashggElectrons.eleTightIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V2-tight")
@@ -366,8 +371,8 @@ class MicroAODCustomize(object):
                          'RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV60_cff']
         for idmod in my_id_modules:
             setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
-            
-        
+
+
     def customizeSummer16EGMEleID(self,process):
         from PhysicsTools.SelectorUtils.tools.vid_id_tools import DataFormat,switchOnVIDElectronIdProducer,setupAllVIDIdsInModule,setupVIDElectronSelection
         dataFormat = DataFormat.MiniAOD
@@ -378,7 +383,7 @@ class MicroAODCustomize(object):
         for idmod in my_id_modules:
             setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
         process.flashggElectrons.effAreasConfigFile = cms.FileInPath("RecoEgamma/ElectronIdentification/data/Summer16/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_80X.txt")
-        process.flashggElectrons.eleVetoIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto")  
+        process.flashggElectrons.eleVetoIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-veto")
         process.flashggElectrons.eleLooseIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose")
         process.flashggElectrons.eleMediumIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-medium")
         process.flashggElectrons.eleTightIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-tight")
@@ -396,7 +401,7 @@ class MicroAODCustomize(object):
         for idmod in my_id_modules:
             setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
         process.flashggElectrons.effAreasConfigFile = cms.FileInPath("RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt")
-        process.flashggElectrons.eleVetoIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-veto")  
+        process.flashggElectrons.eleVetoIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-veto")
         process.flashggElectrons.eleLooseIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-loose")
         process.flashggElectrons.eleMediumIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-medium")
         process.flashggElectrons.eleTightIdMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Fall17-94X-V1-tight")
@@ -498,14 +503,14 @@ class MicroAODCustomize(object):
                     ## maxVtx=cms.int32(1), computeWorstVtx=cms.bool(False)
                     ),
                 )
-        
-    # Add debug collections    
-    def customizeDebug(self,process):    
+
+    # Add debug collections
+    def customizeDebug(self,process):
         from flashgg.MicroAOD.flashggMicroAODOutputCommands_cff import microAODDebugOutputCommand
         process.out.outputCommands += microAODDebugOutputCommand # extra items for debugging
 
-    # Add HLT collections    
-    def customizeHLT(self,process):    
+    # Add HLT collections
+    def customizeHLT(self,process):
         from flashgg.MicroAOD.flashggMicroAODOutputCommands_cff import microAODHLTOutputCommand
         process.out.outputCommands += microAODHLTOutputCommand # extra items for HLT efficiency
 
@@ -524,7 +529,7 @@ class MicroAODCustomize(object):
 
     def customizeVH(self,process):
         # from CMSSW_10_5_0 VH is apparently no longer supported, one should specify either ZH or WH, using auto instead
-        process.rivetProducerHTXS.ProductionMode = "AUTO" 
+        process.rivetProducerHTXS.ProductionMode = "AUTO"
 
     def customizeGGH(self,process):
         process.rivetProducerHTXS.ProductionMode = "GGF"
@@ -575,7 +580,7 @@ class MicroAODCustomize(object):
                 setattr(process.flashggDiPhotons, opt, str(value))
             else:
                 setattr(process.flashggDiPhotons, opt, value)
-                
+
     def customizeGlobalTag(self,process):
         from Configuration.AlCa.GlobalTag import GlobalTag
         process.GlobalTag = GlobalTag(process.GlobalTag, self.globalTag, '')
@@ -588,7 +593,7 @@ class MicroAODCustomize(object):
         TimeMemoryCustomize(process)
         process.MessageLogger.cerr.threshold = 'WARNING'
 
-    def customizePFCHS(self,process):    
+    def customizePFCHS(self,process):
         # need to allow unscheduled processes otherwise reclustering function will fail
         if not hasattr(process,"options"):
             process.options = cms.untracked.PSet()
@@ -602,9 +607,41 @@ class MicroAODCustomize(object):
                                  vertexIndex =vtx,
                                  #doQGTagging = True,
                                  label = '' + str(vtx))
-            
+            print "Debug: DeepJet = ",self.metaConditions['DeepJet']
+            print "Debug: isData = ",self.processType
+
+    def customizePFCHSAK8(self,process):
+        # need to allow unscheduled processes otherwise reclustering function will fail
+        if not hasattr(process,"options"):
+            process.options = cms.untracked.PSet()
+        process.options.allowUnscheduled = cms.untracked.bool(True)
+        from flashgg.MicroAOD.flashggJets_cfi import addFlashggPFCHSAK8Jets
+        from flashgg.MicroAOD.flashggJets_cfi import maxJetCollections
+        for vtx in range(0,maxJetCollections):
+            addFlashggPFCHSAK8Jets (process = process,
+                                 DeepJet = self.metaConditions['DeepJet'],
+                                 isData=(self.processType == "data"),
+                                 vertexIndex =vtx,
+                                 #doQGTagging = True,
+                                 label = '' + str(vtx))
+
+    def customizePFPuppiAK8(self,process):
+        # need to allow unscheduled processes otherwise reclustering function will fail
+        if not hasattr(process,"options"):
+            process.options = cms.untracked.PSet()
+        process.options.allowUnscheduled = cms.untracked.bool(True)
+        from flashgg.MicroAOD.flashggJets_cfi import addFlashggPFPuppiAK8Jets
+        from flashgg.MicroAOD.flashggJets_cfi import maxJetCollections
+        for vtx in range(0,maxJetCollections):
+            addFlashggPFPuppiAK8Jets (process = process,
+                                 DeepJet = self.metaConditions['DeepJet'],
+                                 isData=(self.processType == "data"),
+                                 vertexIndex =vtx,
+                                 #doQGTagging = True,
+                                 label = '' + str(vtx))
+
     def customizePuppi(self,process):
-        # need to allow unscheduled processes otherwise reclustering function will fail                                                            
+        # need to allow unscheduled processes otherwise reclustering function will fail
         if not hasattr(process,"options"):
             process.options = cms.untracked.PSet()
         process.options.allowUnscheduled = cms.untracked.bool(True)
@@ -623,6 +660,20 @@ class MicroAODCustomize(object):
             path.remove(process.flashggFinalJets)
         process.out.outputCommands.append('drop *_flashggFinalJets_*_*')
 
+    def customizeRemovePFCHSAK8(self,process):
+        for pathName in process.paths:
+            path = getattr(process,pathName)
+            path.remove(process.flashggVertexMapForCHS)
+            path.remove(process.flashggFinalAK8Jets)
+        process.out.outputCommands.append('drop *_flashggFinalAK8Jets_*_*')
+
+    def customizeRemovePFPuppiAK8(self,process):
+        for pathName in process.paths:
+            path = getattr(process,pathName)
+            path.remove(process.flashggVertexMapForCHS)
+            path.remove(process.flashggFinalPuppiAK8Jets)
+        process.out.outputCommands.append('drop *_flashggFinalPuppiAK8Jets_*_*')
+
     def customizeRemovePuppi(self,process):
         for pathName in process.paths:
             path = getattr(process,pathName)
@@ -636,7 +687,7 @@ class MicroAODCustomize(object):
 
     def insertEGMSequence(self,process):
         print "Replace flashggPrePhotonSequence80X with egmPhotonIDSequence"
-        print process.p
+        print "process.p: ",process.p
 
         #Hack for EGM
         hack_modifier = cms.Modifier()
@@ -647,7 +698,7 @@ class MicroAODCustomize(object):
         process.task = createTaskWithAllProducersAndFilters(process)
         process.p.associate(process.task)
 
-        
+
 def createTaskWithAllProducersAndFilters(process):
    from FWCore.ParameterSet.Config import Task
    l = [ p for p in process.producers.itervalues()]

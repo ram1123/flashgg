@@ -127,14 +127,18 @@ Note: make sure to run `cmsenv` before executing any of these commands.  If crab
 In order to be able to run on some samples, the samples need to be imported first. Three steps are needed for this.
 
 1. _`import`_. Import copies the list of files from DBS to a local json file called `catalog`. 
-   ```
+
+```
 fggManageSamples.py -C <campagin> -V <flashggversion> import 
 # e.g. fggManageSamples.py -C HggPhys14 -V Phys14MicroAODV1 import 
 ```
-   This command will import all datasets matching `/*/*<campaign>*-*<flashggversion>*/USER` and writes the list of file in `flashgg/MetaData/data/<campaign>/dataset.json`. 
+
+This command will import all datasets matching `/*/*<campaign>*-*<flashggversion>*/USER` and writes the list of file in `flashgg/MetaData/data/<campaign>/dataset.json`. 
+
 A different location for the meta data can be specified with the `--metaDataSrc <pkgName>` option. This will change the destination to `<pkgName>/MetaData/data/<campaign>/datasets.json`. 
 An example output for the `import` command is shown below.
-   ```
+
+```
 Will use the following datasets catalog:
 /afs/cern.ch/work/m/musella/private/Analysis/FGG_7_2_1_patch4/src/flashgg/MetaData/data/HggPhys14/datasets.json
 Importing from das /*/*HggPhys14-Phys14MicroAODV1*/USER
@@ -151,20 +155,22 @@ Importing /GJet_Pt40_doubleEMEnriched_TuneZ2star_13TeV-pythia6/sethzenz-HggPhys1
 
 [...]
 ```
-   At any time, the catalog content can be inspected by the `list` command.
 
-   *Note*: By default the `import` command imports all datasets matching the pattern `/*/*<campaing>-<fgg_version>*/*`. This can be changed explicitely specifying the patterns to be imported, e.g.:
+At any time, the catalog content can be inspected by the `list` command.
+
+**Note**: By default the `import` command imports all datasets matching the pattern `/*/*<campaing>-<fgg_version>*/*`. This can be changed explicitely specifying the patterns to be imported, e.g.:
    `fggManangeSamples.py -C <campaing>_50ns -S /*/*<campaign>*50ns*/*`
    `fggManangeSamples.py -C <campaing>_20ns -S /*/*<campaign>*20ns*/*`
    
-   *Note 2*: Datasets that are submitted or finish at a later stage can be imported in arleady existing catalogs.
+**Note 2**: Datasets that are submitted or finish at a later stage can be imported in arleady existing catalogs.
    If a datataset with the same name already exists, the list of files will be merged (the `review` and `check` steps need to be re-run`).
  
 2. `review` . After importing a list of datasets, the catalog content can be reviewed with the `review` command. This allows to remove undesired (eg duplicated) datasets from the catalog.
-   This operation is achieved by
-   ```fggManageSample -C <campaign> review```
-   An example of the output is shown below.
-   ```
+This operation is achieved by
+```fggManageSample -C <campaign> review```
+
+An example of the output is shown below.
+```
 Will use the following datasets catalog:
 /afs/cern.ch/work/m/musella/private/Analysis/FGG_7_2_1_patch4/src/flashgg/MetaData/data/HggPhys14/datasets.json
 keep this dataset (yes/no/all)?
@@ -185,7 +191,8 @@ keep this dataset?
 ```
 
 3. `check`. Finally, the content of the catalog should be validated using the `check` command. This command will run on all the files in the catalog, check that they can be correctly read in, and also compute sum of weights (for MC samples) which will be later used to reweight the samples. 
-   ```
+
+```
 fggManageSamples.py -C <campaign>  check 
 
 Will use the following datasets catalog:
@@ -203,8 +210,9 @@ Finished jobs: 25. Total jobs: 26
 Writing catalog
 Done
 ```
-   After such operation, the bad files will be marked as such in the catalog and the total weight for each file will be reported.
-   ```
+
+After such operation, the bad files will be marked as such in the catalog and the total weight for each file will be reported.
+```
 {
     "/DYJetsToLL_M-50_13TeV-madgraph-pythia8/sethzenz-HggPhys14-Phys14MicroAODV1-v1-Phys14DR-PU4bx50_PHYS14_25_V1-v1-d7bb6e4a06af43bf30c0514b01defd0b/USER": {
         "files": [
@@ -217,28 +225,28 @@ Done
 }
 ```
 
-   *Note*: For large catalogs, it may be better to run the submit the check command to the batch system using the `-q <queu_name>`  (8nm on lxbatch would suffice) and also to check different datasets in different steps.
-   Furthermore, the check for duplicates can be decoupled from the actual file-by-file check. This can be achieved with the `checklite` command.
+**Note**: For large catalogs, it may be better to run the submit the check command to the batch system using the `-q <queu_name>`  (8nm on lxbatch would suffice) and also to check different datasets in different steps.
+Furthermore, the check for duplicates can be decoupled from the actual file-by-file check. This can be achieved with the `checklite` command.
    `fggManageSamples.py -C <campaing> checklite`
    `fggManageSamples.py -C <campaing> -q 8nm check /DY*`
    `fggManageSamples.py -C <campaing> -q 8nm check /QCD*`
    `fggManageSamples.py -C <campaing> -q 8nm check /DiPhoton*`
    `fggManageSamples.py -C <campaing> -q 8nm check /*/*Prompt*`
 
-   In general, it is best not to deal with more than 1000 files for each `check` run.
+In general, it is best not to deal with more than 1000 files for each `check` run.
 
-   *Note 2*: If the check steps hangs for some reason (and the jobs were run on the batch system), the ouput of the partially completed jobs can be recovered in a subsequent run.
+**Note 2**: If the check steps hangs for some reason (and the jobs were run on the batch system), the ouput of the partially completed jobs can be recovered in a subsequent run.
 `fggManageSamples.py -C <campaing> -c check /DY*`
 
-   This command will not submit any new jobs but just integrate the output of the successful ones into the catalog.    An additional call to:
+This command will not submit any new jobs but just integrate the output of the successful ones into the catalog.    An additional call to:
    `fggManageSamples.py -C <campaing> -q 8nm check /DY*`
    Will submit the missing jobs.
 
-   *Note 3*: By default files or datasets that were not already checked are not included in subsequent runs of the `check` and `checklite` commands. To change this behaviour one can use the `--force` option.
+**Note 3**: By default files or datasets that were not already checked are not included in subsequent runs of the `check` and `checklite` commands. To change this behaviour one can use the `--force` option.
 
-   *Note 4*: If the weights for a dataset are 0, the job splitting is done only base on the number of events.  If any of the files listed in the dataset are non-0, then only those with non-0 weights will be used.
+**Note 4**: If the weights for a dataset are 0, the job splitting is done only base on the number of events.  If any of the files listed in the dataset are non-0, then only those with non-0 weights will be used.
 
-   *Note 5*: If you received an error during the `check` step: `[Errno 2] No such file or directory: u'.tmpxxxxxx.json'` rerun `cmsenv` and retry the fggManageSamples.py commands.
+**Note 5**: If you received an error during the `check` step: `[Errno 2] No such file or directory: u'.tmpxxxxxx.json'` rerun `cmsenv` and retry the fggManageSamples.py commands.
 
 
 4. The file catalog can now be committed to git.
@@ -259,13 +267,14 @@ Before looking into the actual job configuration, some more meta-data need to be
 ```
 Its default location is `flashgg/MetaData/data/cross_sections.json`, but several files can be specified.
 
-    *Note: If the cross-section is set to 0, the dataset is assumed to be data.
+**Note**: If the cross-section is set to 0, the dataset is assumed to be data.
 
 #### Customization statements
 The `fggRunJobs.py` supports jobs which are configured through a `CMSSW` parameter set. These can be `cmsRun` jobs, as well as compiled framework lite executable.
 
 In order to be used by `fggRunJobs.py`, the process configuration, needs to add a specific customization statement, like the one reported below.
 The customization class `flashgg.MetaData.JobConfig` uses the `VarParsing` utilities from `CMSSW` to pass command line options and reads information from the file catalog and the cross section database. 
+
 ```
 # import flashgg customization
 from flashgg.MetaData.JobConfig import customize
@@ -284,7 +293,6 @@ customize = JobConfig(metaDataSrc=<pkgName>,
                       crossSections=["$CMSSW_BASE/src/<pkgName>/MetaData/data/cross_sections.json",
                       "/path/to/my/additional/cross_sections.json"
                       ])
-
 ```
 
 #### Jobs driver configuration

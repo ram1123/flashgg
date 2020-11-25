@@ -11,8 +11,8 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32( 1000 ) )
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 100 )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32( 10 ) )
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 10 )
 
 import os
 ### 2016
@@ -75,22 +75,52 @@ process.MessageLogger.cerr.threshold = 'ERROR' # can't get suppressWarning to wo
 #                                        ignoreTotal = cms.untracked.int32(1),
 #                                        monitorPssAndPrivate = cms.untracked.bool(True)
 #                                       )
-
+print "==================================================================="
+print "=="
+print "== Load flashgg/MicroAOD/flashggMicroAODSequence_cff"
+print "=="
+print "==================================================================="
 process.load("flashgg/MicroAOD/flashggMicroAODSequence_cff")
-
+print "==================================================================="
+print "=="
+print "== Loaded flashgg/MicroAOD/flashggMicroAODSequence_cff"
+print "=="
+print "==================================================================="
 # NEEDED FOR ANYTHING PRIOR TO reMiniAOD
 #process.weightsCount.pileupInfo = "addPileupInfo"
 
+print "==================================================================="
+print "=="
+print "== Load flashgg.MicroAOD.flashggMicroAODOutputCommands_cff"
+print "=="
+print "==================================================================="
 from flashgg.MicroAOD.flashggMicroAODOutputCommands_cff import microAODDefaultOutputCommand
+print "==================================================================="
+print "=="
+print "== Loaded flashgg.MicroAOD.flashggMicroAODOutputCommands_cff"
+print "=="
+print "==================================================================="
 process.out = cms.OutputModule("PoolOutputModule", fileName = cms.untracked.string('myMicroAODOutputFile.root'),
                                outputCommands = microAODDefaultOutputCommand
                                )
 
+print "==================================================================="
+print "=="
+print "== Defined OutputModule"
+print "=="
+print "==================================================================="
 # All jets are now handled in MicroAODCustomize.py
 # Switch from PFCHS to PUPPI with puppi=1 argument (both if puppi=2)
 
 process.p = cms.Path(process.flashggMicroAODSequence)
+
+print "==================================================================="
+print "=="
+print "== Defined paths: process.flashggMicroAODSequence"
+print "=="
+print "==================================================================="
 process.e = cms.EndPath(process.out)
+print "==================================================================="
 
 # Uncomment these lines to run the example commissioning module and send its output to root
 #process.commissioning = cms.EDAnalyzer('flashggCommissioning',
@@ -105,8 +135,13 @@ process.e = cms.EndPath(process.out)
 
 from flashgg.MicroAOD.MicroAODCustomize import customize
 customize(process)
-
+print "==================================================================="
+print "=="
+print "== Loaded flashgg.MicroAOD.MicroAODCustomize"
+print "=="
+print "==================================================================="
 if "DY" in customize.datasetName or "SingleElectron" in customize.datasetName or "DoubleEG" in customize.datasetName or "EGamma" in customize.datasetName:
+    print "[INFO]-[MicroAODstd.py#144]"
     customize.customizeHLT(process)
 
 #open('dump.py', 'w').write(process.dumpPython())

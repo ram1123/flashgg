@@ -5,7 +5,8 @@ from flashgg.MicroAOD.flashggPhotons_cfi import flashggPhotons
 from flashgg.MicroAOD.flashggRandomizedPhotonProducer_cff import flashggRandomizedPhotons
 from flashgg.MicroAOD.flashggDiPhotons_cfi import flashggDiPhotons
 
-from flashgg.MicroAOD.flashggJets_cfi import flashggFinalJets,flashggFinalPuppiJets
+# from flashgg.MicroAOD.flashggJets_cfi import flashggFinalJets,flashggFinalPuppiJets
+from flashgg.MicroAOD.flashggJets_cfi import flashggFinalJets,flashggFinalPuppiJets,flashggFinalAK8Jets,flashggFinalPuppiAK8Jets
 from flashgg.MicroAOD.flashggElectrons_cfi import flashggElectrons
 from flashgg.MicroAOD.flashggMuons_cfi import flashggMuons
 
@@ -48,5 +49,7 @@ flashggMicroAODSequence = cms.Sequence( eventCount+weightsCount
                                        +flashggMuons*flashggSelectedMuons
                                        +flashggMuonFilterSequence
                                        +flashggVertexMapForCHS*flashggFinalJets
+                                       +flashggVertexMapForCHS*flashggFinalAK8Jets
                                        +flashggVertexMapForPUPPI*flashggFinalPuppiJets
+                                       +flashggVertexMapForPUPPI*flashggFinalPuppiAK8Jets
                                         )
