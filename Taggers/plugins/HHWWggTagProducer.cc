@@ -674,7 +674,7 @@ namespace flashgg {
       // double leadPho_pt = 0;
       // double subleadPho_pt = 0;
       double sumpT = 0;
-      double diPho_pT = 0;
+      //double diPho_pT = 0;
 
       // Vertex 
       double GenVtx_z = -999; 
@@ -871,7 +871,7 @@ namespace flashgg {
 
           if (sumpT < 160.)
           {
-            // if (Event_num==1) std::cout<<"Photon pt > 160 cut applied" << std::endl;
+            if (Event_num==1) std::cout<<"Photon pt > 160 cut applied" << std::endl;
             continue;
           }
 
