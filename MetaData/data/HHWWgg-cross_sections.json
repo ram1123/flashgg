@@ -520,7 +520,7 @@
 },
 "GluGluToHHTo2G4Q_node_cHHH5_TuneCUETP8M1_PSWeights_13TeV-powheg-pythia8": {
     "xs": 0.001
-}
+},
 "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV-powheg-pythia8":{
 "xs": 0.001,
 "kf": 1.06

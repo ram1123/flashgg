@@ -602,9 +602,25 @@ namespace flashgg {
         return h1.CosTheta();
     }
 
-    // int Event_num = 1;
+    int Event_num = 1;
     void HHWWggTagProducer::produce( Event &event, const EventSetup & )
     {
+      // bool DEBUG = false;
+      if (Event_num%1000==1) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce:: Event_num = " <<Event_num<< endl;
+      cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce:: Event_num = " <<Event_num<< endl;
+
+      // Set cut booleans
+      // std::vector<double> Cut_Results = {1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; // Cut_Results[i] = 1: Event Passed Cut i
+      std::vector<double> Cut_Variables(20,0.0); // Cut_Results[i] = 1.0: Event Passed Cut i
+      // std::vector<double> Vertex_Variables(20,0.0); // Cut_Results[i] = 1.0: Event Passed Cut i
+      std::vector<double> MuonVars; // For saving Muon ID's and isolation
+      std::vector<double> JetVars;
+
+      // Cut Variables
+      // double has_PS_Dipho = 0, pass_METfilters = 0, dipho_vertex_is_zero = 0, pass_leadPhoOverMassThreshold = 0, pass_subleadPhoOverMassThreshold = 0,
+      double pass_leadPhoOverMassThreshold = 0, pass_subleadPhoOverMassThreshold = 0;
+
+      if(doHHWWggTagCutFlowAnalysis_) Cut_Variables[19] = 1.0; // passed diphoton preselection
 
       // if (doHHWWggDebug_) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce" <<Event_num<< endl;
       if (doHHWWggDebug_) cout << "[HHWWggTagProducer.cc] - systLabel: " << systLabel_ << endl;  
@@ -650,18 +666,6 @@ namespace flashgg {
       event.getByToken( rhoTag_, rho);
 
       double rho_    = *rho;
-
-      // Set cut booleans
-      // std::vector<double> Cut_Results = {1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}; // Cut_Results[i] = 1: Event Passed Cut i
-      std::vector<double> Cut_Variables(20,0.0); // Cut_Results[i] = 1.0: Event Passed Cut i
-      // std::vector<double> Vertex_Variables(20,0.0); // Cut_Results[i] = 1.0: Event Passed Cut i
-      // std::vector<double> Vertex_Variables(); 
-      std::vector<double> MuonVars; // For saving Muon ID's and isolation
-      std::vector<double> JetVars;
-
-      // Cut Variables
-      // double has_PS_Dipho = 0, pass_METfilters = 0, dipho_vertex_is_zero = 0, pass_leadPhoOverMassThreshold = 0, pass_subleadPhoOverMassThreshold = 0,
-      double pass_leadPhoOverMassThreshold = 0, pass_subleadPhoOverMassThreshold = 0;
 
       //---output collection
       // std::unique_ptr<vector<HHWWggTag> > tags( new vector<HHWWggTag> );
@@ -871,8 +875,8 @@ namespace flashgg {
 
           if (sumpT < 160.)
           {
-            if (Event_num==1) std::cout<<"Photon pt > 160 cut applied" << std::endl;
-            continue;
+            if (Event_num==1) std::cout<<"Photon pt < 160 cut applied" << std::endl;
+            // continue;
           }
 
           if(doHHWWggNonResAnalysis_){
@@ -882,6 +886,7 @@ namespace flashgg {
             sumpT = dipho->pt();
             if(!doHHWWggTagCutFlowAnalysis_ && sumpT < 100.)
             {
+              std::cout<<"Photon pt > 100 cut applied" << std::endl;
               //if (Event_num==1) std::cout<<"Photon pt > 100 cut applied" << std::endl;
               continue; // if not doing cut flow analysis to save events, remove event
             }
@@ -1125,8 +1130,17 @@ namespace flashgg {
           //-- Categorize Events
           if (doHHWWggDebug_) std::cout << "[INFO] n_good_leptons = " << n_good_leptons << ",\t n_good_jets = " << n_good_jets << std::endl;
 
+if (  ((n_good_leptons == 1) && (n_good_jets >= 2)) ||  // SL
+      (n_good_leptons==0 && n_good_jets>=4) ||          // FH
+      ( (n_good_leptons >=2 ) &&                        // FL
+        (theMET->getCorPt() >= MetPtThreshold_) &&      // FL
+        num_FL_dr>=1 &&                                 // FL
+        (leadPho->p4().pt()+subleadPho->p4().pt())>0)   // FL
+
+  )
+{
           //-- Semi-Leptonic Final state tags
-          if(HHWWggAnalysisChannel_ == "SL")
+          // if(HHWWggAnalysisChannel_ == "SL")
           {
             if ( (n_good_leptons == 1) && (n_good_jets >= 2)) {
 
@@ -1201,7 +1215,7 @@ namespace flashgg {
           } // Semileptonic cateogries
 
           //-- Fully Hadronic Final State Tags
-          if(HHWWggAnalysisChannel_ == "FH")
+          // if(HHWWggAnalysisChannel_ == "FH")
           {
             if (n_good_leptons==0 && n_good_jets>=4)
             {
@@ -1267,7 +1281,7 @@ namespace flashgg {
 
           // Fully Leptonic Final State Tags
 
-          if(HHWWggAnalysisChannel_ == "FL")
+          // if(HHWWggAnalysisChannel_ == "FL")
           {
             int catnum = 3;
             Ptr<flashgg::Met> theMET = METs->ptrAt( 0 );
@@ -1513,7 +1527,7 @@ namespace flashgg {
             }
           }
         }//FL selection
-
+}
           // Untagged category
           else {
             if(doHHWWggTagCutFlowAnalysis_){
@@ -1542,7 +1556,7 @@ namespace flashgg {
       } // if at least 1 PS diphoton
       event.put( std::move( HHWWggtags ) );
       event.put( std::move( truths ) );
-      // Event_num=Event_num + 1; // can just set the output message log event by event in workspaceStd
+      Event_num=Event_num + 1; // can just set the output message log event by event in workspaceStd
     } // HHWWggTagProducer::produce
 
   } // namespace flashgg
