@@ -2,6 +2,7 @@ Table of Contents
 =================
 
    * [General Info](#general-info)
+   * [Summary workflow of this framework](#summary-workflow-of-this-framework)
    * [Setting Up HHWWgg_dev Repository](#setting-up-hhwwgg_dev-repository)
       * [Setting up a voms Proxy](#setting-up-a-voms-proxy)
       * [HHWWgg Tagger](#hhwwgg-tagger)
@@ -16,9 +17,11 @@ Table of Contents
          * [Trees](#trees)
             * [Hadd MC Background](#hadd-mc-background)
       * [Rename Workspace](#rename-workspace)
+   * [Examples](#examples)
+      * [2018 Semi-Leptonic SM NLO](#2018-semi-leptonic-sm-nlo)
    * [Few Important Things To Note Before running the framework](#few-important-things-to-note-before-running-the-framework)
 
-Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc).
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
 # General Info
 Contacts:
