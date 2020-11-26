@@ -797,7 +797,6 @@ namespace flashgg {
     // int Event_num = 1;
     void HHWWggTagProducer::produce( Event &event, const EventSetup & )
     {
-      cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce:: " << endl;
       if (doHHWWggDebug_) cout << "[INFO][HHWWggTagProducer.cc] - Beginning of HHWWggTagProducer::produce" << endl;
       if (doHHWWggDebug_) cout << "[HHWWggTagProducer.cc] - systLabel: " << systLabel_ << endl;  
 
