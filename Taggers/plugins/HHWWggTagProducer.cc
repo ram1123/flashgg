@@ -194,7 +194,7 @@ namespace flashgg {
     double dipho_MVA;
     edm::InputTag genInfo_;
     edm::EDGetTokenT<GenEventInfoProduct> genInfoToken_;
-    TH1F* nEvents;
+    // TH1F* nEvents;
 
     bool HHWWgguseZeroVtx_; 
   };
@@ -258,7 +258,7 @@ namespace flashgg {
 
       genInfo_ = pSet.getUntrackedParameter<edm::InputTag>( "genInfo", edm::InputTag("generator") );
       genInfoToken_ = consumes<GenEventInfoProduct>( genInfo_ );
-      nEvents = fs->make<TH1F> ("nEvents", "nEvents", 2,0,2);
+      // nEvents = fs->make<TH1F> ("nEvents", "nEvents", 2,0,2);
       // diphopt = fs->make<TH1F> ("diphopt", "diphopt", 500,0,500);
       // phoptsum = fs->make<TH1F> ("phoptsum", "phoptsum", 500,0,500);
 
@@ -810,7 +810,7 @@ namespace flashgg {
       double pass_leadPhoOverMassThreshold = 0, pass_subleadPhoOverMassThreshold = 0;
 
       if(doHHWWggTagCutFlowAnalysis_) Cut_Variables[19] = 1.0; // Count number of events
-      nEvents->Fill(1.0);
+      // nEvents->Fill(1.0);
 
       //read reweighting
       vector<float> reweight_values;
@@ -1468,7 +1468,7 @@ namespace flashgg {
                 jet3 = FHJets[2];
                 jet4 = FHJets[3];
               }
-              else if (doHHWWggFHminHiggsMassOnly_)
+              else if (doHHWWggFHminHiggsMassOnly_) // kept doHHWWggFHminHiggsMassOnly_ to true in Taggers/python/flashggHHWWggTag_cfi.py; this ensures that this won't eneter in the last else
               {
                 if (doHHWWggDebug_) std::cout << "\n\n=============> doHHWWggFHminHiggsMassOnly_ ==================\n\n" << std::endl;
                 FHJets = GetFHminHiggsMassOnly(doHHWWggDebug_, tagJets);
