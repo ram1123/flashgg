@@ -304,7 +304,10 @@ modifyTagSequenceForSystematics(process,jetSystematicsInputTags) # normally unco
 print "Printing options"
 print 'acceptance '+str(customize.acceptance)
 print 'tthTagsOnly '+str(customize.tthTagsOnly)
-
+print 'doHHWWggFHptOrdered = ',customize.doHHWWggFHptOrdered
+print 'doHHWWggFHminWHJets = ',customize.doHHWWggFHminWHJets
+print 'doHHWWggFHminWHLead2Jet = ',customize.doHHWWggFHminWHLead2Jet
+print 'doHHWWggFHminHiggsMassOnly = ',customize.doHHWWggFHminHiggsMassOnly
 # process.load("flashgg/Taggers/flashggTagSequence_cfi")
 # process.flashggTagSequence = flashggPrepareTagSequence(customize.metaConditions)
 
