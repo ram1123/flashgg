@@ -751,7 +751,8 @@ for tag in tagList:
                            nScaleWeights=nScaleWeights,
                            splitPdfByStage0Bin=customize.doHTXS,
                            splitPdfByStage1Bin=customize.doStageOne,
-                           dumpGenWeight=customize.dumpGenWeight
+                           dumpGenWeight=customize.dumpGenWeight,
+                           unbinnedSystematics=(not isBinnedOnly)
                            )
 
 
