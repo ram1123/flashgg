@@ -752,6 +752,7 @@ for tag in tagList:
                            splitPdfByStage0Bin=customize.doHTXS,
                            splitPdfByStage1Bin=customize.doStageOne,
                            dumpGenWeight=customize.dumpGenWeight,
+                           #unbinnedSystematics=True
                            unbinnedSystematics=(not isBinnedOnly)
                            )
 
