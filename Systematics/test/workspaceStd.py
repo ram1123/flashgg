@@ -8,7 +8,6 @@ from flashgg.Systematics.SystematicDumperDefaultVariables import minimalVariable
 import os
 import copy
 from flashgg.MetaData.MetaConditionsReader import *
-# from flashgg.Systematics.flashggDiPhotonSystematics_cfi import flashggDiPhotonSystematics
 
 # SYSTEMATICS SECTION
 dropVBFInNonGold = False  # for 2015 only!
@@ -21,8 +20,6 @@ process.load("Configuration.StandardSequences.MagneticField_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1000000 )
-# process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1 )
-# process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32( 1 ) # Printing out info every event may kill / slow down jobs!
 
 systlabels = [""]
 phosystlabels = []
@@ -268,9 +265,9 @@ customize.options.register('applyNNLOPSweight',
                            )
 
 
-print "Printing defaults"
-print 'acceptance '+str(customize.acceptance)
-print 'tthTagsOnly '+str(customize.tthTagsOnly)
+# print "Printing defaults"
+# print 'acceptance '+str(customize.acceptance)
+# print 'tthTagsOnly '+str(customize.tthTagsOnly)
 
 # import flashgg customization to check if we have signal or background
 from flashgg.MetaData.JobConfig import customize
@@ -295,19 +292,14 @@ jetSystematicsInputTags = createStandardSystematicsProducers(process , customize
 if dropVBFInNonGold:
     process.flashggVBFTag.SetArbitraryNonGoldMC = True
     process.flashggVBFTag.DropNonGoldData = True
-
 modifyTagSequenceForSystematics(process,jetSystematicsInputTags) # normally uncommented 
 # HHWWgg testing: 
 # process.systematicsTagSequences = cms.Sequence()
 # process.flashggSystTagMerger = cms.EDProducer("TagMerger",src=cms.VInputTag("flashggTagSorter"))
 
-print "Printing options"
-print 'acceptance '+str(customize.acceptance)
-print 'tthTagsOnly '+str(customize.tthTagsOnly)
-print 'doHHWWggFHptOrdered = ',customize.doHHWWggFHptOrdered
-print 'doHHWWggFHminWHJets = ',customize.doHHWWggFHminWHJets
-print 'doHHWWggFHminWHLead2Jet = ',customize.doHHWWggFHminWHLead2Jet
-print 'doHHWWggFHminHiggsMassOnly = ',customize.doHHWWggFHminHiggsMassOnly
+# print "Printing options"
+# print 'acceptance '+str(customize.acceptance)
+# print 'tthTagsOnly '+str(customize.tthTagsOnly)
 # process.load("flashgg/Taggers/flashggTagSequence_cfi")
 # process.flashggTagSequence = flashggPrepareTagSequence(customize.metaConditions)
 
@@ -362,7 +354,7 @@ if customize.doHHWWggTag:
     import flashgg.Systematics.HHWWggCustomize 
     hhwwggc = flashgg.Systematics.HHWWggCustomize.HHWWggCustomize(process, customize, customize.metaConditions)
     minimalVariables += hhwwggc.variablesToDump()
-    systematicVariables = hhwwggc.systematicVariables()
+    # systematicVariables = hhwwggc.systematicVariables()
 
 if customize.doStageOne:
     assert (not customize.doHTXS)
@@ -396,7 +388,6 @@ if customize.tthTagsOnly:
     
     process.flashggDiPhotonSystematics.SystMethods = newvpset
 
-
 # if customize.HHWWggTagsOnly:    
 #     print "Removing FracRVNvtxWeight from syst and adding  PixelSeed"
     
@@ -412,57 +403,6 @@ if customize.tthTagsOnly:
 
 print "customize.processId:",customize.processId
 
-# load appropriate scale and smearing bins here
-# systematics customization scripts will take care of adjusting flashggDiPhotonSystematics
-#process.load("flashgg.Systematics.escales.escale76X_16DecRereco_2015")
-
-# Adding systematics without useEGMTools()
-# sysmodule = importlib.import_module(
-
-
-
-# sysmodule = import_module(
-#     "flashgg.Systematics."+customize.metaConditions["flashggDiPhotonSystematics"])
-# systModules2D = cms.VPSet()
-# systModules = cms.VPSet()
-
-# if customize.processId == "Data":
-#     print'Data'
-#     systModules.append(sysmodule.MCScaleHighR9EB_EGM)
-#     systModules.append(sysmodule.MCScaleLowR9EB_EGM)
-#     systModules.append(sysmodule.MCScaleHighR9EE_EGM)
-#     systModules.append(sysmodule.MCScaleLowR9EE_EGM)
-#     # systModules.append(sysmodule.MCScaleGain6EB_EGM)
-#     # systModules.append(sysmodule.MCScaleGain1EB_EGM)
-
-#     for module in systModules:
-#         module.ApplyCentralValue = cms.bool(True)
-
-# else:
-#     print'Not Data'
-#     # systModules.append(sysmodule.MCScaleHighR9EB_EGM)
-#     # systModules.append(sysmodule.MCScaleLowR9EB_EGM)
-#     # systModules.append(sysmodule.MCScaleHighR9EE_EGM)
-#     # systModules.append(sysmodule.MCScaleLowR9EE_EGM)    
-
-#     # systModules2D.append(sysmodule.MCSmearHighR9EE_EGM)
-#     # systModules2D.append(sysmodule.MCSmearLowR9EE_EGM)
-#     # systModules2D.append(sysmodule.MCSmearHighR9EB_EGM)
-#     # systModules2D.append(sysmodule.MCSmearLowR9EB_EGM)
-
-#     # for module in systModules:
-#         # module.ApplyCentralValue = cms.bool(False)
-
-#     systModules.append(sysmodule.TriggerWeight) # applycentralvalue = true 
-
-
-
-
-# process.flashggDiPhotonSystematics = flashggDiPhotonSystematics
-# process.flashggDiPhotonSystematics.src = "flashggPreselectedDiPhotons"
-# process.flashggDiPhotonSystematics.SystMethods = systModules
-# process.flashggDiPhotonSystematics.SystMethods2D = systModules2D
-
 # Or use the official tool instead
 useEGMTools(process)
 
@@ -471,7 +411,17 @@ useEGMTools(process)
 signal_processes = ["ggh_","vbf_","wzh_","wh_","zh_","bbh_","thq_","thw_","tth_","ggzh_","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance","hh","vbfhh","qqh","ggh","tth","vh","WWgg","GluGluToHH"]
 is_signal = reduce(lambda y,z: y or z, map(lambda x: customize.processId.count(x), signal_processes))
 print"is_signal:",is_signal
-applyL1Prefiring = customizeForL1Prefiring(process, customize.metaConditions, customize.processId)
+
+##-- Run without L1 + jet syst. for faster local testing 
+# applyL1Prefiring = 0 
+# if(customize.doHHWWggDebug): 
+    # applyL1Prefiring = 0 
+    # process.flashggTagSequence.remove(process.flashggPrefireDiPhotons)
+# 
+# else:
+    # applyL1Prefiring = customizeForL1Prefiring(process, customize.metaConditions, customize.processId)    
+     
+applyL1Prefiring = customizeForL1Prefiring(process, customize.metaConditions, customize.processId)   
 print("applyL1Prefiring:",applyL1Prefiring)
 #if customize.processId.count("h_") or customize.processId.count("vbf_") or customize.processId.count("Acceptance") or customize.processId.count("hh_"): 
 if is_signal:
@@ -539,10 +489,6 @@ if is_signal:
                     phosystlabels.append("MCScale%s%s%s01sigma" % (r9,region,direction))
                     for var in ["Rho","Phi"]:
                         phosystlabels.append("MCSmear%s%s%s%s01sigma" % (r9,region,var,direction))
-       
-       
-#############################################################
-        
         systlabels += phosystlabels
         systlabels += jetsystlabels
         systlabels += metsystlabels
@@ -563,8 +509,8 @@ if customize.doubleHTagsOnly:
   
 if customize.doDoubleHTag:
    systlabels,jetsystlabels,metsystlabels = hhc.customizeSystematics(systlabels,jetsystlabels,metsystlabels)
-           
 
+##-- Testing removing variablesToUse setting for HHWWgg
 if customize.HHWWggTagsOnly:
     variablesToUse = minimalVariables
     if (customize.processId == "Data"): 
@@ -576,9 +522,9 @@ if customize.HHWWggTagsOnly:
 print "--- Systematics  with independent collections ---"
 print systlabels
 print "-------------------------------------------------"
-print "--- Variables to be dumped, including systematic weights ---"
-print variablesToUse
-print "------------------------------------------------------------"
+# print "--- Variables to be dumped, including systematic weights ---"
+# print variablesToUse
+# print "------------------------------------------------------------"
 
 #from flashgg.Taggers.globalVariables_cff import globalVariables
 #globalVariables.extraFloats.rho = cms.InputTag("rhoFixedGridAll")
@@ -836,7 +782,8 @@ if customize.tthTagsOnly or customize.HHWWggTagsOnly:
                             process.flashggDiPhotonSystematics*
                             process.flashggMetSystematics*
                             process.flashggMuonSystematics*process.flashggElectronSystematics*
-                            (process.flashggUnpackedJets*process.jetSystematicsSequence)*
+                            # (process.flashggUnpackedJets)*
+                            (process.flashggUnpackedJets*process.jetSystematicsSequence)* # jetSystematicsSequence takes a while? --> required for flashggPrefireDiPhotons 
                             #  process.content* ##-- nice for printing out info 
                             (process.flashggTagSequence*process.systematicsTagSequences)*
                             process.flashggSystTagMerger*
@@ -927,30 +874,33 @@ if customize.doHHWWggTag:
 if( not hasattr(process,"options") ): process.options = cms.untracked.PSet()
 process.options.allowUnscheduled = cms.untracked.bool(True)
 
-print "--- Dumping all modules: ---"
-mns = process.p.moduleNames()
-for mn in mns:
-    module = getattr(process,mn)
-    print str(module)
+# print "--- Dumping all modules: ---"
+# mns = process.p.moduleNames()
+# for mn in mns:
+#     module = getattr(process,mn)
+#     print str(module)
 
-print "--- Dumping modules that take diphotons as input: ---"
-mns = process.p.moduleNames()
-for mn in mns:
-    module = getattr(process,mn)
-    if hasattr(module,"src") and type(module.src) == type(cms.InputTag("")) and module.src.value().count("DiPhoton"):
-        print str(module),module.src
-    elif hasattr(module,"DiPhotonTag"):
-        print str(module),module.DiPhotonTag
+# print "--- Dumping modules that take diphotons as input: ---"
+# mns = process.p.moduleNames()
+# for mn in mns:
+#     module = getattr(process,mn)
+#     if hasattr(module,"src") and type(module.src) == type(cms.InputTag("")) and module.src.value().count("DiPhoton"):
+#         print str(module),module.src
+#     elif hasattr(module,"DiPhotonTag"):
+#         print str(module),module.DiPhotonTag
 
-print "--- has mvashift in input: ---"
-for mn in mns:
-    module = getattr(process,mn)
-    if hasattr(module,"src") and type(module.src) == type(cms.InputTag("")) and module.src.value().count("MvaShift"):
-        print str(module),module.src
-    elif hasattr(module,"MvaShift"):
-        print str(module),module.DiPhotonTag
+# print "--- has mvashift in input: ---"
+# for mn in mns:
+#     module = getattr(process,mn)
+#     if hasattr(module,"src") and type(module.src) == type(cms.InputTag("")) and module.src.value().count("MvaShift"):
+#         print str(module),module.src
+#     elif hasattr(module,"MvaShift"):
+#         print str(module),module.DiPhotonTag
 
-print
+# print
+# print "[cms path]"
+# print process.p
+# print 
 printSystematicInfo(process)
 
 # Detailed tag interpretation information printout (blinded)
@@ -995,13 +945,13 @@ if customize.verboseTagDump:
 ## Additional details on tag sorter steps ##
 ############################################
 
-if customize.verboseTagDump:
-    process.flashggTagSorter.Debug = True
-    customize.maxEvents = 10
+# if customize.verboseTagDump:
+#     process.flashggTagSorter.Debug = True
+#     customize.maxEvents = 10
                            
-if customize.verboseSystDump:
-    turnOnAllSystematicsDebug(process)
-    customize.maxEVents = 10
+# if customize.verboseSystDump:
+#     turnOnAllSystematicsDebug(process)
+#     customize.maxEVents = 10
 
 ##############
 ## Dump EDM ##
@@ -1019,4 +969,5 @@ if customize.verboseSystDump:
 #processDumpFile = open('processDump.py', 'w')
 #print >> processDumpFile, process.dumpPython()
 # call the customization
+
 customize(process)

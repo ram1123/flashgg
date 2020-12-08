@@ -388,19 +388,19 @@ class HHWWggCustomize():
       ]
 
 
-      if self.customize.doubleHReweight > 0: 
-        for num in range(0,12):  #12 benchmarks
-            systematicVariables += ["benchmark_reweight_%d[100,0,200] := getBenchmarkReweight(%d)"%(num,num)]
-        systematicVariables+= ["benchmark_reweight_SM[100,0,200] := getBenchmarkReweight(12)"]
-        systematicVariables+= ["benchmark_reweight_box[100,0,200] := getBenchmarkReweight(13)"]      
+    #   if self.customize.doubleHReweight > 0: 
+    #     for num in range(0,12):  #12 benchmarks
+    #         systematicVariables += ["benchmark_reweight_%d[100,0,200] := getBenchmarkReweight(%d)"%(num,num)]
+    #     systematicVariables+= ["benchmark_reweight_SM[100,0,200] := getBenchmarkReweight(12)"]
+    #     systematicVariables+= ["benchmark_reweight_box[100,0,200] := getBenchmarkReweight(13)"]      
 
-      debugVars=[
-          "leadPhoMVA[2,0,2]:=lp_Hgg_MVA",
-          "subleadPhoMVA[2,0,2]:=slp_Hgg_MVA"
-      ]
+    #   debugVars=[
+    #       "leadPhoMVA[2,0,2]:=lp_Hgg_MVA",
+    #       "subleadPhoMVA[2,0,2]:=slp_Hgg_MVA"
+    #   ]
 
-      if self.customize.doHHWWggDebug:
-        systematicVariables += debugVars
+    #   if self.customize.doHHWWggDebug:
+    #     systematicVariables += debugVars
 
       return systematicVariables
 
@@ -509,6 +509,7 @@ class HHWWggCustomize():
             self.process.flashggTagSequence.remove(self.process.flashggUntagged)
             self.process.flashggTagSequence.remove(self.process.flashggUntagged)
             self.process.flashggTagSequence.remove(self.process.flashggTHQLeptonicTag)
+            self.process.flashggTagSequence.remove(self.process.flashggVHhadMVA)
 
         self.process.flashggTagSequence.replace(self.process.flashggTagSorter,self.process.flashggHHWWggTagSequence*self.process.flashggTagSorter)
         self.process.flashggTagSorter.TagPriorityRanges = cms.VPSet( cms.PSet(TagName = cms.InputTag('flashggHHWWggTag')) )
