@@ -1122,7 +1122,7 @@ namespace flashgg {
           sumpT = dipho->pt();
 
           // diPhoton pT cut
-          // if (HHWWggAnalysisChannel_ == "FH" && sumpT < 160.0)  continue;
+          if (HHWWggAnalysisChannel_ == "FH" && sumpT < 200.0)  continue;
           // if (HHWWggAnalysisChannel_ == "FL" && sumpT < 54.0)  continue;
           // if (HHWWggAnalysisChannel_ == "SL" && sumpT < 100.0)  continue;
 
