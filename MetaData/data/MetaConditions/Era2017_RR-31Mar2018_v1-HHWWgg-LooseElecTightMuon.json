@@ -332,8 +332,7 @@
     
         "Ele_reco_SF_FileName" : "flashgg/Systematics/data/2017_reco-eff.json",    
         
-        "jetID" : "Tight2017",
-        "applyPUJetID" : true      
+        "jetID" : "Tight2017"        
     },
 
    "PhoIdInputCorrections":

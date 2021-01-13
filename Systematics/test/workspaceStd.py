@@ -137,25 +137,25 @@ customize.options.register('doHHWWggNonResAnalysis', # If true and doing HHWWggT
                            VarParsing.VarParsing.varType.bool,
                            'doHHWWggNonResAnalysis'
                            )  
-customize.options.register('doHHWWggFHptOrdered', # For HHWWgg analysis fully hardonic state, select jets based on pT order and not min WH difference 
+customize.options.register('doHHWWggFHptOrdered', # For HHWWgg analysis fully hadronic state, select jets based on pT order and not min WH difference 
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doHHWWggFHptOrdered'
                            )
-customize.options.register('doHHWWggFHminWHJets', # For HHWWgg analysis fully hardonic state, select jets based on pT order and not min WH difference
-                           False,
+customize.options.register('doHHWWggFHminWHJets', # For HHWWgg analysis fully hadronic state, select jets based on pT order and not min WH difference
+                           True,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doHHWWggFHminWHJets'
                            )
-customize.options.register('doHHWWggFHminWHLead2Jet', # For HHWWgg analysis fully hardonic state, select jets based on pT order and not min WH difference
+customize.options.register('doHHWWggFHminWHLead2Jet', # For HHWWgg analysis fully hadronic state, select jets based on pT order and not min WH difference
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
                            'doHHWWggFHminWHLead2Jet'
                            )
-customize.options.register('doHHWWggFHminHiggsMassOnly', # For HHWWgg analysis fully hardonic state, select jets based on pT order and not min WH difference
+customize.options.register('doHHWWggFHminHiggsMassOnly', # For HHWWgg analysis fully hadronic state, select jets based on pT order and not min WH difference
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.bool,
@@ -166,7 +166,13 @@ customize.options.register('HHWWggAnalysisChannel', # SL, FL or FH
                            VarParsing.VarParsing.multiplicity.singleton,
                            VarParsing.VarParsing.varType.string,
                            'HHWWggAnalysisChannel'
-                           )                                                                               
+                           )  
+customize.options.register('FillUntagged', # SL, FL or FH 
+                           False, ##-- Do not fill untagged by default 
+                           VarParsing.VarParsing.multiplicity.singleton,
+                           VarParsing.VarParsing.varType.bool,
+                           'FillUntagged'
+                           )                                    
 customize.options.register('doHHWWggDebug', # save more variables to perform checks 
                            False,
                            VarParsing.VarParsing.multiplicity.singleton,
@@ -354,10 +360,22 @@ if customize.doHHWWggTag:
     import flashgg.Systematics.HHWWggCustomize 
     hhwwggc = flashgg.Systematics.HHWWggCustomize.HHWWggCustomize(process, customize, customize.metaConditions)
     minimalVariables += hhwwggc.variablesToDump()
-    systematicVariables_hhwwgg = hhwwggc.systematicVariables() # add scale factors to systematic variables for checks 
+    systematicVariables_hhwwgg = hhwwggc.SystematicVariablesToDump() 
     for HHWWggsystVar in systematicVariables_hhwwgg:
         systematicVariables.append(HHWWggsystVar)
-    # print"systematicVariables:",systematicVariables
+
+print 
+print "=========================="
+print "Checking HHWWgg"
+print "=========================="
+print "Nominal variables to dump:"
+print minimalVariables
+print "=========================="
+print "Systematic variables to dump:"
+print systematicVariables
+print "=========================="
+print "Number of nominal tree variables:",len(minimalVariables)
+print "Number of systematic tree variabels:",len(systematicVariables)
 
 if customize.doStageOne:
     assert (not customize.doHTXS)
@@ -411,7 +429,7 @@ useEGMTools(process)
 
 # Only run systematics for signal events
 # convention: ggh vbf wzh (wh zh) tth
-signal_processes = ["ggh_","vbf_","wzh_","wh_","zh_","bbh_","thq_","thw_","tth_","ggzh_","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance","hh","vbfhh","qqh","ggh","tth","vh","WWgg","GluGluToHH"]
+signal_processes = ["ggh_","vbf_","wzh_","wh_","zh_","bbh_","thq_","thw_","tth_","ggzh_","HHTo2B2G","GluGluHToGG","VBFHToGG","VHToGG","ttHToGG","Acceptance","hh","vbfhh","qqh","ggh","tth","vh","WWgg","GluGluToHHTo2G2Qlnu","GluGluToHHTo2G2ZTo2G4Q","GluGluToHHTo2G2l2nu","GluGluToHHTo2G4Q"]
 is_signal = reduce(lambda y,z: y or z, map(lambda x: customize.processId.count(x), signal_processes))
 print"is_signal:",is_signal
 
@@ -462,26 +480,26 @@ if is_signal:
             variablesToUse.append("electronVetoSF%s01sigma[1,-999999.,999999.] := weight(\"electronVetoSF%s01sigma\")" % (direction,direction))
             variablesToUse.append("TriggerWeight%s01sigma[1,-999999.,999999.] := weight(\"TriggerWeight%s01sigma\")" % (direction,direction))
             variablesToUse.append("FracRVWeight%s01sigma[1,-999999.,999999.] := weight(\"FracRVWeight%s01sigma\")" % (direction,direction))
-            # variablesToUse.append("MuonIDWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"Muon%sIDWeight%s01sigma\")" % (direction,str(customize.metaConditions["MUON_ID"]),direction))
-            variablesToUse.append("MuonTightIDWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"Muon%sIDWeight%s01sigma\")" % (direction,str(customize.metaConditions["MUON_ID"]),direction))
+            if customize.HHWWggTagsOnly: variablesToUse.append("MuonIDWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"Muon%sIDWeight%s01sigma\")" % (direction,str(customize.metaConditions["HHWWggTag"]["MUON_ID"]),direction))
+            else: variablesToUse.append("MuonIDWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"Muon%sIDWeight%s01sigma\")" % (direction,str(customize.metaConditions["MUON_ID"]),direction))
             variablesToUse.append("ElectronIDWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"ElectronIDWeight%s01sigma\")" % (direction,direction))
             variablesToUse.append("ElectronRecoWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"ElectronRecoWeight%s01sigma\")" % (direction,direction))
-            # variablesToUse.append("MuonIsoWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"Muon%sISOWeight%s01sigma\")" % (direction,str(customize.metaConditions['MUON_ISO']),direction))
-            variablesToUse.append("MuonTightRelIsoWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"Muon%sISOWeight%s01sigma\")" % (direction,str(customize.metaConditions['MUON_ISO']),direction))
+            if customize.HHWWggTagsOnly: variablesToUse.append("MuonIsoWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"Muon%sISOWeight%s01sigma\")" % (direction,str(customize.metaConditions["HHWWggTag"]['MUON_ISO']),direction))
+            else: variablesToUse.append("MuonIsoWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"Muon%sISOWeight%s01sigma\")" % (direction,str(customize.metaConditions['MUON_ISO']),direction))
             variablesToUse.append("JetBTagCutWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"JetBTagCutWeight%s01sigma\")" % (direction,direction))
             variablesToUse.append("JetBTagReshapeWeight%s01sigma[1,-999999.,999999.] := getObjectWeight(\"JetBTagReshapeWeight%s01sigma\")" % (direction,direction))
             if applyL1Prefiring:
                 variablesToUse.append("prefireWeight%s01sigma[1,-999999.,999999.] := weight(\"prefireWeight%s01sigma\")" % (direction,direction))
-                # variablesToUse.append("prefireWeightCentral[1,-999999.,999999.] := weight(\"prefireWeight\")")
-            variablesToUse.append("THU_ggH_Mu%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mu%s01sigma\")" % (direction,direction))
-            variablesToUse.append("THU_ggH_Res%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Res%s01sigma\")" % (direction,direction))
-            variablesToUse.append("THU_ggH_Mig01%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mig01%s01sigma\")" % (direction,direction))
-            variablesToUse.append("THU_ggH_Mig12%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mig12%s01sigma\")" % (direction,direction))
-            variablesToUse.append("THU_ggH_VBF2j%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_VBF2j%s01sigma\")" % (direction,direction))
-            variablesToUse.append("THU_ggH_VBF3j%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_VBF3j%s01sigma\")" % (direction,direction))
-            variablesToUse.append("THU_ggH_PT60%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_PT60%s01sigma\")" % (direction,direction))
-            variablesToUse.append("THU_ggH_PT120%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_PT120%s01sigma\")" % (direction,direction))
-            variablesToUse.append("THU_ggH_qmtop%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_qmtop%s01sigma\")" % (direction,direction))
+            if (not customize.HHWWggTagsOnly):
+                variablesToUse.append("THU_ggH_Mu%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mu%s01sigma\")" % (direction,direction))
+                variablesToUse.append("THU_ggH_Res%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Res%s01sigma\")" % (direction,direction))
+                variablesToUse.append("THU_ggH_Mig01%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mig01%s01sigma\")" % (direction,direction))
+                variablesToUse.append("THU_ggH_Mig12%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_Mig12%s01sigma\")" % (direction,direction))
+                variablesToUse.append("THU_ggH_VBF2j%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_VBF2j%s01sigma\")" % (direction,direction))
+                variablesToUse.append("THU_ggH_VBF3j%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_VBF3j%s01sigma\")" % (direction,direction))
+                variablesToUse.append("THU_ggH_PT60%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_PT60%s01sigma\")" % (direction,direction))
+                variablesToUse.append("THU_ggH_PT120%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_PT120%s01sigma\")" % (direction,direction))
+                variablesToUse.append("THU_ggH_qmtop%s01sigma[1,-999999.,999999.] := getTheoryWeight(\"THU_ggH_qmtop%s01sigma\")" % (direction,direction))
 
             for r9 in ["HighR9","LowR9"]:
                 for region in ["EB","EE"]:
@@ -532,7 +550,7 @@ print "-------------------------------------------------"
 
 # cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,jetsystlabels,jetSystematicsInputTags)
 
-cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,metsystlabels,jetsystlabels,jetSystematicsInputTags) # used in workspacestd 
+cloneTagSequenceForEachSystematic(process,systlabels,phosystlabels,metsystlabels,jetsystlabels,jetSystematicsInputTags) 
 
 # Dump an object called NoTag for untagged events in order to track QCD weights
 # Will be broken if it's done for non-central values, so turn this on only for the non-syst tag sorter
@@ -667,8 +685,7 @@ for tag in tagList:
               currentVariables = []
       isBinnedOnly = (systlabel !=  "")
       is_signal = reduce(lambda y,z: y or z, map(lambda x: customize.processId.count(x), signal_processes))
-      ##-- Don't have PDF weights for HHWWgg yet 
-      if (not customize.doHHWWggTag) and ( customize.doPdfWeights and customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) or customize.processId.count("h_") or customize.processId.count("vbf_") or is_signal ) and (systlabel ==  "") and not (customize.processId.count("bbh_") or customize.processId.count("thw_") or customize.processId.count("thq_")):
+      if ( customize.doPdfWeights and customize.doSystematics ) and ( (customize.datasetName() and customize.datasetName().count("HToGG")) or customize.processId.count("h_") or customize.processId.count("vbf_") or is_signal ) and (systlabel ==  "") and not (customize.processId.count("bbh_") or customize.processId.count("thw_") or customize.processId.count("thq_")):
           #print "Signal MC central value, so dumping PDF weights"
           dumpPdfWeights = True
           nPdfWeights = 60
@@ -734,9 +751,21 @@ if ((customize.processId.count("wh") or customize.processId.count("zh")) and not
 #    process.load("flashgg/Systematics/CentralHiggsFilter_cfi")
 #    process.genFilter += process.CentralHiggsFilter
 
-#pythia8 has an unanticipated EM showering feature, check have two photons from hard scatter
 process.penultimateFilter= cms.Sequence()
-if customize.processId.count("WWgg") or customize.processId.count("ttH"):
+HHWWgg_FinalStates = ["GluGluToHHTo2G2Qlnu","GluGluToHHTo2G2ZTo2G4Q","GluGluToHHTo2G2l2nu","GluGluToHHTo2G4Q"]
+isHHWWgg_FinalState = 0
+for HHWWgg_FinalState in HHWWgg_FinalStates:
+    if customize.processId.count(HHWWgg_FinalState):
+        isHHWWgg_FinalState = 1 
+        
+HHWWgg_Backgrounds = ["tth_125","vbf_125","wzh_125","ggh_125"]
+isHHWWgg_Bkg = 0
+for HHWWgg_Bkg in HHWWgg_Backgrounds:
+    if customize.processId.count(HHWWgg_Bkg):
+        isHHWWgg_Bkg = 1
+
+#pythia8 has an unanticipated EM showering feature, check have two photons from hard scatter
+if (isHHWWgg_FinalState or isHHWWgg_Bkg or customize.processId.count("ttH")):
 # if customize.processId.count("ggF_X") or customize.processId.count("ttH"):
 #  if customize.processId == "th_125": # for this sample the filter removes also H -> ZG
     process.load("flashgg/Systematics/HardProcessFinalStateFilter_cfi")
@@ -902,6 +931,7 @@ process.options.allowUnscheduled = cms.untracked.bool(True)
 # print "[cms path]"
 # print process.p
 # print 
+
 printSystematicInfo(process)
 
 # Detailed tag interpretation information printout (blinded)

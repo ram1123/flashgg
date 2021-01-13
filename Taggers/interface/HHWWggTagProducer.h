@@ -12,7 +12,6 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 
-#include "FWCore/Common/interface/TriggerNames.h"
 #include "flashgg/DataFormats/interface/DiPhotonCandidate.h"
 #include "flashgg/DataFormats/interface/SinglePhotonView.h"
 #include "flashgg/DataFormats/interface/Photon.h"
@@ -59,7 +58,7 @@ public:
     edm::Service<TFileService> fs;
     
 private:
-    bool checkPassMVAs(const flashgg::Photon*& leading_photon, const flashgg::Photon*& subleading_photon, edm::Ptr<reco::Vertex>& diphoton_vertex, double EB_Photon_MVA_Threshold, double EE_Photon_MVA_Threshold);
+    // bool checkPassMVAs(const flashgg::Photon*& leading_photon, const flashgg::Photon*& subleading_photon, edm::Ptr<reco::Vertex>& diphoton_vertex, double EB_Photon_MVA_Threshold, double EE_Photon_MVA_Threshold);
     std::vector<double> GetMuonVars(const std::vector<edm::Ptr<flashgg::Muon> > &muonPointers, const std::vector<edm::Ptr<reco::Vertex> > &vertexPointers);
     std::vector<double> GetJetVars(const std::vector<edm::Ptr<flashgg::Jet> > &jetPointers, const edm::Ptr<flashgg::DiPhotonCandidate> dipho);
     vector<Ptr<flashgg::Jet>> GetFHPtOrderedJets(bool doHHWWggDebug_, std::vector<edm::Ptr<Jet> > tagJets_);
@@ -69,18 +68,23 @@ private:
     int GetNumFLDR(std::vector<edm::Ptr<flashgg::Electron> >, std::vector<edm::Ptr<flashgg::Muon> >, double);
     static bool compEle(const edm::Ptr<flashgg::Electron>& a, const edm::Ptr<flashgg::Electron>& b);
     static bool compMu(const edm::Ptr<flashgg::Muon>& a, const edm::Ptr<flashgg::Muon>& b);
+    // template <class flashggPtr>
+    // static bool compPt(flashggPtr, flashggPtr);
+    static bool compPt(edm::Ptr<reco::GenParticle>, edm::Ptr<reco::GenParticle>);
     float getGenCosThetaStar_CS(TLorentzVector h1, TLorentzVector h2);
     template <class flashggPtr>
     void PrintScaleFactorsPtr(flashggPtr);
     template <class flashggObj>
     void PrintScaleFactorsObj(flashggObj);
-    HHWWggTag SetCentralUpDownWeights(HHWWggTag, std::vector<edm::Ptr<flashgg::Electron> >, std::vector<edm::Ptr<flashgg::Muon> >, std::vector<edm::Ptr<flashgg::Jet> >, edm::Ptr<flashgg::DiPhotonCandidate>, bool);
+    HHWWggTag SetCentralUpDownWeights(HHWWggTag, std::vector<edm::Ptr<flashgg::Electron> >, std::vector<edm::Ptr<flashgg::Muon> >, 
+                                      std::vector<edm::Ptr<flashgg::Jet> >, edm::Ptr<flashgg::DiPhotonCandidate>, bool, std::string, double, string);
+    double PassPUJetID(vector<double>, vector<double>, Ptr<flashgg::Jet>);    
+    HHWWggTag ComputePUJetIDs(vector<Ptr<flashgg::Jet>>, HHWWggTag);
+    std::vector<edm::Ptr<reco::GenParticle> > OrderParticles(std::vector<edm::Ptr<reco::GenParticle> >);
     
     void produce( Event &, const EventSetup & ) override;
     std::vector<edm::EDGetTokenT<edm::View<DiPhotonCandidate> > > diPhotonTokens_;
     std::string inputDiPhotonName_;
-    
-    std::vector<std::string> inputJetsSuffixes_;
     
     std::vector<edm::EDGetTokenT<edm::View<flashgg::Jet> > > jetTokens_;
     
@@ -106,26 +110,24 @@ private:
     Handle<View<flashgg::DiPhotonMVAResult> > mvaResults;
     
     Handle<View<reco::Vertex> > vertices;
+
+    // EDGetTokenT<View<reco::GenParticle> > genParticleToken_;
+    // Handle<View<reco::GenParticle> > genParticle;    
     
-    EDGetTokenT<double> rhoTag_;
-    edm::EDGetTokenT<edm::TriggerResults> triggerRECO_;
-    edm::EDGetTokenT<edm::TriggerResults> triggerPAT_;
-    edm::EDGetTokenT<edm::TriggerResults> triggerFLASHggMicroAOD_;
     string systLabel_;
-    edm::Handle<double>  rho;
     
     std::vector< std::string > systematicsLabels;
-    std::vector<std::string> inputDiPhotonSuffixes_;
     
     string JetIDLevel_;
+    bool applyPUJetID_; 
+    std::vector<double> pujid_wp_pt_bin_1_;
+    std::vector<double> pujid_wp_pt_bin_2_;    
     
     //---ID selector
     ConsumesCollector cc_;
     
     //----output collection
-    double EB_Photon_MVA_Threshold_;
-    double EE_Photon_MVA_Threshold_;
-    double MetPtThreshold_;
+    double FL_METThreshold_;
     double deltaRLeps_;
     double leptonPtThreshold_;
     double muonEtaThreshold_;
@@ -133,19 +135,14 @@ private:
     double subleadPhoOverMassThreshold_;
     double MVAThreshold_;
     double deltaRMuonPhoThreshold_;
-    double jetsNumberThreshold_;
     double jetPtThreshold_;
     double jetEtaThreshold_;
     double muPFIsoSumRelThreshold_;
-    double PhoMVAThreshold_;
-    double METThreshold_;
     double deltaRJetMuonThreshold_;
     double deltaRPhoLeadJet_;
     double deltaRPhoSubLeadJet_;
     
     double DeltaRTrkElec_;
-    double TransverseImpactParam_;
-    double LongitudinalImpactParam_;
     
     double deltaRPhoElectronThreshold_;
     double deltaMassElectronZThreshold_;
@@ -155,24 +152,24 @@ private:
     double FH_Dipho_pT_Thre_;
     bool hasGoodElec = false;
     bool hasGoodMuons = false;
+    double diPho_pT = -99; 
     
     vector<double> nonTrigMVAThresholds_;
     vector<double> nonTrigMVAEtaCuts_;
     
-    double electronIsoThreshold_;
     vector<double> electronEtaThresholds_;
-    bool useElectronMVARecipe_;
-    bool useElectronLooseID_;
+    string ElectronID_;
+    string MuonID_;
     double btagThresh_;
     vector<string> BTagTypes_;
     bool doHHWWggTagCutFlowAnalysis_;
-    bool doHHWWggNonResAnalysis_;
     bool doHHWWggFHptOrdered_;
     bool doHHWWggFHminWHJets_;
     bool doHHWWggFHminWHLead2Jet_;
     bool doHHWWggFHminHiggsMassOnly_;
     bool doHHWWggDebug_;
     string HHWWggAnalysisChannel_;
+    bool FillUntagged_; 
     
     //full-lep
     bool SaveOthers_;
@@ -186,11 +183,9 @@ private:
     double dipho_MVA;
     edm::InputTag genInfo_;
     edm::EDGetTokenT<GenEventInfoProduct> genInfoToken_;
-    // TH1F* nEvents;
     
     bool HHWWgguseZeroVtx_;
 };
-
 
 //---standard
 HHWWggTagProducer::HHWWggTagProducer( const ParameterSet & pSet):
@@ -201,28 +196,15 @@ electronToken_( consumes<View<flashgg::Electron> >( pSet.getParameter<InputTag> 
 muonToken_( consumes<View<flashgg::Muon> >( pSet.getParameter<InputTag> ( "MuonTag" ) ) ),
 METToken_( consumes<View<Met> >( pSet.getParameter<InputTag> ( "METTag" ) ) ),
 mvaResultToken_( consumes<View<flashgg::DiPhotonMVAResult> >( pSet.getParameter<InputTag> ( "MVAResultTag" ) ) ),
-rhoTag_( consumes<double>( pSet.getParameter<InputTag>( "rhoTag" ) ) ),
-triggerRECO_( consumes<edm::TriggerResults>(pSet.getParameter<InputTag>("RECOfilters") ) ),
-triggerPAT_( consumes<edm::TriggerResults>(pSet.getParameter<InputTag>("PATfilters") ) ),
-triggerFLASHggMicroAOD_( consumes<edm::TriggerResults>( pSet.getParameter<InputTag>("FLASHfilters") ) ),
 systLabel_( pSet.getParameter<string> ( "SystLabel" ) ),
 JetIDLevel_( pSet.getParameter<string> ( "JetIDLevel" ) ),
+applyPUJetID_( pSet.getParameter<bool> ( "applyPUJetID" )),
+pujid_wp_pt_bin_1_( pSet.getParameter<std::vector<double> > ( "pujidWpPtBin1" ) ),
+pujid_wp_pt_bin_2_( pSet.getParameter<std::vector<double> > ( "pujidWpPtBin2" ) ),
 cc_( consumesCollector() )
 
 {
     inputDiPhotonName_= pSet.getParameter<std::string > ( "DiPhotonName" );
-    inputDiPhotonSuffixes_= pSet.getParameter<std::vector<std::string> > ( "DiPhotonSuffixes" );
-    std::vector<edm::InputTag>  diPhotonTags;
-    for (auto & suffix : inputDiPhotonSuffixes_) {
-        systematicsLabels.push_back(suffix);
-        std::string inputName = inputDiPhotonName_;
-        inputName.append(suffix);
-        if (!suffix.empty()) diPhotonTags.push_back(edm::InputTag(inputName));
-        else  diPhotonTags.push_back(edm::InputTag(inputDiPhotonName_));
-    }
-    for ( auto & tag : diPhotonTags ) { diPhotonTokens_.push_back( consumes<edm::View<flashgg::DiPhotonCandidate> >( tag ) ); }
-    
-    inputJetsSuffixes_= pSet.getParameter<std::vector<std::string> > ( "JetsSuffixes" );
     
     auto jetTags = pSet.getParameter<std::vector<edm::InputTag> > ( "JetTags" );
     for( auto & tag : jetTags ) { jetTokens_.push_back( consumes<edm::View<flashgg::Jet> >( tag ) ); }
@@ -230,9 +212,7 @@ cc_( consumesCollector() )
     genInfo_ = pSet.getUntrackedParameter<edm::InputTag>( "genInfo", edm::InputTag("generator") );
     genInfoToken_ = consumes<GenEventInfoProduct>( genInfo_ );
     
-    // nEvents = fs->make<TH1F> ("nEvents", "nEvents", 2,0,2);
-    
-    MetPtThreshold_ =pSet.getParameter<double>( "MetPtThreshold");
+    FL_METThreshold_ =pSet.getParameter<double>( "FL_METThreshold");
     deltaRLeps_ =pSet.getParameter<double>( "deltaRLeps");
     leptonPtThreshold_ = pSet.getParameter<double>( "leptonPtThreshold");
     muonEtaThreshold_ = pSet.getParameter<double>( "muonEtaThreshold");
@@ -240,38 +220,32 @@ cc_( consumesCollector() )
     subleadPhoOverMassThreshold_ = pSet.getParameter<double>( "subleadPhoOverMassThreshold");
     MVAThreshold_ = pSet.getParameter<double>( "MVAThreshold");
     deltaRMuonPhoThreshold_ = pSet.getParameter<double>( "deltaRMuonPhoThreshold");
-    jetsNumberThreshold_ = pSet.getParameter<double>( "jetsNumberThreshold");
     jetPtThreshold_ = pSet.getParameter<double>( "jetPtThreshold");
     jetEtaThreshold_ = pSet.getParameter<double>( "jetEtaThreshold");
     muPFIsoSumRelThreshold_ = pSet.getParameter<double>( "muPFIsoSumRelThreshold");
-    PhoMVAThreshold_ = pSet.getParameter<double>( "PhoMVAThreshold");
-    METThreshold_ = pSet.getParameter<double>( "METThreshold");
     deltaRJetMuonThreshold_ = pSet.getParameter<double>( "deltaRJetMuonThreshold");
     deltaRPhoLeadJet_ = pSet.getParameter<double>( "deltaRPhoLeadJet");
     deltaRPhoSubLeadJet_ = pSet.getParameter<double>( "deltaRPhoSubLeadJet");
     
     DeltaRTrkElec_ = pSet.getParameter<double>( "DeltaRTrkElec");
-    TransverseImpactParam_ = pSet.getParameter<double>( "TransverseImpactParam");
-    LongitudinalImpactParam_ = pSet.getParameter<double>( "LongitudinalImpactParam");
     
     deltaRPhoElectronThreshold_ = pSet.getParameter<double>( "deltaRPhoElectronThreshold");
     deltaMassElectronZThreshold_ = pSet.getParameter<double>( "deltaMassElectronZThreshold");
     nonTrigMVAThresholds_ =  pSet.getParameter<vector<double > >( "nonTrigMVAThresholds");
     nonTrigMVAEtaCuts_ =  pSet.getParameter<vector<double > >( "nonTrigMVAEtaCuts");
-    electronIsoThreshold_ = pSet.getParameter<double>( "electronIsoThreshold");
     electronEtaThresholds_ = pSet.getParameter<vector<double > >( "electronEtaThresholds");
-    useElectronMVARecipe_=pSet.getParameter<bool>("useElectronMVARecipe");
-    useElectronLooseID_=pSet.getParameter<bool>("useElectronLooseID");
+    ElectronID_ = pSet.getParameter<string>("ElectronID");
+    MuonID_ = pSet.getParameter<string>("MuonID");
     btagThresh_ = pSet.getParameter<double>( "btagThresh");
     BTagTypes_ = pSet.getParameter<vector<string>>( "BTagTypes" );
     doHHWWggTagCutFlowAnalysis_ = pSet.getParameter<bool>( "doHHWWggTagCutFlowAnalysis");
-    doHHWWggNonResAnalysis_ = pSet.getParameter<bool>( "doHHWWggNonResAnalysis" );
     doHHWWggFHptOrdered_ = pSet.getParameter<bool>( "doHHWWggFHptOrdered" );
     doHHWWggFHminWHJets_ = pSet.getParameter<bool>( "doHHWWggFHminWHJets" );
     doHHWWggFHminWHLead2Jet_ = pSet.getParameter<bool>( "doHHWWggFHminWHLead2Jet" );
     doHHWWggFHminHiggsMassOnly_ = pSet.getParameter<bool>( "doHHWWggFHminHiggsMassOnly" );
     doHHWWggDebug_ = pSet.getParameter<bool>( "doHHWWggDebug" );
     HHWWggAnalysisChannel_ = pSet.getParameter<string>( "HHWWggAnalysisChannel" );
+    FillUntagged_ = pSet.getParameter<bool>( "FillUntagged" );
     lep1ptThre_ = pSet.getParameter<double>("lep1ptThre");//means > lep1pt
     lep2ptThre_ = pSet.getParameter<double>("lep2ptThre");//means > lep2pt
     lep3ptThre_ = pSet.getParameter<double>("lep3ptThre");//means < lep3pt
@@ -297,73 +271,83 @@ bool HHWWggTagProducer::compMu(const edm::Ptr<flashgg::Muon>& a, const edm::Ptr<
     return a->pt() > b->pt();
 }
 
-bool HHWWggTagProducer::checkPassMVAs( const flashgg::Photon*& leading_photon, const flashgg::Photon*& subleading_photon, edm::Ptr<reco::Vertex>& diphoton_vertex, double EB_Photon_MVA_Threshold, double EE_Photon_MVA_Threshold){
-    
-    // MVA Check variables
-    bool lead_pass_TightPhoID = 0, sublead_pass_TightPhoID = 0;
-    double lp_Hgg_MVA = -99, slp_Hgg_MVA = -99;
-    double leading_pho_eta = -99, sub_leading_pho_eta = -99;
-    
-    // Get MVA values wrt diphoton vertex
-    lp_Hgg_MVA = leading_photon->phoIdMvaDWrtVtx( diphoton_vertex );
-    slp_Hgg_MVA = subleading_photon->phoIdMvaDWrtVtx( diphoton_vertex );
-    
-    // Get eta values
-    leading_pho_eta = leading_photon->p4().eta();
-    sub_leading_pho_eta = subleading_photon->p4().eta();
-    
-    // leading photon
-    // EB
-    if (( abs(leading_pho_eta) > 0) && ( abs(leading_pho_eta) < 1.4442)){
-        if (lp_Hgg_MVA > EB_Photon_MVA_Threshold) lead_pass_TightPhoID = 1;
-    }
-    
-    // EE
-    else if (( abs(leading_pho_eta) > 1.566) && ( abs(leading_pho_eta) < 2.5)){
-        if (lp_Hgg_MVA > EE_Photon_MVA_Threshold) lead_pass_TightPhoID = 1;
-    }
-    
-    // SubLeading Photon
-    // EB
-    if (( abs(sub_leading_pho_eta) > 0) && ( abs(sub_leading_pho_eta) < 1.4442)){
-        if (slp_Hgg_MVA > EB_Photon_MVA_Threshold) sublead_pass_TightPhoID = 1;
-    }
-    
-    // EE
-    else if (( abs(sub_leading_pho_eta) > 1.566) && ( abs(sub_leading_pho_eta) < 2.5)){
-        if (slp_Hgg_MVA > EE_Photon_MVA_Threshold) sublead_pass_TightPhoID = 1;
-    }
-    
-    if (lead_pass_TightPhoID && sublead_pass_TightPhoID){
-        return 1;
-    }
-    
-    else{
-        return 0;
-    }
-    
+// template<typename flashggPtr> 
+bool HHWWggTagProducer::compPt(edm::Ptr<reco::GenParticle> Particle_a, edm::Ptr<reco::GenParticle> Particle_b)
+{
+    auto FourVec_a = Particle_a->p4();
+    auto FourVec_b = Particle_b->p4();
+
+    return FourVec_a.pt() > FourVec_b.pt();
 }
 
+// bool HHWWggTagProducer::checkPassMVAs( const flashgg::Photon*& leading_photon, const flashgg::Photon*& subleading_photon, edm::Ptr<reco::Vertex>& diphoton_vertex, double EB_Photon_MVA_Threshold, double EE_Photon_MVA_Threshold){
+    
+//     // MVA Check variables
+//     bool lead_pass_TightPhoID = 0, sublead_pass_TightPhoID = 0;
+//     double lp_Hgg_MVA = -99, slp_Hgg_MVA = -99;
+//     double leading_pho_eta = -99, sub_leading_pho_eta = -99;
+    
+//     // Get MVA values wrt diphoton vertex
+//     lp_Hgg_MVA = leading_photon->phoIdMvaDWrtVtx( diphoton_vertex );
+//     slp_Hgg_MVA = subleading_photon->phoIdMvaDWrtVtx( diphoton_vertex );
+    
+//     // Get eta values
+//     leading_pho_eta = leading_photon->p4().eta();
+//     sub_leading_pho_eta = subleading_photon->p4().eta();
+    
+//     // leading photon
+//     // EB
+//     if (( abs(leading_pho_eta) > 0) && ( abs(leading_pho_eta) < 1.4442)){
+//         if (lp_Hgg_MVA > EB_Photon_MVA_Threshold) lead_pass_TightPhoID = 1;
+//     }
+    
+//     // EE
+//     else if (( abs(leading_pho_eta) > 1.566) && ( abs(leading_pho_eta) < 2.5)){
+//         if (lp_Hgg_MVA > EE_Photon_MVA_Threshold) lead_pass_TightPhoID = 1;
+//     }
+    
+//     // SubLeading Photon
+//     // EB
+//     if (( abs(sub_leading_pho_eta) > 0) && ( abs(sub_leading_pho_eta) < 1.4442)){
+//         if (slp_Hgg_MVA > EB_Photon_MVA_Threshold) sublead_pass_TightPhoID = 1;
+//     }
+    
+//     // EE
+//     else if (( abs(sub_leading_pho_eta) > 1.566) && ( abs(sub_leading_pho_eta) < 2.5)){
+//         if (slp_Hgg_MVA > EE_Photon_MVA_Threshold) sublead_pass_TightPhoID = 1;
+//     }
+    
+//     if (lead_pass_TightPhoID && sublead_pass_TightPhoID){
+//         return 1;
+//     }
+    
+//     else{
+//         return 0;
+//     }
+    
+// }
+
+// FIXME: Need to change to a vector of vectors
 std::vector<double> HHWWggTagProducer::GetMuonVars(const std::vector<edm::Ptr<flashgg::Muon> > &muonPointers, const std::vector<edm::Ptr<reco::Vertex> > &vertexPointers)
 {
     unsigned int maxMuons = 5; // Shouldn't need more than this
     unsigned int numVars = 6; // 5 IDs + isolation
     unsigned int numVecEntries = maxMuons * numVars;
-    std::vector<double> MuonVars_(numVecEntries,-999); // initialize vector with -999 vals
-    double isLooseMuon = -999, isMediumMuon = -999, isTightMuon = -999, isSoftMuon = -999, isHighPtMuon = -999;
-    double muonIso = -999;
+    std::vector<double> MuonVars_(numVecEntries,-99); // initialize vector with -99 vals
+    double isLooseMuon = -99, isMediumMuon = -99, isTightMuon = -99, isSoftMuon = -99, isHighPtMuon = -99;
+    double muonIso = -99;
     int vtxInd = 0;
     double dzmin = 9999;
     
     for( unsigned int muonIndex = 0; muonIndex < muonPointers.size(); muonIndex++ ) {
         if(muonIndex >= maxMuons) continue; // only save info from 5 highest pT muon objects
-        isLooseMuon = -999, isMediumMuon = -999, isTightMuon = -999, isSoftMuon = -999, isHighPtMuon = -999;
-        muonIso = -999;
+        isLooseMuon = -99, isMediumMuon = -99, isTightMuon = -99, isSoftMuon = -99, isHighPtMuon = -99;
+        muonIso = -99;
         Ptr<flashgg::Muon> muon = muonPointers[muonIndex];
         vtxInd = 0;
         dzmin = 9999;
-        // If no innertrack, set medium, tight, soft, highpt vals to -999 as they can't be calculated without it
-        // I think this is correct because there are non-zero isolation values when isTightMuon is -999
+        // If no innertrack, set medium, tight, soft, highpt vals to -99 as they can't be calculated without it
+        // I think this is correct because there are non-zero isolation values when isTightMuon is -99
         if( !muon->innerTrack() ){
             isLooseMuon = muon::isLooseMuon( *muon );
             muonIso = ( muon->pfIsolationR04().sumChargedHadronPt
@@ -421,15 +405,15 @@ std::vector<double> HHWWggTagProducer::GetJetVars(const std::vector<edm::Ptr<fla
     // unsigned int numVars = 5; // 4 IDs + Jet PU ID
     // unsigned int numVars = 12; // 4 IDs + 8 PUjetIDs
     unsigned int numVecEntries = maxJets * numVars;
-    std::vector<double> JetVars_(numVecEntries,-999); // initialize vector with -999 vals
-    double passLoose = -999, passTight = -999, passTight2017 = -999, passTight2018 = -999;
-    // double passesJetPUIdLoose = -999;
-    // double passesJetPuIdnone = -999, passesJetPuIdloose = -999, passesJetPuIdmedium = -999, passesJetPuIdtight = -999;
-    // double passesJetPuIdmixed = -999, passesJetPuIdforward_loose = -999, passesJetPuIdforward_medium = -999, passesJetPuIdforward_tight = -999;
+    std::vector<double> JetVars_(numVecEntries,-99); // initialize vector with -99 vals
+    double passLoose = -99, passTight = -99, passTight2017 = -99, passTight2018 = -99;
+    // double passesJetPUIdLoose = -99;
+    // double passesJetPuIdnone = -99, passesJetPuIdloose = -99, passesJetPuIdmedium = -99, passesJetPuIdtight = -99;
+    // double passesJetPuIdmixed = -99, passesJetPuIdforward_loose = -99, passesJetPuIdforward_medium = -99, passesJetPuIdforward_tight = -99;
     
     for( unsigned int jetIndex = 0; jetIndex < jetPointers.size(); jetIndex++ ) {
         if(jetIndex >= maxJets) continue; // only save info from 5 highest pT Jet objects
-        passLoose = -999, passTight = -999, passTight2017 = -999, passTight2018 = -999;
+        passLoose = -99, passTight = -99, passTight2017 = -99, passTight2018 = -99;
         Ptr<flashgg::Jet> jet = jetPointers[jetIndex];
         
         // passesJetPuId
@@ -885,9 +869,47 @@ template<typename flashggObj> void HHWWggTagProducer::PrintScaleFactorsObj(flash
 
 // Set Central object weights in output trees for each scale factor
 HHWWggTag HHWWggTagProducer::SetCentralUpDownWeights(HHWWggTag tag_obj_, std::vector<edm::Ptr<flashgg::Electron> > goodElectrons, std::vector<edm::Ptr<flashgg::Muon> > goodMuons,
-                                                     std::vector<edm::Ptr<flashgg::Jet> > tagJets, edm::Ptr<flashgg::DiPhotonCandidate> dipho, bool doHHWWggDebug_)
+                                                     std::vector<edm::Ptr<flashgg::Jet> > tagJets, edm::Ptr<flashgg::DiPhotonCandidate> dipho, bool doHHWWggDebug_, 
+                                                     string MuonID_, double muPFIsoSumRelThreshold_, string Tag_
+                                                     )
 {
     
+    // //-- If debugging, print object weights 
+    // if(doHHWWggDebug_){
+
+    //     // Diphoton
+    //     cout << "*********************************************************" << endl; 
+    //     cout << "Diphoton Scale Factors:" << endl; 
+    //     PrintScaleFactorsObj(*dipho);
+
+    //     // Jets
+    //     for (unsigned int i = 0; i < tagJets.size(); i++){
+    //         if(tagJets.size() > 0){
+    //             cout << "*********************************************************" << endl; 
+    //             cout << "Good Jet " << i << " Scale Factors:" << endl; 
+    //             PrintScaleFactorsPtr(tagJets[i]);
+    //         }
+    //     }
+
+    //     // Electrons
+    //     for (unsigned int i = 0; i < goodElectrons.size(); i++){
+    //         if(goodElectrons.size() > 0){
+    //             cout << "*********************************************************" << endl; 
+    //             cout << "Good Electron " << i << " Scale Factors:" << endl; 
+    //             PrintScaleFactorsPtr(goodElectrons[i]);
+    //         }
+    //     }
+
+    //     // Muons 
+    //     for (unsigned int i = 0; i < goodMuons.size(); i++){
+    //         if(goodMuons.size() > 0){
+    //             cout << "*********************************************************" << endl; 
+    //             cout << "Good Muon " << i << " Scale Factors:" << endl; 
+    //             PrintScaleFactorsPtr(goodMuons[i]);
+    //         }
+    //     }
+    // }
+
     //-- Apply scale factors from all weighted objects
     // Diphoton
     tag_obj_.includeWeights( *dipho );
@@ -901,153 +923,294 @@ HHWWggTag HHWWggTagProducer::SetCentralUpDownWeights(HHWWggTag tag_obj_, std::ve
     for (unsigned int muon_i = 0; muon_i < goodMuons.size(); muon_i++){
         tag_obj_.includeWeights(*goodMuons.at(muon_i));
     }
-    
+
     // Jets
     for (unsigned int TagJet_i = 0; TagJet_i < tagJets.size(); TagJet_i++){
-        tag_obj_.includeWeightsByLabel(*tagJets.at(TagJet_i),"JetBTagReshapeWeightCentral");
-        tag_obj_.includeWeightsByLabel(*tagJets.at(TagJet_i),"UnmatchedPUWeightCentral");
-        // tag_obj.includeWeights(*tagJets.at(TagJet_i));
+        tag_obj_.includeWeightsByLabel(*tagJets.at(TagJet_i),"JetBTagReshapeWeight"); // Apply JetBTagReshapeWeight for all final state categories 
     }
+
+    // // Jets
+    // for (unsigned int TagJet_i = 0; TagJet_i < tagJets.size(); TagJet_i++){
+
+    //     // Only save BTagCutWeight
+    //     if(Tag_ == "FL"){
+    //         tag_obj_.includeWeightsByLabel(*tagJets.at(TagJet_i),"JetBTagCutWeight");
+    //     }
+
+    //     // Save both b tag SFs for the untagged case in case the event is used for SL, FH or FL after ntuple production 
+    //     else if(Tag_ == "Untagged"){ // If using untagged events, will need to divide out SF not being used 
+    //         tag_obj_.includeWeightsByLabel(*tagJets.at(TagJet_i),"JetBTagCutWeight"); // for untagged just apply medium WP bveto SF since in the case these events are used, not 100% precise anyway 
+    //         // tag_obj_.includeWeightsByLabel(*tagJets.at(TagJet_i),"JetBTagReshapeWeight");
+    //     }
+
+    //     // Only save bTagReshapeWeight for MVA final states 
+    //     else{
+    //         tag_obj_.includeWeightsByLabel(*tagJets.at(TagJet_i),"JetBTagReshapeWeight");
+    //     }
+    // }
     
-    //-- Save central, up/down scale factors in output trees for checks / flexibility
-    //-- Initialize Values with 1 incase there are no good electrons, muons or jets since in end values are set to tag object SF values
-    double TagObjCentralWeight = 1; // Central weight of HH->WWgg tag object
+    // // //-- Save central, up/down scale factors in output trees for checks / flexibility
+    // // //-- Initialize Values with 1 incase there are no good electrons, muons or jets since in end values are set to tag object SF values
+    // // double TagObjCentralWeight = 1; // Central weight of HH->WWgg tag object
     
-    // Diphoton
-    double LooseMvaSF = 1, PreselSF = 1, TriggerWeight = 1, electronVetoSF = 1, prefireWeight = 1, diPhoCentralWeight = 1; // Diphoton
-    double LooseMvaSF_up = 1, PreselSF_up = 1, TriggerWeight_up = 1, electronVetoSF_up = 1, prefireWeight_up = 1;
-    double LooseMvaSF_down = 1, PreselSF_down = 1, TriggerWeight_down = 1, electronVetoSF_down = 1, prefireWeight_down = 1;
+    // // Diphoton
+    // double LooseMvaSF = 1, PreselSF = 1, TriggerWeight = 1, electronVetoSF = 1, prefireWeight = 1, diPhoCentralWeight = 1; // Diphoton
+    // // // double LooseMvaSF_up = 1, PreselSF_up = 1, TriggerWeight_up = 1, electronVetoSF_up = 1, prefireWeight_up = 1;
+    // // // double LooseMvaSF_down = 1, PreselSF_down = 1, TriggerWeight_down = 1, electronVetoSF_down = 1, prefireWeight_down = 1;
     
-    // Electrons
-    double ElectronIDWeight = 1, ElectronRecoWeight = 1;
-    double ElectronIDWeight_up = 1, ElectronRecoWeight_up = 1;
-    double ElectronIDWeight_down = 1, ElectronRecoWeight_down = 1;
+    // // Electrons
+    // double ElectronIDWeight = 1, ElectronRecoWeight = 1;
+    // // // double ElectronIDWeight_up = 1, ElectronRecoWeight_up = 1;
+    // // // double ElectronIDWeight_down = 1, ElectronRecoWeight_down = 1;
     
-    // Muons
-    double MuonIDWeight = 1, MuonRelISOWeight = 1;
-    double MuonIDWeight_up = 1, MuonRelISOWeight_up = 1;
-    double MuonIDWeight_down = 1, MuonRelISOWeight_down = 1;
+    // // Muons
+    // double MuonIDWeight = 1, MuonIsoWeight = 1;
+    // // double MuonIDWeight_up = 1, MuonIsoWeight_up = 1;
+    // // double MuonIDWeight_down = 1, MuonIsoWeight_down = 1;
     
-    // Jets
-    double JetBTagReshapeWeight = 1, UnmatchedPUWeight = 1;
-    double JetBTagReshapeWeight_up = 1, UnmatchedPUWeight_up = 1;
-    double JetBTagReshapeWeight_down = 1, UnmatchedPUWeight_down = 1;
-    
-    // Electrons
-    for (unsigned int elec_i = 0; elec_i < goodElectrons.size(); elec_i++){
-        ElectronIDWeight = ElectronIDWeight * goodElectrons.at(elec_i)->weight("ElectronIDWeightCentral");
-        ElectronRecoWeight = ElectronRecoWeight * goodElectrons.at(elec_i)->weight("ElectronRecoWeightCentral");
+    // // Jets
+    // double JetBTagReshapeWeight = 1, JetBTagCutWeight = 1;
+    // // double JetBTagReshapeWeight_up = 1, JetBTagCutWeight_up = 1;
+    // // double JetBTagReshapeWeight_down = 1, JetBTagCutWeight_down = 1;
+
+    // // Electrons
+    // for (unsigned int elec_i = 0; elec_i < goodElectrons.size(); elec_i++){
+    //     ElectronIDWeight = ElectronIDWeight * goodElectrons.at(elec_i)->weight("ElectronIDWeightCentral");
+    //     ElectronRecoWeight = ElectronRecoWeight * goodElectrons.at(elec_i)->weight("ElectronRecoWeightCentral");
         
-        ElectronIDWeight_up = ElectronIDWeight_up * goodElectrons.at(elec_i)->weight("ElectronIDWeightUp01sigma");
-        ElectronRecoWeight_up = ElectronRecoWeight_up * goodElectrons.at(elec_i)->weight("ElectronRecoWeightUp01sigma");
+    // //     // ElectronIDWeight_up = ElectronIDWeight_up * goodElectrons.at(elec_i)->weight("ElectronIDWeightUp01sigma");
+    // //     // ElectronRecoWeight_up = ElectronRecoWeight_up * goodElectrons.at(elec_i)->weight("ElectronRecoWeightUp01sigma");
         
-        ElectronIDWeight_down = ElectronIDWeight_down * goodElectrons.at(elec_i)->weight("ElectronIDWeightDown01sigma");
-        ElectronRecoWeight_down = ElectronRecoWeight_down * goodElectrons.at(elec_i)->weight("ElectronRecoWeightDown01sigma");
-    }
-    tag_obj_.setWeight("ElectronIDWeightCentral",ElectronIDWeight);
-    tag_obj_.setWeight("ElectronRecoWeightCentral",ElectronRecoWeight);
+    // //     // ElectronIDWeight_down = ElectronIDWeight_down * goodElectrons.at(elec_i)->weight("ElectronIDWeightDown01sigma");
+    // //     // ElectronRecoWeight_down = ElectronRecoWeight_down * goodElectrons.at(elec_i)->weight("ElectronRecoWeightDown01sigma");
+    // }
+    // tag_obj_.setWeight("ElectronIDWeightCentral",ElectronIDWeight);
+    // tag_obj_.setWeight("ElectronRecoWeightCentral",ElectronRecoWeight);
     
-    tag_obj_.setWeight("ElectronIDWeightUp01sigma",ElectronIDWeight_up);
-    tag_obj_.setWeight("ElectronRecoWeightUp01sigma",ElectronRecoWeight_up);
+    // // // tag_obj_.setWeight("ElectronIDWeightUp01sigma",ElectronIDWeight_up);
+    // // // tag_obj_.setWeight("ElectronRecoWeightUp01sigma",ElectronRecoWeight_up);
     
-    tag_obj_.setWeight("ElectronIDWeightDown01sigma",ElectronIDWeight_down);
-    tag_obj_.setWeight("ElectronRecoWeightDown01sigma",ElectronRecoWeight_down);
+    // // // tag_obj_.setWeight("ElectronIDWeightDown01sigma",ElectronIDWeight_down);
+    // // // tag_obj_.setWeight("ElectronRecoWeightDown01sigma",ElectronRecoWeight_down);
     
-    // Muons
-    for (unsigned int muon_i = 0; muon_i < goodMuons.size(); muon_i++){
-        MuonIDWeight = MuonIDWeight * goodMuons.at(muon_i)->weight("MuonTightIDWeightCentral");
-        MuonRelISOWeight = MuonRelISOWeight * goodMuons.at(muon_i)->weight("MuonTightRelISOWeightCentral");
+    // // // // Muons
+    // string MuonID_str_central, MuonID_str_up, MuonID_str_down;
+    // string MuonISO_str_central, MuonISO_str_up, MuonISO_str_down;
+    // if(MuonID_ == "Medium"){
+    //     MuonID_str_central = "MuonMediumIDWeightCentral";
+    // // // //     MuonID_str_up = "MuonMediumIDWeightUp01sigma";
+    // // // //     MuonID_str_down = "MuonMediumIDWeightDown01sigma";
+    // }
+
+    // else if(MuonID_ == "Tight"){
+    //     MuonID_str_central = "MuonTightIDWeightCentral";
+    // // // //     MuonID_str_up = "MuonTightIDWeightUp01sigma";
+    // // // //     MuonID_str_down = "MuonTightIDWeightDown01sigma";
+    // }    
+
+    // if(muPFIsoSumRelThreshold_ == 0.25){
+    //     MuonISO_str_central = "MuonLooseRelISOWeightCentral";
+    // // // //     MuonISO_str_up = "MuonLooseRelISOWeightUp01sigma";
+    // // // //     MuonISO_str_down = "MuonLooseRelISOWeightDown01sigma";
+    // }
+
+    // else if(muPFIsoSumRelThreshold_ == 0.15){
+    //     MuonISO_str_central = "MuonTightRelISOWeightCentral";
+    // // // //     MuonISO_str_up = "MuonTightRelISOWeightUp01sigma";
+    // // // //     MuonISO_str_down = "MuonTightRelISOWeightDown01sigma";
+    // }    
+
+    // // // if(doHHWWggDebug_){
+    // // //     cout << "MuonID : " << MuonID_ << endl;
+    // // //     cout << "muPFIsoSumRelThreshold_ : " << muPFIsoSumRelThreshold_ << endl; 
+    // // //     cout << "MuonID_str_central : " << MuonID_str_central << endl; 
+    // // //     cout << "MuonISO_str_central : " << MuonISO_str_central << endl; 
+    // // // }
+
+    // for (unsigned int muon_i = 0; muon_i < goodMuons.size(); muon_i++){
+    // // //     // Set muon weight string based on input falgs
+
+    //     MuonIDWeight = MuonIDWeight * goodMuons.at(muon_i)->weight(MuonID_str_central);
+    //     MuonIsoWeight = MuonIsoWeight * goodMuons.at(muon_i)->weight(MuonISO_str_central);
         
-        MuonIDWeight_up = MuonIDWeight_up * goodMuons.at(muon_i)->weight("MuonTightIDWeightUp01sigma");
-        MuonRelISOWeight_up = MuonRelISOWeight_up * goodMuons.at(muon_i)->weight("MuonTightRelISOWeightUp01sigma");
+    // // // //     MuonIDWeight_up = MuonIDWeight_up * goodMuons.at(muon_i)->weight(MuonID_str_up);
+    // // // //     MuonIsoWeight_up = MuonIsoWeight_up * goodMuons.at(muon_i)->weight(MuonISO_str_up);
         
-        MuonIDWeight_down = MuonIDWeight_down * goodMuons.at(muon_i)->weight("MuonTightIDWeightDown01sigma");
-        MuonRelISOWeight_down = MuonRelISOWeight_down * goodMuons.at(muon_i)->weight("MuonTightRelISOWeightDown01sigma");
-    }
-    tag_obj_.setWeight("MuonTightIDWeightCentral",MuonIDWeight);
-    tag_obj_.setWeight("MuonTightRelISOWeightCentral",MuonRelISOWeight);
+    // // // //     MuonIDWeight_down = MuonIDWeight_down * goodMuons.at(muon_i)->weight(MuonID_str_down);
+    // // // //     MuonIsoWeight_down = MuonIsoWeight_down * goodMuons.at(muon_i)->weight(MuonISO_str_down);
+
+    // }
+
+    // tag_obj_.setWeight(MuonID_str_central,MuonIDWeight);
+    // tag_obj_.setWeight(MuonISO_str_central,MuonIsoWeight);
     
-    tag_obj_.setWeight("MuonTightIDWeightUp01sigma",MuonIDWeight_up);
-    tag_obj_.setWeight("MuonTightRelISOWeightUp01sigma",MuonRelISOWeight_up);
+    // // // tag_obj_.setWeight("MuonIDWeightUp01sigma",MuonIDWeight_up);
+    // // // tag_obj_.setWeight("MuonIsoWeightUp01sigma",MuonIsoWeight_up);
     
-    tag_obj_.setWeight("MuonTightIDWeightDown01sigma",MuonIDWeight_down);
-    tag_obj_.setWeight("MuonTightRelISOWeightDown01sigma",MuonRelISOWeight_down);
+    // // // tag_obj_.setWeight("MuonIDWeightDown01sigma",MuonIDWeight_down);
+    // // // tag_obj_.setWeight("MuonIsoWeightDown01sigma",MuonIsoWeight_down);    
     
-    // Jets
-    for (unsigned int TagJet_i = 0; TagJet_i < tagJets.size(); TagJet_i++){
-        // tag_obj.includeWeightsByLabel(*tagJets.at(TagJet_i),"JetBTagCutWeightCentral");
-        JetBTagReshapeWeight = JetBTagReshapeWeight * tagJets.at(TagJet_i)->weight("JetBTagReshapeWeightCentral");
-        UnmatchedPUWeight = UnmatchedPUWeight * tagJets.at(TagJet_i)->weight("UnmatchedPUWeightCentral");
-        
-        JetBTagReshapeWeight_up = JetBTagReshapeWeight_up * tagJets.at(TagJet_i)->weight("JetBTagReshapeWeightUp01sigma");
-        UnmatchedPUWeight_up = UnmatchedPUWeight_up * tagJets.at(TagJet_i)->weight("UnmatchedPUWeightUp01sigma");
-        
-        JetBTagReshapeWeight_down = JetBTagReshapeWeight_down * tagJets.at(TagJet_i)->weight("JetBTagReshapeWeightDown01sigma");
-        UnmatchedPUWeight_down = UnmatchedPUWeight_down * tagJets.at(TagJet_i)->weight("UnmatchedPUWeightDown01sigma");
-    }
-    tag_obj_.setWeight("JetBTagReshapeWeightCentral",JetBTagReshapeWeight);
-    tag_obj_.setWeight("UnmatchedPUWeightCentral",UnmatchedPUWeight);
+    // // Jets
+
+    // // If Fully Leptonic Final state, save SF for JetBTagCut b/c applying bVeto 
+    // if(Tag_ == "FL"){
+    //     for (unsigned int TagJet_i = 0; TagJet_i < tagJets.size(); TagJet_i++){
+    //         JetBTagCutWeight = JetBTagCutWeight * tagJets.at(TagJet_i)->weight("JetBTagCutWeightCentral");
+    //         // JetBTagCutWeight_up = JetBTagCutWeight_up * tagJets.at(TagJet_i)->weight("JetBTagCutWeightUp01sigma");
+    //         // JetBTagCutWeight_down = JetBTagCutWeight_down * tagJets.at(TagJet_i)->weight("JetBTagCutWeightDown01sigma");
+    //     }
+    // }
+
+    // // Save both b tag SFs for the untagged case in case the event is used for SL, FH or FL after ntuple production 
+    // else if(Tag_ == "Untagged"){
+    //     for (unsigned int TagJet_i = 0; TagJet_i < tagJets.size(); TagJet_i++){
+    //         JetBTagCutWeight = JetBTagCutWeight * tagJets.at(TagJet_i)->weight("JetBTagCutWeightCentral");
+    //         // JetBTagCutWeight_up = JetBTagCutWeight_up * tagJets.at(TagJet_i)->weight("JetBTagCutWeightUp01sigma");
+    // //         JetBTagCutWeight_down = JetBTagCutWeight_down * tagJets.at(TagJet_i)->weight("JetBTagCutWeightDown01sigma");
+    //         JetBTagReshapeWeight = JetBTagReshapeWeight * tagJets.at(TagJet_i)->weight("JetBTagReshapeWeightCentral");
+    // //         JetBTagReshapeWeight_up = JetBTagReshapeWeight_up * tagJets.at(TagJet_i)->weight("JetBTagReshapeWeightUp01sigma");
+    // //         JetBTagReshapeWeight_down = JetBTagReshapeWeight_down * tagJets.at(TagJet_i)->weight("JetBTagReshapeWeightDown01sigma");            
+    //     }
+
+    // }
+    // else{
+    //     for (unsigned int TagJet_i = 0; TagJet_i < tagJets.size(); TagJet_i++){
+    //         JetBTagReshapeWeight = JetBTagReshapeWeight * tagJets.at(TagJet_i)->weight("JetBTagReshapeWeightCentral");
+    // //         JetBTagReshapeWeight_up = JetBTagReshapeWeight_up * tagJets.at(TagJet_i)->weight("JetBTagReshapeWeightUp01sigma");
+    // //         JetBTagReshapeWeight_down = JetBTagReshapeWeight_down * tagJets.at(TagJet_i)->weight("JetBTagReshapeWeightDown01sigma");            
+    //     }            
+    // }    
+
+    // // In any case, save weight values. If not set, should default to 1. 
+    // tag_obj_.setWeight("JetBTagCutWeightCentral",JetBTagCutWeight);
+    // // tag_obj_.setWeight("JetBTagCutWeightUp01sigma",JetBTagCutWeight_up);
+    // // tag_obj_.setWeight("JetBTagCutWeightDown01sigma",JetBTagCutWeight_down);
+    // tag_obj_.setWeight("JetBTagReshapeWeightCentral",JetBTagReshapeWeight);
+    // // tag_obj_.setWeight("JetBTagReshapeWeightUp01sigma",JetBTagReshapeWeight_up);
+    // // tag_obj_.setWeight("JetBTagReshapeWeightDown01sigma",JetBTagReshapeWeight_down);    
+
+    // // Diphoton
+    // diPhoCentralWeight = dipho->centralWeight();
+
+    // LooseMvaSF = dipho->weight("LooseMvaSFCentral");
+    // PreselSF = dipho->weight("PreselSFCentral");
+    // TriggerWeight = dipho->weight("TriggerWeightCentral");
+    // electronVetoSF = dipho->weight("electronVetoSFCentral");
+    // prefireWeight = dipho->weight("prefireWeightCentral") / diPhoCentralWeight; // prefireweight already multiplied by diphoton central weight 
     
-    tag_obj_.setWeight("JetBTagReshapeWeightUp01sigma",JetBTagReshapeWeight_up);
-    tag_obj_.setWeight("UnmatchedPUWeightUp01sigma",UnmatchedPUWeight_up);
+    // // LooseMvaSF_up = dipho->weight("LooseMvaSFUp01sigma");
+    // // PreselSF_up = dipho->weight("PreselSFUp01sigma");
+    // // TriggerWeight_up = dipho->weight("TriggerWeightUp01sigma");
+    // // electronVetoSF_up = dipho->weight("electronVetoSFUp01sigma");
+    // // prefireWeight_up = dipho->weight("prefireWeightUp01sigma");
     
-    tag_obj_.setWeight("JetBTagReshapeWeightDown01sigma",JetBTagReshapeWeight_down);
-    tag_obj_.setWeight("UnmatchedPUWeightDown01sigma",UnmatchedPUWeight_down);
+    // // LooseMvaSF_down = dipho->weight("LooseMvaSFDown01sigma");
+    // // PreselSF_down = dipho->weight("PreselSFDown01sigma");
+    // // TriggerWeight_down = dipho->weight("TriggerWeightDown01sigma");
+    // // electronVetoSF_down = dipho->weight("electronVetoSFDown01sigma");
+    // // prefireWeight_down = dipho->weight("prefireWeightDown01sigma");
     
-    // Diphoton
-    LooseMvaSF = dipho->weight("LooseMvaSFCentral");
-    PreselSF = dipho->weight("PreselSFCentral");
-    TriggerWeight = dipho->weight("TriggerWeightCentral");
-    electronVetoSF = dipho->weight("electronVetoSFCentral");
-    prefireWeight = dipho->weight("prefireWeightCentral");
     
-    LooseMvaSF_up = dipho->weight("LooseMvaSFUp01sigma");
-    PreselSF_up = dipho->weight("PreselSFUp01sigma");
-    TriggerWeight_up = dipho->weight("TriggerWeightUp01sigma");
-    electronVetoSF_up = dipho->weight("electronVetoSFUp01sigma");
-    prefireWeight_up = dipho->weight("prefireWeightUp01sigma");
+    // Divide by prefireWeight because it's already applied to all previously set diphoton scale factors. Multiplication happens in PrefireDiPhotonProducer when updating diphoton object
+    // tag_obj_.setWeight("LooseMvaSFCentral",LooseMvaSF/prefireWeight);
+    // tag_obj_.setWeight("PreselSFCentral",PreselSF/prefireWeight);
+    // tag_obj_.setWeight("TriggerWeightCentral",TriggerWeight/prefireWeight);
+    // tag_obj_.setWeight("electronVetoSFCentral",electronVetoSF/prefireWeight);
+    // tag_obj_.setWeight("prefireWeightCentral",prefireWeight);
     
-    LooseMvaSF_down = dipho->weight("LooseMvaSFDown01sigma");
-    PreselSF_down = dipho->weight("PreselSFDown01sigma");
-    TriggerWeight_down = dipho->weight("TriggerWeightDown01sigma");
-    electronVetoSF_down = dipho->weight("electronVetoSFDown01sigma");
-    prefireWeight_down = dipho->weight("prefireWeightDown01sigma");
+    // // tag_obj_.setWeight("LooseMvaSFUp01sigma",LooseMvaSF_up);
+    // // tag_obj_.setWeight("PreselSFUp01sigma",PreselSF_up);
+    // // tag_obj_.setWeight("TriggerWeightUp01sigma",TriggerWeight_up);
+    // // tag_obj_.setWeight("electronVetoSFUp01sigma",electronVetoSF_up);
+    // // tag_obj_.setWeight("prefireWeightUp01sigma",prefireWeight_up);
     
-    diPhoCentralWeight = dipho->centralWeight();
-    
-    if(prefireWeight == diPhoCentralWeight) {
-        prefireWeight = 1;
-        prefireWeight_up = 1;
-        prefireWeight_down = 1;
-    }
-    
-    tag_obj_.setWeight("LooseMvaSFCentral",LooseMvaSF);
-    tag_obj_.setWeight("PreselSFCentral",PreselSF);
-    tag_obj_.setWeight("TriggerWeightCentral",TriggerWeight);
-    tag_obj_.setWeight("electronVetoSFCentral",electronVetoSF);
-    tag_obj_.setWeight("prefireWeightCentral",prefireWeight);
-    
-    tag_obj_.setWeight("LooseMvaSFUp01sigma",LooseMvaSF_up);
-    tag_obj_.setWeight("PreselSFUp01sigma",PreselSF_up);
-    tag_obj_.setWeight("TriggerWeightUp01sigma",TriggerWeight_up);
-    tag_obj_.setWeight("electronVetoSFUp01sigma",electronVetoSF_up);
-    tag_obj_.setWeight("prefireWeightUp01sigma",prefireWeight_up);
-    
-    tag_obj_.setWeight("LooseMvaSFDown01sigma",LooseMvaSF_down);
-    tag_obj_.setWeight("PreselSFDown01sigma",PreselSF_down);
-    tag_obj_.setWeight("TriggerWeightDown01sigma",TriggerWeight_down);
-    tag_obj_.setWeight("electronVetoSFDown01sigma",electronVetoSF_down);
-    tag_obj_.setWeight("prefireWeightDown01sigma",prefireWeight_down);
-    
-    // Multiply prefire weight by hand
-    TagObjCentralWeight = tag_obj_.centralWeight();
-    TagObjCentralWeight = TagObjCentralWeight * prefireWeight;
-    tag_obj_.setCentralWeight(TagObjCentralWeight);
+    // // tag_obj_.setWeight("LooseMvaSFDown01sigma",LooseMvaSF_down);
+    // // tag_obj_.setWeight("PreselSFDown01sigma",PreselSF_down);
+    // // tag_obj_.setWeight("TriggerWeightDown01sigma",TriggerWeight_down);
+    // // tag_obj_.setWeight("electronVetoSFDown01sigma",electronVetoSF_down);
+    // // tag_obj_.setWeight("prefireWeightDown01sigma",prefireWeight_down);
     
     return tag_obj_;
 }
 
+double HHWWggTagProducer::PassPUJetID(vector<double> pujid_wp_pt_bin_1_, vector<double> pujid_wp_pt_bin_2_, Ptr<flashgg::Jet> thejet)
+{
+    std::vector<std::pair<double,double> > eta_cuts_(4);
+    eta_cuts_[0] = std::make_pair (0    , 2.50 );
+    eta_cuts_[1] = std::make_pair (2.50 , 2.75 );
+    eta_cuts_[2] = std::make_pair (2.75 , 3.00 );
+    eta_cuts_[3] = std::make_pair (3.00 , 10);
 
+    double passPUJetID = 0; 
+    for (UInt_t eta_bin = 0; eta_bin < pujid_wp_pt_bin_1_.size(); eta_bin++ ){
+        if ( fabs( thejet->eta() ) >  eta_cuts_[eta_bin].first &&
+            fabs( thejet->eta() ) <= eta_cuts_[eta_bin].second){
+            if ( thejet->pt() >  20 &&
+                thejet->pt() <= 30 && thejet->puJetIdMVA() > pujid_wp_pt_bin_1_[eta_bin] )
+                passPUJetID = 1;
+            if ( thejet->pt() >  30 &&
+                thejet->pt() <= 50 && thejet->puJetIdMVA() > pujid_wp_pt_bin_2_[eta_bin] )
+                passPUJetID = 1;
+            if (thejet->pt() > 50) passPUJetID = 1;
+        }
+    }
+
+    return passPUJetID; 
+}
+
+HHWWggTag HHWWggTagProducer::ComputePUJetIDs(vector<Ptr<flashgg::Jet>> jets, HHWWggTag tag_obj)
+{
+    // Compute booleans for PUJetID working points and set the tag object values to be accessed in HHWWggCustomize and saved in the output trees
+    // This way you can run once and check different PUJetID working points afterwards
+
+    double passes_loose, passes_medium, passes_tight = 0;
+    std::vector<std::vector<double>> allJetIDs;
+
+    std::vector<double> pujid_wp_pt_bin_1_Loose_ = {-0.97, -0.68, -0.53, -0.47};
+    std::vector<double> pujid_wp_pt_bin_2_Loose_ = {-0.89, -0.52, -0.38, -0.30};   
+
+    std::vector<double> pujid_wp_pt_bin_1_Medium_ = {0.18, -0.55, -0.42, -0.36};
+    std::vector<double> pujid_wp_pt_bin_2_Medium_ = {0.61, -0.35, -0.23, -0.17};    
+
+    std::vector<double> pujid_wp_pt_bin_1_Tight_ = {0.69, -0.35, -0.26, -0.21};
+    std::vector<double> pujid_wp_pt_bin_2_Tight_ = {0.86, -0.10, -0.05, -0.01};           
+
+    for( unsigned int jet_i = 0; jet_i <  jets.size() ; jet_i++ )
+        {
+            edm::Ptr<flashgg::Jet> thejet = jets[ jet_i ];
+            std::vector<double> JetIDs;
+            passes_loose = PassPUJetID(pujid_wp_pt_bin_1_Loose_, pujid_wp_pt_bin_2_Loose_, thejet);    
+            passes_medium = PassPUJetID(pujid_wp_pt_bin_1_Medium_, pujid_wp_pt_bin_2_Medium_, thejet);
+            passes_tight = PassPUJetID(pujid_wp_pt_bin_1_Tight_, pujid_wp_pt_bin_2_Tight_, thejet);
+            JetIDs.push_back(passes_loose);
+            JetIDs.push_back(passes_medium);
+            JetIDs.push_back(passes_tight);
+            allJetIDs.push_back(JetIDs);
+        }
+
+    tag_obj.SetJetIDs(allJetIDs);
+
+    return tag_obj; 
+
+}
+
+// std::vector<edm::Ptr<reco::GenParticle> > HHWWggTagProducer::OrderParticles(std::vector<edm::Ptr<reco::GenParticle> > GenParticles )
+// {
+    // double maxpT = -999; 
+    // double tempPt; 
+    // int N_genParticles = GenParticles.size();
+    // edm::Ptr<reco::GenParticle> GenPart; 
+
+    // for (unsigned int i; i < N_genParticles; i ++){
+    //     GenPart = GenParticles.at(i);
+    //     tempPt = GenPart->p4().pt(); 
+
+
+    // }
+
+    
+
+// }
 
 
 }

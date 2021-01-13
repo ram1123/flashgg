@@ -48,14 +48,30 @@ namespace flashgg {
     
     // Get Leptons and Jets
     std::vector<flashgg::Electron> GetElectrons(std::vector<edm::Ptr<flashgg::Electron>>);
+    void SetAllElectrons(std::vector<edm::Ptr<flashgg::Electron>>);
+    void SetGoodElectrons(std::vector<edm::Ptr<flashgg::Electron>>);
+    void SetAllMuons(std::vector<edm::Ptr<flashgg::Muon>>);
+    void SetGoodMuons(std::vector<edm::Ptr<flashgg::Muon>>);
+
     std::vector<flashgg::Muon> GetMuons(std::vector<edm::Ptr<flashgg::Muon>>);
     std::vector<flashgg::Jet> GetJets(std::vector<edm::Ptr<flashgg::Jet>>);
+    // void setZeroVertex(edm::Ptr<reco::Vertex>);
     void SetGoodJets(std::vector<edm::Ptr<flashgg::Jet>>);
     void SetAllJets(std::vector<edm::Ptr<flashgg::Jet>>);
+    void SetDiPhoMVA(double);
+    void SetDiPhoPt(double);
     void SetDiphoCentralWeight(double);
 
     // Jet Vars 
     void SetJetVars(std::vector<double>); 
+    void SetJetIDs(std::vector<std::vector<double>>);
+
+    //-- Gen Particles
+    void SetGenObjs(std::vector<edm::Ptr<reco::GenParticle> >, std::vector<edm::Ptr<reco::GenParticle> >, std::vector<edm::Ptr<reco::GenParticle> >,
+                    std::vector<edm::Ptr<reco::GenParticle> >, std::vector<edm::Ptr<reco::GenParticle> >, std::vector<edm::Ptr<reco::GenParticle> >);
+
+    //-- PDF Info 
+    // void SavePDFInfo();
 
     //-- Fully Leptonic Leptons 
     void GetFLElectrons(edm::Ptr<flashgg::Electron> Ele1,edm::Ptr<flashgg::Electron> Ele2);
@@ -82,11 +98,6 @@ namespace flashgg {
               std::vector<edm::Ptr<flashgg::Jet>>, std::vector<edm::Ptr<flashgg::Jet>>,
               std::vector<double>, std::vector<double>, std::vector<double>);
 
-    //-- 0 and 1 with just HH objects. Saving just in case 
-    // HHWWggTag(edm::Ptr<DiPhotonCandidate>, edm::Ptr<flashgg::Electron>, edm::Ptr<flashgg::Met>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet>); // HHWWggTag_0
-    // HHWWggTag(edm::Ptr<DiPhotonCandidate>, edm::Ptr<flashgg::Muon>, edm::Ptr<flashgg::Met>, edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet>); // HHWWggTag_1
-
-
     // HHWWggTag_2 - Fully Hadronic 
     HHWWggTag(edm::Ptr<DiPhotonCandidate>,
               edm::Ptr<flashgg::Met>,
@@ -109,6 +120,24 @@ namespace flashgg {
               std::vector<edm::Ptr<flashgg::Jet>>, std::vector<edm::Ptr<flashgg::Jet>>,
               std::vector<double>, std::vector<double>, std::vector<double>
               );
+
+    //-- SL systematic tree. Good objects only 
+    HHWWggTag(edm::Ptr<DiPhotonCandidate>,
+                          std::vector<edm::Ptr<flashgg::Electron>>,
+                          std::vector<edm::Ptr<flashgg::Muon>>,
+                          edm::Ptr<flashgg::Met>,
+                          std::vector<edm::Ptr<flashgg::Jet>>,
+                          std::vector<double>); 
+
+
+    //-- FH systematic tree. Good objects only 
+    HHWWggTag(edm::Ptr<DiPhotonCandidate> dipho,
+                  edm::Ptr<flashgg::Met>,
+                  edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet>,
+                  edm::Ptr<flashgg::Jet>, edm::Ptr<flashgg::Jet>,
+                  std::vector<edm::Ptr<flashgg::Jet>>, 
+                  std::vector<double>);
+
 
     // Required this because HHWWggTag is derived from another class
     virtual HHWWggTag *clone() const override;
@@ -141,7 +170,9 @@ namespace flashgg {
     const std::vector<flashgg::Muon> goodMuons() const {return goodMuons_;}
     const std::vector<flashgg::Jet> allJets() const {return allJets_;}
     const std::vector<flashgg::Jet> goodJets() const {return goodJets_;}
+    // const edm::Ptr<reco::Vertex> ZeroVertex() const {return ZeroVertex_;}
     const float DiphoCentralWeight() const {return DiphoCentralWeight_;}
+// const std::vector<edm::Ptr<reco::Vertex>> vtx
 
     const LorentzVector & dijet() const { return dijet_; }
     const LorentzVector & dijet2() const { return dijet2_; }
@@ -152,9 +183,7 @@ namespace flashgg {
     const reco::Candidate::LorentzVector& Leading_lepton() const { return Leading_lepton_; };
     const reco::Candidate::LorentzVector& Subleading_lepton() const { return Subleading_lepton_; };
     const float dipho_MVA() const {return dipho_MVA_;};
-
-    // void setBenchmarkReweight(std::vector<float> x) { benchmark_reweights_ = x; }
-    // float getBenchmarkReweight(int targetNode) const { return benchmark_reweights_[targetNode]; }
+    const float dipho_pt() const {return dipho_pt_;};
 
     void setGenMhh(double x) { genMhh_ = x; }
     double genMhh() const { return genMhh_; }
@@ -168,6 +197,23 @@ namespace flashgg {
     double ZeroVtx_z() const {return ZeroVtx_z_; }
     void setZeroVtx_z(double x) { ZeroVtx_z_ = x; }
 
+    // Jet PUID Booleans 
+    const std::vector<std::vector<double>> goodJets_passJetPUID() const {return goodJets_passJetPUID_;}
+
+    // Gen particles
+    const std::vector<reco::Candidate::LorentzVector > genHiggsBosons() const {return genHiggsBosons_;}
+    const std::vector<reco::Candidate::LorentzVector > genWBosons() const {return genWBosons_;}
+    const std::vector<reco::Candidate::LorentzVector > genPhotons() const {return genPhotons_;}
+    const std::vector<reco::Candidate::LorentzVector > genQuarks() const {return genQuarks_;}
+    const std::vector<reco::Candidate::LorentzVector > genLeptons() const {return genLeptons_;}
+    const std::vector<reco::Candidate::LorentzVector > genNeutrinos() const {return genNeutrinos_;}
+    const std::vector<double> genQuarksPdgIds() const {return genQuarksPdgIds_;}
+    const std::vector<double> genLeptonsPdgIds() const {return genLeptonsPdgIds_;}
+    const std::vector<double> genNeutrinosPdgIds() const {return genNeutrinosPdgIds_;}   
+
+    // PDF Info 
+     
+
   private:
     double mva_;
     long eventNumber_;
@@ -178,8 +224,8 @@ namespace flashgg {
     float lp_pt_;
     float slp_pt_;
     std::vector<double> Cut_Variables_;
-    std::vector<double> MuonVars_ = {-999}; // Give initial value to avoid void vectors when obtaining final state variables  
-    std::vector<double> JetVars_ = {-999}; // Give initial value to avoid void vectors when obtaining final state variables 
+    std::vector<double> MuonVars_ = {-99}; // Give initial value to avoid void vectors when obtaining final state variables  
+    std::vector<double> JetVars_ = {-99}; // Give initial value to avoid void vectors when obtaining final state variables 
     flashgg::Electron Electron_;
     flashgg::Muon Muon_;
     flashgg::Jet Leading_Jet_;
@@ -194,6 +240,7 @@ namespace flashgg {
     std::vector<flashgg::Muon> goodMuons_;
     std::vector<flashgg::Jet> allJets_;
     std::vector<flashgg::Jet> goodJets_;
+    // edm::Ptr<reco::Vertex> ZeroVertex_;
 
     LorentzVector dijet_;
     LorentzVector dijet2_;
@@ -202,9 +249,8 @@ namespace flashgg {
     LorentzVector HH_;
     reco::Candidate::LorentzVector Leading_lepton_;
     reco::Candidate::LorentzVector Subleading_lepton_;
-    float dipho_MVA_;
-    // vector<float> benchmark_reweights_;    
-
+    float dipho_MVA_ = -999;
+    float dipho_pt_ = -999; 
     double genMhh_;
     double genCosThetaStar_CS_;
 
@@ -212,6 +258,20 @@ namespace flashgg {
     double GenVtx_z_; 
     double HggVtx_z_; 
     double ZeroVtx_z_; 
+
+    // Jet PUID booleans  
+    vector<vector<double>> goodJets_passJetPUID_; 
+
+    // Gen particles
+    std::vector<reco::Candidate::LorentzVector> genHiggsBosons_;
+    std::vector<reco::Candidate::LorentzVector> genWBosons_;
+    std::vector<reco::Candidate::LorentzVector> genPhotons_;
+    std::vector<reco::Candidate::LorentzVector> genQuarks_;
+    std::vector<reco::Candidate::LorentzVector> genLeptons_;
+    std::vector<reco::Candidate::LorentzVector> genNeutrinos_;
+    std::vector<double> genQuarksPdgIds_; 
+    std::vector<double> genLeptonsPdgIds_;
+    std::vector<double> genNeutrinosPdgIds_;       
 
     double DiphoCentralWeight_;
   };
