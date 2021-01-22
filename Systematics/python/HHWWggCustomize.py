@@ -234,6 +234,7 @@ class HHWWggCustomize():
             entry = "%s:=%s"%(vtitle,vname)
             finalStateVars.append(entry)
             for v in p4_variables:
+                if("Jets" in objV): checkN = 10
                 for i in range(checkN):
                     vtitle = "%s_%s_%s"%(objV,i,v)
                     vname = "? %s.size() >= %s ? %s[%s].p4().%s() : -99"%(objV,i+1,objV,i,v)
@@ -583,6 +584,7 @@ class HHWWggCustomize():
             entry = "%s:=%s"%(vtitle,vname)
             finalStateVars.append(entry)
             for v in p4_variables:
+                if("Jets" in objV): checkN = 10
                 for i in range(checkN):
                     vtitle = "%s_%s_%s"%(objV,i,v)
                     vname = "? %s.size() >= %s ? %s[%s].p4().%s() : -99"%(objV,i+1,objV,i,v)
