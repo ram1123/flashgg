@@ -602,7 +602,7 @@ class HHWWggCustomize():
             if("Jets" in objV):
                 NtoCheck = 5   
                 # goodJetsToCheck = 10
-                # if(objV == "goodJets"): NtoCheck = 10 # want to save more good jet information for checking btags per event 
+                if(objV == "goodJets"): NtoCheck = 10 # want to save more good jet information for checking btags per event 
                 bscores = ["bDiscriminator('mini_pfDeepFlavourJetTags:probb')","bDiscriminator('pfDeepCSVJetTags:probb')",
                            "bDiscriminator('mini_pfDeepFlavourJetTags:probbb')","bDiscriminator('pfDeepCSVJetTags:probbb')",
                            "bDiscriminator('mini_pfDeepFlavourJetTags:problepb')"
