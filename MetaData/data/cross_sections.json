@@ -827,12 +827,24 @@
   "kf": 1.0,
   "br": 1.0
  },
+ "GluGluHToGG_M120_TuneCP5_13TeV-amcatnloFXFX-pythia8":{
+  "xs" : 52.22,
+  "br" : 0.002218,
+  "kf" : 1.06,
+  "itype": -120000
+ }, 
  "GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8":{
   "xs" : 48.5800,
   "br" : 0.00227,
   "kf" : 1.06,
   "itype": -125000
  },
+ "GluGluHToGG_M130_TuneCP5_13TeV-amcatnloFXFX-pythia8": {
+  "xs": 45.31,
+  "itype": -130000,
+  "kf": 1.06,
+  "br": 0.002238
+ }, 
  "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_CUETP8M1Up": {
   "xs": 48.58,
   "itype": -125000,
