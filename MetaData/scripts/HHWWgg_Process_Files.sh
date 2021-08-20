@@ -135,7 +135,8 @@ cd $inputFolder
 ls > filesBefore.txt
 echo "Hadding..."
 echo $scriptLoc
-python $scriptLoc > /dev/null # do not print any output from command # Create workspace hadded files
+#python $scriptLoc > /dev/null # do not print any output from command # Create workspace hadded files
+python $scriptLoc 
 echo "Done hadding..."
 ls > filesAfter.txt
 
