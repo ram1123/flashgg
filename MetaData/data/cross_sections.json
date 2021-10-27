@@ -832,7 +832,7 @@
   "br" : 0.002218,
   "kf" : 1.06,
   "itype": -120000
- }, 
+ },
  "GluGluHToGG_M125_TuneCP5_13TeV-amcatnloFXFX-pythia8":{
   "xs" : 48.5800,
   "br" : 0.00227,
@@ -844,7 +844,7 @@
   "itype": -130000,
   "kf": 1.06,
   "br": 0.002238
- }, 
+ },
  "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_CUETP8M1Up": {
   "xs": 48.58,
   "itype": -125000,
@@ -1835,10 +1835,29 @@
 "GluGluToHHTo2G4Q_node_cHHH5_TuneCUETP8M1_PSWeights_13TeV-powheg-pythia8": {
     "xs": 0.001
 },
+
+"GluGluToHHTo2B2G_node_cHHH0_TuneCUETP8M1_PSWeights_13TeV-powheg-pythia8"    : {
+   "xs" : 0.001
+},
+"GluGluToHHTo2B2G_node_cHHH0_TuneCP5_PSWeights_13TeV-powheg-pythia8"    : {
+   "xs" : 0.001
+},
 "GluGluToHHTo2B2G_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV-powheg-pythia8"    : {
    "xs" : 0.001
 },
 "GluGluToHHTo2B2G_node_cHHH1_TuneCP5_PSWeights_13TeV-powheg-pythia8"    : {
+   "xs" : 0.001
+},
+"GluGluToHHTo2B2G_node_cHHH2p45_TuneCUETP8M1_PSWeights_13TeV-powheg-pythia8"    : {
+   "xs" : 0.001
+},
+"GluGluToHHTo2B2G_node_cHHH2p45_TuneCP5_PSWeights_13TeV-powheg-pythia8"    : {
+   "xs" : 0.001
+},
+"GluGluToHHTo2B2G_node_cHHH5_TuneCUETP8M1_PSWeights_13TeV-powheg-pythia8"    : {
+   "xs" : 0.001
+},
+"GluGluToHHTo2B2G_node_cHHH5_TuneCP5_PSWeights_13TeV-powheg-pythia8"    : {
    "xs" : 0.001
 },
 

@@ -1,4 +1,6 @@
 # Editors temp files
+.dasmaps/
+screenlog.0
 classes_def.xml
 .__*
 *.swp
