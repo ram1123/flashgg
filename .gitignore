@@ -1,4 +1,5 @@
 # Editors temp files
+.vscode/
 .dasmaps/
 screenlog.0
 classes_def.xml
