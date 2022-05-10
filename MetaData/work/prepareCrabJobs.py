@@ -312,7 +312,9 @@ if options.createCrabConfig:
             ("RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3_ext2-v1", "Summer16"),
             ("RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1", "Autumn18"),
             ("RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3", "Summer16"),
-            ("RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15", "Fall18")
+            ("RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15", "Fall18"),
+            ("_dipoleRecoilOff", ""),
+            ("_Summer16", "")
         ]
 
         for orig, replacement in replacements:
