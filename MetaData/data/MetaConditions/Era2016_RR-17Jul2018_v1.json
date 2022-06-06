@@ -63,7 +63,7 @@
         },
         ".*SingleEle.*" :
         {
-	    "tagAndProbe" : 
+	    "tagAndProbe" :
 	    [
 		"HLT_Ele27_WPTight_Gsf*"
 	    ]
@@ -79,7 +79,7 @@
 	    ]
         }
     },
-    
+
     "MUON_ID" : "Medium",
     "MUON_ISO" : "LooseRel",
     "MUON_ID_JSON_FileName" : "flashgg/Systematics/data/Muon2016_RunBCDEFGH_SF_ID.json",
@@ -95,15 +95,15 @@
     "Ele_reco_SF_FileName" : "flashgg/Systematics/data/2016_reco-eff.json",
 
     "flashggDiPhotonSystematics" : "flashggDiPhotonSystematics2016_cfi",
-    
-    "flashggDiPhotonMVA" : 
-    {  
+
+    "flashggDiPhotonMVA" :
+    {
         "weightFile" : "flashgg/Taggers/data/STXSmodels/legacyDiphoModelMerged.xml",
         "version" : "xgb"
     },
 
-    "flashggJetSystematics" : 
-    {  
+    "flashggJetSystematics" :
+    {
         "doGranular" : false,
         "textFileName" : "flashgg/Systematics/data/JEC/Regrouped_Summer16_07Aug2017_V11_MC_UncertaintySources_AK4PFchs.txt",
         "listOfSources" : [
@@ -120,32 +120,32 @@
                            "RelativeSample2016"
                           ]
     },
-    "flashggVBFMVA" : 
-    {  
+    "flashggVBFMVA" :
+    {
         "weightFile" : "flashgg/Taggers/data/STXSmodels/dijetDataDrivenMerged.xml",
         "jetID" : "Tight2017"
     },
 
-    "flashggVHhadMVA" : 
-    {  
+    "flashggVHhadMVA" :
+    {
         "weightFile" : "flashgg/Taggers/data/STXSmodels/vhHadDataDrivenMerged.xml",
         "jetID" : "Tight2017"
     },
 
-    "stageOneCombinedTag" : 
-    {  
+    "stageOneCombinedTag" :
+    {
         "rawDiphoBounds" : [
                              0.783, 0.701, 0.525,
                              0.836, 0.791, 0.655,
-                             
+
                              0.854, 0.794, 0.690,
                              0.883, 0.841, 0.746,
                              0.922, 0.885, 0.814,
-                             
+
                              0.831, 0.761, 0.637,
                              0.891, 0.867, 0.726,
                              0.918, 0.893, 0.829,
-                             
+
                              0.945, 0.882,
                              0.924, 0.802,
                              0.844,
@@ -172,7 +172,7 @@
                              0.599, 0.478
                            ],
         "rawGghBounds" : [
-                             0.565, 0.726, 
+                             0.565, 0.726,
                              0.583, 0.919,
                              0.928, 0.876,
                              0.362, 0.742,
@@ -190,9 +190,9 @@
     {
 
 	"bTagEffBins" : "bTagEffBins2016",
-        
-	"bTagger" : "pfDeepJet",  
-        
+
+	"bTagger" : "pfDeepJet",
+
 	"bDiscriminatorValue_pfDeepCSV" : 0.6321,
 	"bTagCalibrationFile_Reshape_pfDeepCSV" : "flashgg/Systematics/data/DeepCSV_2016LegacySF_V1.csv",
 	"bTagCalibrationFile_WPCut_pfDeepCSV" : "flashgg/Systematics/data/DeepCSV_2016LegacySF_WP_V1.csv",
@@ -204,7 +204,7 @@
 	"eta" : 2.4
     },
 
-    "mc2hessianCSV" : "PhysicsTools/HepMCCandAlgos/data/NNPDF30_lo_as_0130_hessian_60.csv",
+    "mc2hessianCSV" : "PhysicsTools/HepMCCandAlgos/data/NNPDF30_nlo_as_0118_hessian_60.csv",
 
     "bRegression" :
     {
@@ -212,10 +212,10 @@
         "y_mean" : 1.04588,
         "y_std" : 0.2685356,
         "year" : 2016,
-        "useBRegressionJERsf" : false, 
-        "JER_central" : 1.1, 
-        "JER_up" : 0.1, 
-        "JER_down" : -0.1 
+        "useBRegressionJERsf" : false,
+        "JER_central" : 1.1,
+        "JER_up" : 0.1,
+        "JER_down" : -0.1
     },
 
     "doubleHTag":
@@ -249,7 +249,7 @@
                              2.79300773e-01,   2.82007646e-01,   6.50499362e+01,   3.08319388e+01,
                              9.72514714e-01,   1.09188163e+00,   1.80664926e+00,   1.80460847e+00],
         "ttHKiller_listmean" : [  1.04960120e+02,  -5.49804481e-03,   3.08285275e-02],
-        "ttHKiller_liststd" : [ 85.77034272,   1.03762195,   1.83170033]   
+        "ttHKiller_liststd" : [ 85.77034272,   1.03762195,   1.83170033]
     },
 
     "PhoIdInputCorrections":
@@ -275,7 +275,7 @@
         "photonFileName" : "flashgg/Taggers/data/L1prefiring_photonpt_2016BtoH.root",
         "photonHistName" : "L1prefiring_photonpt_2016BtoH",
         "jetFileName"    : "flashgg/Taggers/data/L1prefiring_jetpt_2016BtoH.root",
-        "jetHistName"    : "L1prefiring_jetpt_2016BtoH" 
+        "jetHistName"    : "L1prefiring_jetpt_2016BtoH"
     },
 
     "THQLeptonicTag":

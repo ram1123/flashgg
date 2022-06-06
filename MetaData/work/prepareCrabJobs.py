@@ -313,9 +313,13 @@ if options.createCrabConfig:
             ("RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1", "Autumn18"),
             ("RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3", "Summer16"),
             ("RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15", "Fall18"),
-            ("RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3","RunIISummer16v3"),
-            ("dipoleRecoilOff-TuneCUETP8M1_PSweights_13TeV-madgraph-pythia8","Madgraph"),
-            ("dipoleRecoilOff-TuneCUETP8M1_PSweights_13TeV","")
+            ("RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1","RunIISummer16MiniAODv3"),
+            ("RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1","RunIIFall17MiniAODv2"),
+            ("RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v2","RunIIFall17MiniAODv2"),
+            ("RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1","RunIIAutumn18MiniAOD"),
+            ("RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2","RunIIAutumn18MiniAOD"),
+            ("_dipoleRecoilOff-TuneCUETP8M1_PSweights",""),
+            ("_dipoleRecoilOff-TuneCP5_PSweights","")
         ]
 
         for orig, replacement in replacements:
