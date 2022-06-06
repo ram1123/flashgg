@@ -64,14 +64,16 @@ def printSystematicVPSet(vpsetlist):
 
 
 def createStandardSystematicsProducers(process, options):
-    process.load("flashgg/Taggers/flashggTagSequence_cfi")
+
+    if not hasattr(process,'flashggTagSequence'):
+        process.load("flashgg.Taggers.flashggTagSequence_cfi")
+        from flashgg.Taggers.flashggTagSequence_cfi import *
+        process.flashggTagSequence = flashggPrepareTagSequence(process, options.metaConditions)
+
     process.load("flashgg.Systematics.flashggDiPhotonSystematics_cfi")
     process.load("flashgg.Systematics.flashggMuonSystematics_cfi")
     process.load("flashgg.Systematics.flashggElectronSystematics_cfi")
     process.load("flashgg.Systematics.flashggMetSystematics_cfi")
-
-    from flashgg.Taggers.flashggTagSequence_cfi import *
-    process.flashggTagSequence = flashggPrepareTagSequence(process, options.metaConditions)
     
     import flashgg.Systematics.flashggDiPhotonSystematics_cfi as diPhotons_syst
     diPhotons_syst.setupDiPhotonSystematics( process, options )
@@ -368,10 +370,10 @@ def recalculatePDFWeights(process, options):
                                                     mc2hessianCSV = cms.untracked.string(options["mc2hessianCSV"].encode("ascii")),
                                                     LHERunLabel = cms.string("externalLHEProducer"),
                                                     Debug = cms.bool(False),
-                                                    PDFmap = cms.PSet(#see here https://lhapdf.hepforge.org/pdfsets.html to update the map if needed
-                                                        NNPDF30_lo_as_0130_nf_4 = cms.untracked.uint32(263400),
-                                                        NNPDF31_nnlo_as_0118_nf_4 = cms.untracked.uint32(320900)
-                                                    )
+                                                    #PDFmap = cms.PSet(#see here https://lhapdf.hepforge.org/pdfsets.html to update the map if needed
+                                                    #    NNPDF30_lo_as_0130_nf_4 = cms.untracked.uint32(263400),
+                                                    #    NNPDF31_nnlo_as_0118_nf_4 = cms.untracked.uint32(320900)
+                                                    #)
                                                 ) 
     process.p.insert(0, process.flashggPDFWeightObject)
 
