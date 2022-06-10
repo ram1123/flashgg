@@ -34,14 +34,14 @@ def printSystematicVPSet(vpsetlist):
 #            if detailed:
 #               if hasattr(pset,"PhotonMethodName"):
 #                    print pset.PhotonMethodName.value(),pset.Label.value(),pset.OverallRange.value(),
-#                else:    
+#                else:
 #                    print pset.MethodName.value(),pset.Label.value(),pset.OverallRange.value(),
             syst = pset.Label.value()
             if pset.ApplyCentralValue.value():
                 cv = "YES"
             else:
                 cv = "NO"
-            sigmalist = pset.NSigmas.value()    
+            sigmalist = pset.NSigmas.value()
             sig = ""
             sig2 = ""
             if type(sigmalist) == type([]) and len(sigmalist) > 0:
@@ -54,7 +54,7 @@ def printSystematicVPSet(vpsetlist):
                 sig2 += "2nd: "
                 for val in sigmalist.secondVar:
                         sig2 += "%i " % val
-            else:    
+            else:
                 sig += "NO"
             print "%20s %15s %20s" % (syst,cv,sig)
             if (sig2 != ""):
@@ -74,13 +74,13 @@ def createStandardSystematicsProducers(process, options):
     process.load("flashgg.Systematics.flashggMuonSystematics_cfi")
     process.load("flashgg.Systematics.flashggElectronSystematics_cfi")
     process.load("flashgg.Systematics.flashggMetSystematics_cfi")
-    
+
     import flashgg.Systematics.flashggDiPhotonSystematics_cfi as diPhotons_syst
     diPhotons_syst.setupDiPhotonSystematics( process, options )
 
     import flashgg.Systematics.flashggMuonSystematics_cfi as muon_sf
     muon_sf.SetupMuonScaleFactors( process ,  options.metaConditions["MUON_ID_JSON_FileName"],  options.metaConditions["MUON_ID_JSON_FileName_LowPt"], options.metaConditions["MUON_ISO_JSON_FileName"], options.metaConditions["MUON_ID"], options.metaConditions["MUON_ISO"], options.metaConditions["MUON_ID_RefTracks"],options.metaConditions["MUON_ID_RefTracks_LowPt"] )
-   
+
     #scale factors for electron ID
     from   flashgg.Systematics.flashggElectronSystematics_cfi import EleSF_JSONReader
     binInfoEle = EleSF_JSONReader(options.metaConditions["Ele_ID_SF_FileName"],options.metaConditions["Ele_ID_version"]).getBinInfo()
@@ -108,9 +108,9 @@ def modifyTagSequenceForSystematics(process,jetSystematicsInputTags,ZPlusJetMode
     for i in range(len(jetSystematicsInputTags)):
         massSearchReplaceAnyInputTag(process.flashggTagSequence,UnpackedJetCollectionVInputTag[i],jetSystematicsInputTags[i])
 
-    if ZPlusJetMode == 2:  # VBF    
+    if ZPlusJetMode == 2:  # VBF
         process.flashggSystTagMerger = cms.EDProducer("VBFTagMerger",src=cms.VInputTag("flashggVBFTag"))
-    elif ZPlusJetMode:    
+    elif ZPlusJetMode:
         process.flashggSystTagMerger = cms.EDProducer("ZPlusJetTagMerger",src=cms.VInputTag("flashggZPlusJetTag"))
     else:
         process.flashggSystTagMerger = cms.EDProducer("TagMerger",src=cms.VInputTag("flashggTagSorter"))
@@ -119,7 +119,7 @@ def modifyTagSequenceForSystematics(process,jetSystematicsInputTags,ZPlusJetMode
 
 def createJetSystematicsForBreg(process,options):
     from flashgg.Taggers.flashggTags_cff import UnpackedJetCollectionVInputTag
-    
+
     bregSystInputList = cms.VInputTag()
     bregSystProducers = []
     for i in range(len(UnpackedJetCollectionVInputTag)):
@@ -130,7 +130,7 @@ def createJetSystematicsForBreg(process,options):
         for pset in bregSystProd.SystMethods:
             if not pset.Label.value().count("JER"):
                 newvpset += [pset]
-         
+
         JERbregpset = cms.PSet( MethodName = cms.string("FlashggJetBregSmear"),
                                 Label = cms.string("JERbreg"),
                                 NSigmas = cms.vint32(-1,1),
@@ -195,7 +195,7 @@ def modifySystematicsWorkflowForttH(process, systlabels, phosystlabels, metsystl
         if systlabel == "":
             continue
         process.p.remove(getattr(process, 'flashggTagSorter' + systlabel))
-        process.p.replace(process.flashggSystTagMerger, getattr(process, 'flashggTagSorter' + systlabel) * process.flashggSystTagMerger) 
+        process.p.replace(process.flashggSystTagMerger, getattr(process, 'flashggTagSorter' + systlabel) * process.flashggSystTagMerger)
         setattr(getattr(process, 'flashggTagSorter'+systlabel), 'TagPriorityRanges', cms.VPSet( cms.PSet(TagName = cms.InputTag('flashggTTHLeptonicTag', systlabel)), cms.PSet(TagName = cms.InputTag('flashggTTHHadronicTag', systlabel)) ))
 
 def allowLargettHMVAs(process):
@@ -213,7 +213,7 @@ def customizePhotonSystematicsForMC(process):
             pset.BinList = photonSmearBins
         elif photonScaleUncertBins and pset.Label.value().count("Scale"):
             pset.BinList = photonScaleUncertBins
-    
+
 def customizeSystematicsForSignal(process):
     customizeSystematicsForMC(process)
 
@@ -248,7 +248,7 @@ def customizeVPSetForData(systs, phScaleBins):
                 pset.NSigmas = cms.vint32() # Do not perform shift
             else:
                 pset.NSigmas = cms.PSet( firstVar = cms.vint32(), secondVar = cms.vint32() ) # Do not perform shift - 2D case
-            if pset.Label.value().count("Scale") and phScaleBins != None: 
+            if pset.Label.value().count("Scale") and phScaleBins != None:
                 pset.BinList = phScaleBins
             newvpset += [pset]
     return newvpset
@@ -312,7 +312,7 @@ def useEGMTools(process):
             process.MCSmearHighR9EB_EGM,
             process.MCSmearLowR9EB_EGM,
             ])
-    
+
     # add sigmaE/E correction and systematics
     process.flashggDiPhotonSystematics.SystMethods.extend( [process.SigmaEOverESmearing_EGM, process.SigmaEOverEShift] )
 
@@ -323,7 +323,7 @@ def runRivetSequence(process, options, processId):
                                                LHERunInfo = cms.InputTag('externalLHEProducer'),
                                                ProductionMode = cms.string('AUTO'),
     )
-    
+
     process.mergedGenParticles = cms.EDProducer("MergedGenParticleProducer",
                                                 inputPruned = cms.InputTag("prunedGenParticles"),
                                                 inputPacked = cms.InputTag("packedGenParticles"),
@@ -366,6 +366,7 @@ def recalculatePDFWeights(process, options):
                                                     GenTag      = cms.InputTag('generator'),
                                                     tag = cms.untracked.string("initrwgt"),
                                                     doScaleWeights  = cms.untracked.bool(True),
+                                                    doAlphasWeights = cms.untracked.bool(True),
                                                     nPdfEigWeights = cms.uint32(60),
                                                     mc2hessianCSV = cms.untracked.string(options["mc2hessianCSV"].encode("ascii")),
                                                     LHERunLabel = cms.string("externalLHEProducer"),
@@ -374,7 +375,7 @@ def recalculatePDFWeights(process, options):
                                                     #    NNPDF30_lo_as_0130_nf_4 = cms.untracked.uint32(263400),
                                                     #    NNPDF31_nnlo_as_0118_nf_4 = cms.untracked.uint32(320900)
                                                     #)
-                                                ) 
+                                                )
     process.p.insert(0, process.flashggPDFWeightObject)
 
 def filterHLTrigger(process, options):
