@@ -1,3 +1,9 @@
+# Ntuple paths:
+
+## October 29, 2021
+
+- With EFT reweight points: `/eos/user/p/pmandrik/HHWWgg_central/January_2021_Production_v2/`
+
 # With 10 good jets for main as well as systematics
 
 |Year   |Sample         | Status    | Output Path   | Command | Comments (if any) |
