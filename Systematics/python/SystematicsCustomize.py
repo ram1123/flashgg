@@ -76,11 +76,16 @@ def createStandardSystematicsProducers(process, options):
     process.load("flashgg.Systematics.flashggMetSystematics_cfi")
     
     import flashgg.Systematics.flashggDiPhotonSystematics_cfi as diPhotons_syst
+    print "[DEBUG#79] createStandardSystematicsProducers: "
     diPhotons_syst.setupDiPhotonSystematics( process, options )
+    print "[DEBUG#80] createStandardSystematicsProducers: "
 
     import flashgg.Systematics.flashggMuonSystematics_cfi as muon_sf
+    print "[DEBUG#84] createStandardSystematicsProducers: "
+    print "options.HHWWggTagsOnly: ",options.HHWWggTagsOnly
     if(options.HHWWggTagsOnly): muon_sf.SetupMuonScaleFactors( process ,  options.metaConditions["HHWWggTag"]["MUON_ID_JSON_FileName"],  options.metaConditions["HHWWggTag"]["MUON_ID_JSON_FileName_LowPt"], options.metaConditions["HHWWggTag"]["MUON_ISO_JSON_FileName"], options.metaConditions["HHWWggTag"]["MUON_ID"], options.metaConditions["HHWWggTag"]["MUON_ISO"], options.metaConditions["HHWWggTag"]["MUON_ID_RefTracks"],options.metaConditions["HHWWggTag"]["MUON_ID_RefTracks_LowPt"] )
     else: muon_sf.SetupMuonScaleFactors( process ,  options.metaConditions["MUON_ID_JSON_FileName"],  options.metaConditions["MUON_ID_JSON_FileName_LowPt"], options.metaConditions["MUON_ISO_JSON_FileName"], options.metaConditions["MUON_ID"], options.metaConditions["MUON_ISO"], options.metaConditions["MUON_ID_RefTracks"],options.metaConditions["MUON_ID_RefTracks_LowPt"] )
+    print "[DEBUG#87] createStandardSystematicsProducers: "
    
     #scale factors for electron ID
     from   flashgg.Systematics.flashggElectronSystematics_cfi import EleSF_JSONReader

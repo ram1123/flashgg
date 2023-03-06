@@ -536,6 +536,10 @@ class JobConfig(object):
         # auto-detect data from xsec = 0
         if self.dataset:
             name,xsec,totEvents,files,maxEvents,specialPrepend = self.dataset
+            # print "[DEBUG:#539] self.dataset: ",self.dataset
+            # print "[DEBUG:#539] type(xsec): ",type(xsec)
+            # print "[DEBUG:#539] xsec.get(\"xs\",None): ",xsec.get("xs",None)
+            # print "[DEBUG:#539] type(xsec.get(\"xs\",None)): ",type(xsec.get("xs",None))
             if len(specialPrepend) > 0 and not self.useAAA:
                 self.filePrepend = specialPrepend
             if type(xsec) != dict or type(xsec.get("xs",None)) != float:
